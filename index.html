@@ -492,12 +492,32 @@ function openReservation(id){
 function openOfferModal(){$('#offerModal').classList.add('open')}
 function closeModal(id){$('#'+id).classList.remove('open')}
 
-$('#registrationForm').onsubmit=e=>{
+
+$('#registrationForm').onsubmit = async e => {
   e.preventDefault(); const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);
   let c=clients.find(x=>x.phone===d.phone);
   if(c)Object.assign(c,d);else clients.push({id:uid(),...d,points:0,suspendedUntil:null});
-  save('meat_clients',clients);e.target.reset();closeModal('registrationModal');renderAll();toast('Înscriere salvată.');
+  save('meat_clients',clients);
+  try {
+    await addDoc(collection(db, "clients"), {
+        name: d.name,
+        phone: d.phone,
+        birthdate: d.birthdate || "",
+        city: d.city || "",
+        address: d.address || "",
+        consent: d.consent ? true : false,
+        createdAt: serverTimestamp()
+    });
+
+    console.log("Client salvat în Firestore!");
+} catch (err) {
+    console.error("Eroare Firestore:", err);
+}
+
+  e.target.reset();closeModal('registrationModal');renderAll();toast('Înscriere salvată.');
 };
+
+
 $('#reservationForm').onsubmit=e=>{
   e.preventDefault();expireReservations(false);
   const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);d.quantity=Number(d.quantity);d.duration=Number(d.duration);
