@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carmangeria Premium — Oferte și rezervări</title>
+  <style>
+    :root{
+      --bg:#0f1115;
+      --panel:#171a21;
+      --panel-2:#1f2430;
+      --text:#f7f7f8;
+      --muted:#a9afbd;
+      --accent:#e63946;
+      --accent-2:#ff6b6b;
+      --success:#2ecc71;
+      --warning:#f1c40f;
+      --danger:#ff4d4f;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 18px 50px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left,rgba(230,57,70,.18),transparent 28%),
+        radial-gradient(circle at bottom right,rgba(255,107,107,.10),transparent 24%),
+        var(--bg);
+      min-height:100vh;
+    }
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{min-height:100vh}
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 5vw;
+      backdrop-filter:blur(18px);
+      background:rgba(15,17,21,.82);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),#8e1321);
+      box-shadow:0 10px 25px rgba(230,57,70,.3);
+      font-size:22px;
+    }
+    .brand small{display:block;color:var(--muted);font-weight:500}
+    .nav{display:flex;gap:10px;flex-wrap:wrap}
+    .nav button{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 14px;border-radius:999px;
+    }
+    .nav button.active,.nav button:hover{background:var(--accent);border-color:var(--accent)}
+    main{width:min(1180px,92vw);margin:0 auto;padding:34px 0 70px}
+    .view{display:none}
+    .view.active{display:block}
+    .hero{
+      display:grid;grid-template-columns:1.15fr .85fr;gap:24px;
+      align-items:stretch;margin-bottom:26px;
+    }
+    .hero-card,.glass{
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-card{padding:38px;position:relative;overflow:hidden}
+    .hero-card:after{
+      content:"";position:absolute;inset:auto -90px -90px auto;
+      width:240px;height:240px;border-radius:50%;
+      background:radial-gradient(circle,rgba(230,57,70,.45),transparent 65%);
+    }
+    .eyebrow{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(230,57,70,.14);color:#ffb5bb;
+      border:1px solid rgba(230,57,70,.25);font-size:14px;font-weight:700;
+    }
+    h1{font-size:clamp(38px,6vw,72px);line-height:.98;margin:22px 0 18px;letter-spacing:-2px}
+    h2{margin:0 0 16px;font-size:28px}
+    p{color:var(--muted);line-height:1.65}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
+    .btn{
+      border:0;border-radius:14px;padding:13px 18px;font-weight:800;
+      transition:.2s transform,.2s opacity,.2s background;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#b5172b);color:#fff}
+    .btn-secondary{background:rgba(255,255,255,.07);color:#fff;border:1px solid var(--border)}
+    .btn-success{background:var(--success);color:#07140d}
+    .btn-danger{background:var(--danger);color:#fff}
+    .hero-side{
+      padding:28px;display:flex;flex-direction:column;justify-content:space-between;
+      background:
+        linear-gradient(180deg,rgba(15,17,21,.1),rgba(15,17,21,.88)),
+        url('https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1200&q=80') center/cover;
+      min-height:390px;
+    }
+    .hero-side .stat{background:rgba(10,12,16,.75);padding:16px;border-radius:16px;border:1px solid var(--border)}
+    .grid{display:grid;gap:20px}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+    .card{padding:22px}
+    .offer-card{overflow:hidden;padding:0}
+    .offer-img{height:210px;background:#222 center/cover;position:relative}
+    .discount{
+      position:absolute;top:16px;left:16px;background:var(--accent);
+      padding:8px 12px;border-radius:999px;font-weight:900;
+    }
+    .offer-body{padding:20px}
+    .offer-title{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+    .price{font-weight:900;font-size:24px}
+    .old-price{text-decoration:line-through;color:var(--muted);font-size:14px}
+    .progress{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin:12px 0}
+    .progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--success),#9be15d);border-radius:inherit}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+    .pill{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);font-size:13px}
+    .section-title{display:flex;justify-content:space-between;align-items:end;margin:34px 0 16px;gap:20px}
+    .section-title p{margin:0}
+    .empty{padding:34px;text-align:center;color:var(--muted)}
+    .modal{
+      position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;place-items:center;
+      z-index:100;padding:20px;
+    }
+    .modal.open{display:grid}
+    .modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;padding:24px}
+    .modal-head{display:flex;justify-content:space-between;gap:16px;align-items:center}
+    .icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#fff}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field.full{grid-column:1/-1}
+    label{font-size:14px;color:#d9dce4}
+    input,select,textarea{
+      width:100%;border:1px solid var(--border);background:#11141a;color:#fff;
+      padding:13px 14px;border-radius:13px;outline:none;
+    }
+    input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+    .check{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:13px}
+    .check input{width:auto;margin-top:3px}
+    .admin-layout{display:grid;grid-template-columns:230px 1fr;gap:22px}
+    .sidebar{padding:18px;align-self:start;position:sticky;top:90px}
+    .side-btn{
+      width:100%;text-align:left;padding:12px 14px;margin:4px 0;
+      border:0;border-radius:12px;background:transparent;color:var(--muted);
+    }
+    .side-btn.active,.side-btn:hover{background:rgba(230,57,70,.14);color:#fff}
+    .admin-section{display:none}
+    .admin-section.active{display:block}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+    .kpi{padding:18px}
+    .kpi strong{display:block;font-size:31px;margin-top:8px}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:760px}
+    th,td{padding:13px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:14px}
+    th{color:var(--muted);font-weight:700}
+    .status{padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800;display:inline-block}
+    .status.pending{background:rgba(241,196,15,.15);color:#ffe180}
+    .status.completed{background:rgba(46,204,113,.14);color:#8ff0b5}
+    .status.expired{background:rgba(255,77,79,.14);color:#ff9b9d}
+    .trust{font-weight:900}
+    .trust.good{color:var(--success)}
+    .trust.medium{color:var(--warning)}
+    .trust.bad{color:var(--danger)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .toast{
+      position:fixed;right:20px;bottom:20px;z-index:200;
+      background:#fff;color:#111;padding:14px 18px;border-radius:14px;
+      box-shadow:var(--shadow);transform:translateY(120px);opacity:0;transition:.3s;
+      max-width:360px;
+    }
+    .toast.show{transform:translateY(0);opacity:1}
+    .footer{text-align:center;color:var(--muted);padding:20px}
+    @media(max-width:900px){
+      .hero,.admin-layout,.grid-3,.grid-2{grid-template-columns:1fr}
+      .sidebar{position:static}
+      .kpis{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:620px){
+      .topbar{align-items:flex-start;gap:12px}
+      .brand small{display:none}
+      .nav{justify-content:flex-end}
+      .nav button{padding:9px 11px;font-size:13px}
+      .hero-card{padding:25px}
+      .form-grid,.kpis{grid-template-columns:1fr}
+      h1{letter-spacing:-1px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🥩</div>
+      <div>Carmangeria Premium<small>Oferte locale și rezervări rapide</small></div>
+    </div>
+    <div class="nav">
+      <button class="active" data-view="clientView">Clienți</button>
+      <button data-view="adminView">Administrare</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="clientView" class="view active">
+      <div class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">🔥 Oferte limitate în timp</span>
+          <h1>Carne proaspătă.<br>Prețuri mai bune.</h1>
+          <p>Rezervă rapid cantitatea dorită, ridic-o în intervalul stabilit și câștigă puncte de fidelitate.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="document.getElementById('offers').scrollIntoView()">Vezi ofertele</button>
+            <button class="btn btn-secondary" onclick="openRegistration()">Înscrie-te pentru SMS</button>
+          </div>
+        </div>
+        <div class="hero-card hero-side">
+          <div></div>
+          <div class="stat">
+            <strong id="heroStock">0 kg disponibile</strong>
+            <p style="margin:5px 0 0">Stocul se actualizează automat după fiecare rezervare.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title" id="offers">
+        <div><h2>Ofertele momentului</h2><p>Rezervările expiră automat dacă nu sunt ridicate la timp.</p></div>
+      </div>
+      <div id="offerGrid" class="grid grid-3"></div>
+
+      <div class="section-title">
+        <div><h2>Cum funcționează</h2><p>Trei pași simpli.</p></div>
+      </div>
+      <div class="grid grid-3">
+        <div class="glass card"><h3>1. Alegi oferta</h3><p>Selectezi produsul și cantitatea dorită.</p></div>
+        <div class="glass card"><h3>2. Primești confirmarea</h3><p>Rezervarea este salvată cu numărul tău de telefon.</p></div>
+        <div class="glass card"><h3>3. Ridici produsul</h3><p>Angajatul caută numărul tău și marchează rezervarea ca predată.</p></div>
+      </div>
+    </section>
+
+    <section id="adminView" class="view">
+      <div class="admin-layout">
+        <aside class="glass sidebar">
+          <button class="side-btn active" data-admin="dashboard">📊 Panou general</button>
+          <button class="side-btn" data-admin="offersAdmin">🥩 Oferte</button>
+          <button class="side-btn" data-admin="reservationsAdmin">📦 Rezervări</button>
+          <button class="side-btn" data-admin="clientsAdmin">👥 Clienți</button>
+          <button class="side-btn" data-admin="smsAdmin">💬 SMS simulate</button>
+        </aside>
+
+        <div>
+          <section id="dashboard" class="admin-section active">
+            <div class="section-title"><div><h2>Panou de administrare</h2><p>Toate datele sunt salvate local în browser.</p></div></div>
+            <div class="kpis">
+              <div class="glass kpi"><span>Oferte active</span><strong id="kpiOffers">0</strong></div>
+              <div class="glass kpi"><span>Rezervări active</span><strong id="kpiReservations">0</strong></div>
+              <div class="glass kpi"><span>Clienți</span><strong id="kpiClients">0</strong></div>
+              <div class="glass kpi"><span>Kg rezervate</span><strong id="kpiKg">0</strong></div>
+            </div>
+            <div class="grid grid-2">
+              <div class="glass card">
+                <h3>Acțiuni rapide</h3>
+                <div class="toolbar">
+                  <button class="btn btn-primary" onclick="openOfferModal()">Adaugă ofertă</button>
+                  <button class="btn btn-secondary" onclick="expireReservations()">Verifică expirările</button>
+                </div>
+                <p>Poți seta durata minimă a rezervării chiar și la 2 minute, iar maximul la 4 ore.</p>
+              </div>
+              <div class="glass card">
+                <h3>Reguli automate</h3>
+                <p>O rezervare nepreluată scade scorul de încredere. După două neprezentări, clientul este suspendat 7 zile.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="offersAdmin" class="admin-section">
+            <div class="section-title">
+              <div><h2>Gestionare oferte</h2><p>Adaugă, oprește sau șterge ofertele.</p></div>
+              <button class="btn btn-primary" onclick="openOfferModal()">Ofertă nouă</button>
+            </div>
+            <div id="adminOffers" class="grid grid-2"></div>
+          </section>
+
+          <section id="reservationsAdmin" class="admin-section">
+            <div class="section-title"><div><h2>Rezervări</h2><p>Caută după numărul de telefon și confirmă ridicarea.</p></div></div>
+            <div class="toolbar">
+              <input id="reservationSearch" placeholder="Caută telefon, nume sau produs..." oninput="renderReservations()" />
+              <button class="btn btn-secondary" onclick="expireReservations()">Actualizează expirările</button>
+            </div>
+            <div class="glass card table-wrap"><table>
+              <thead><tr><th>Client</th><th>Telefon</th><th>Produs</th><th>Cantitate</th><th>Expiră</th><th>Status</th><th>Acțiune</th></tr></thead>
+              <tbody id="reservationTable"></tbody>
+            </table></div>
+          </section>
+
+          <section id="clientsAdmin" class="admin-section">
+            <div class="section-title"><div><h2>Clienți și scor de încredere</h2><p>Scorul este calculat din rezervări ridicate și expirate.</p></div></div>
+            <div class="glass card table-wrap"><table>
+              <thead><tr><th>Nume</th><th>Telefon</th><th>Localitate</th><th>Ridicate</th><th>Expirate</th><th>Scor</th><th>Suspendare</th></tr></thead>
+              <tbody id="clientTable"></tbody>
+            </table></div>
+          </section>
+
+          <section id="smsAdmin" class="admin-section">
+            <div class="section-title"><div><h2>SMS simulate</h2><p>În această versiune locală, mesajele nu sunt trimise real.</p></div></div>
+            <div class="glass card">
+              <div class="field"><label>Mesaj</label><textarea id="smsText" rows="5" placeholder="Exemplu: Astăzi avem pulpă de porc la -40%. Rezervă acum!"></textarea></div>
+              <div class="toolbar" style="margin-top:14px">
+                <button class="btn btn-primary" onclick="simulateSms()">Trimite către clienții înscriși</button>
+              </div>
+              <div id="smsLog"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footer">Versiune demonstrativă locală • Carmangeria Premium</div>
+</div>
+
+<div id="registrationModal" class="modal">
+  <div class="glass modal-card">
+    <div class="modal-head"><h2>Înscriere client</h2><button class="icon-btn" onclick="closeModal('registrationModal')">✕</button></div>
+    <form id="registrationForm" class="form-grid">
+      <div class="field"><label>Nume complet</label><input name="name" required></div>
+      <div class="field"><label>Telefon</label><input name="phone" required inputmode="tel"></div>
+      <div class="field"><label>Data nașterii</label><input name="birthdate" type="date"></div>
+      <div class="field"><label>Oraș / localitate</label><input name="city" required></div>
+      <div class="field full"><label>Adresă</label><input name="address" placeholder="Stradă, număr"></div>
+      <label class="check field full"><input type="checkbox" name="consent" required> Sunt de acord să primesc oferte și notificări prin SMS și îmi dau acordul pentru prelucrarea datelor introduse.</label>
+      <div class="field full"><button class="btn btn-primary" type="submit">Salvează înscrierea</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="reservationModal" class="modal">
+  <div class="glass modal-card">
+    <div class="modal-head"><h2>Rezervă produsul</h2><button class="icon-btn" onclick="closeModal('reservationModal')">✕</button></div>
+    <form id="reservationForm" class="form-grid">
+      <input type="hidden" name="offerId">
+      <div class="field full"><label>Produs</label><input name="product" readonly></div>
+      <div class="field"><label>Nume</label><input name="name" required></div>
+      <div class="field"><label>Telefon</label><input name="phone" required inputmode="tel"></div>
+      <div class="field"><label>Cantitate dorită (kg)</label><input name="quantity" type="number" min="0.1" step="0.1" required></div>
+      <div class="field"><label>Durată rezervare</label><select name="duration">
+        <option value="2">2 minute</option><option value="15">15 minute</option><option value="30">30 minute</option>
+        <option value="60">1 oră</option><option value="90">1 oră și 30 minute</option><option value="120">2 ore</option>
+        <option value="180">3 ore</option><option value="240">4 ore</option>
+      </select></div>
+      <div class="field full"><button class="btn btn-primary" type="submit">Confirmă rezervarea</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="offerModal" class="modal">
+  <div class="glass modal-card">
+    <div class="modal-head"><h2>Adaugă ofertă</h2><button class="icon-btn" onclick="closeModal('offerModal')">✕</button></div>
+    <form id="offerForm" class="form-grid">
+      <div class="field full"><label>Denumire produs</label><input name="name" required placeholder="Ex: Ceafă de porc"></div>
+      <div class="field"><label>Preț vechi / kg</label><input name="oldPrice" type="number" step="0.01" required></div>
+      <div class="field"><label>Preț ofertă / kg</label><input name="newPrice" type="number" step="0.01" required></div>
+      <div class="field"><label>Cantitate totală (kg)</label><input name="stock" type="number" step="0.1" required></div>
+      <div class="field"><label>Limită per client (kg)</label><input name="limit" type="number" step="0.1" value="10" required></div>
+      <div class="field"><label>Valabilă până la</label><input name="validUntil" type="datetime-local" required></div>
+      <div class="field"><label>Durată implicită rezervare</label><select name="defaultDuration"><option value="30">30 minute</option><option value="60">1 oră</option><option value="90">1 oră și 30 minute</option><option value="120">2 ore</option><option value="240">4 ore</option></select></div>
+      <div class="field full"><label>Imagine produs — adresă URL opțională</label><input name="image" placeholder="https://..."></div>
+      <div class="field full"><label>Descriere</label><textarea name="description" rows="3"></textarea></div>
+      <div class="field full"><button class="btn btn-primary" type="submit">Publică oferta</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const load = (k, fallback=[]) => JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback));
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+let offers = load('meat_offers');
+let clients = load('meat_clients');
+let reservations = load('meat_reservations');
+let smsLog = load('meat_sms_log');
+
+if(!offers.length){
+  offers = [{
+    id:uid(),name:'Ceafă de porc',oldPrice:34.99,newPrice:20.99,stock:50,initialStock:50,limit:10,
+    validUntil:new Date(Date.now()+24*3600000).toISOString(),defaultDuration:90,active:true,
+    description:'Produs proaspăt, cantitate limitată.',
+    image:'https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=1000&q=80'
+  },{
+    id:uid(),name:'Piept de pui',oldPrice:27.99,newPrice:18.49,stock:35,initialStock:35,limit:8,
+    validUntil:new Date(Date.now()+18*3600000).toISOString(),defaultDuration:60,active:true,
+    description:'Ideal pentru grătar sau gătit rapid.',
+    image:'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=1000&q=80'
+  }];
+  save('meat_offers',offers);
+}
+
+function toast(msg){
+  const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+function fmtDate(v){return new Date(v).toLocaleString('ro-RO',{dateStyle:'short',timeStyle:'short'})}
+function phoneClean(v){return v.replace(/\s+/g,'').replace(/[^0-9+]/g,'')}
+function discount(o){return Math.round((1-o.newPrice/o.oldPrice)*100)}
+function activeOffers(){return offers.filter(o=>o.active && o.stock>0 && new Date(o.validUntil)>new Date())}
+
+$$('.nav button').forEach(b=>b.onclick=()=>{
+  $$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  $$('.view').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.view).classList.add('active');
+  renderAll();
+});
+$$('.side-btn').forEach(b=>b.onclick=()=>{
+  $$('.side-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  $$('.admin-section').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.admin).classList.add('active');
+});
+
+function renderOffers(){
+  expireReservations(false);
+  const list=activeOffers();
+  $('#heroStock').textContent=list.reduce((s,o)=>s+o.stock,0).toFixed(1)+' kg disponibile';
+  $('#offerGrid').innerHTML=list.length?list.map(o=>{
+    const percent=Math.max(0,Math.min(100,o.stock/o.initialStock*100));
+    return `<article class="glass offer-card">
+      <div class="offer-img" style="background-image:url('${o.image||'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1000&q=80'}')">
+        <span class="discount">-${discount(o)}%</span>
+      </div>
+      <div class="offer-body">
+        <div class="offer-title"><div><h3 style="margin:0">${o.name}</h3><span class="old-price">${o.oldPrice.toFixed(2)} lei/kg</span></div><div class="price">${o.newPrice.toFixed(2)} lei</div></div>
+        <p>${o.description||''}</p>
+        <div class="progress"><span style="width:${percent}%"></span></div>
+        <div class="meta"><span class="pill">${o.stock.toFixed(1)} kg rămase</span><span class="pill">Max. ${o.limit} kg/client</span><span class="pill">Până la ${fmtDate(o.validUntil)}</span></div>
+        <button class="btn btn-primary" style="width:100%" onclick="openReservation('${o.id}')">Rezervă acum</button>
+      </div>
+    </article>`;
+  }).join(''):`<div class="glass empty">Momentan nu există oferte active.</div>`;
+}
+function renderAdminOffers(){
+  $('#adminOffers').innerHTML=offers.length?offers.map(o=>`<div class="glass card">
+    <h3>${o.name}</h3><p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
+    <div class="toolbar"><button class="btn btn-secondary" onclick="toggleOffer('${o.id}')">${o.active?'Oprește':'Activează'}</button><button class="btn btn-danger" onclick="deleteOffer('${o.id}')">Șterge</button></div>
+  </div>`).join(''):'<div class="glass empty">Nu există oferte.</div>';
+}
+function renderReservations(){
+  const q=($('#reservationSearch')?.value||'').toLowerCase();
+  const rows=reservations.filter(r=>[r.name,r.phone,r.product].join(' ').toLowerCase().includes(q));
+  $('#reservationTable').innerHTML=rows.length?rows.slice().reverse().map(r=>`<tr>
+    <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td><td>${r.quantity} kg</td><td>${fmtDate(r.expiresAt)}</td>
+    <td><span class="status ${r.status}">${r.status==='pending'?'În așteptare':r.status==='completed'?'Ridicată':'Expirată'}</span></td>
+    <td>${r.status==='pending'?`<button class="btn btn-success" onclick="completeReservation('${r.id}')">Predat</button>`:'—'}</td>
+  </tr>`).join(''):'<tr><td colspan="7">Nu există rezervări.</td></tr>';
+}
+function clientStats(c){
+  const rs=reservations.filter(r=>r.phone===c.phone);
+  const done=rs.filter(r=>r.status==='completed').length, expired=rs.filter(r=>r.status==='expired').length;
+  const total=done+expired; const score=total?Math.round(done/total*100):100;
+  return {done,expired,score};
+}
+function renderClients(){
+  $('#clientTable').innerHTML=clients.length?clients.map(c=>{
+    const s=clientStats(c), cls=s.score>=85?'good':s.score>=60?'medium':'bad';
+    const suspension=c.suspendedUntil&&new Date(c.suspendedUntil)>new Date()?fmtDate(c.suspendedUntil):'Nu';
+    return `<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.city||'—'}</td><td>${s.done}</td><td>${s.expired}</td><td class="trust ${cls}">${s.score}%</td><td>${suspension}</td></tr>`;
+  }).join(''):'<tr><td colspan="7">Nu există clienți.</td></tr>';
+}
+function renderKpis(){
+  $('#kpiOffers').textContent=activeOffers().length;
+  $('#kpiReservations').textContent=reservations.filter(r=>r.status==='pending').length;
+  $('#kpiClients').textContent=clients.length;
+  $('#kpiKg').textContent=reservations.filter(r=>r.status==='pending').reduce((s,r)=>s+r.quantity,0).toFixed(1);
+}
+function renderSms(){
+  $('#smsLog').innerHTML=smsLog.length?'<h3>Istoric</h3>'+smsLog.slice().reverse().map(x=>`<div class="glass card" style="margin-top:10px"><strong>${fmtDate(x.date)}</strong><p>${x.text}</p><small>${x.count} destinatari</small></div>`).join(''):'';
+}
+function renderAll(){renderOffers();renderAdminOffers();renderReservations();renderClients();renderKpis();renderSms()}
+
+function openRegistration(){$('#registrationModal').classList.add('open')}
+function openReservation(id){
+  const o=offers.find(x=>x.id===id); if(!o)return;
+  const f=$('#reservationForm');f.offerId.value=o.id;f.product.value=o.name;f.duration.value=o.defaultDuration||90;
+  f.quantity.max=Math.min(o.stock,o.limit);$('#reservationModal').classList.add('open');
+}
+function openOfferModal(){$('#offerModal').classList.add('open')}
+function closeModal(id){$('#'+id).classList.remove('open')}
+
+$('#registrationForm').onsubmit=e=>{
+  e.preventDefault(); const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);
+  let c=clients.find(x=>x.phone===d.phone);
+  if(c)Object.assign(c,d);else clients.push({id:uid(),...d,points:0,suspendedUntil:null});
+  save('meat_clients',clients);e.target.reset();closeModal('registrationModal');renderAll();toast('Înscriere salvată.');
+};
+$('#reservationForm').onsubmit=e=>{
+  e.preventDefault();expireReservations(false);
+  const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);d.quantity=Number(d.quantity);d.duration=Number(d.duration);
+  const o=offers.find(x=>x.id===d.offerId);
+  if(!o||!o.active)return toast('Oferta nu mai este activă.');
+  if(d.quantity<=0||d.quantity>o.stock||d.quantity>o.limit)return toast('Cantitatea depășește limita sau stocul disponibil.');
+  let c=clients.find(x=>x.phone===d.phone);
+  if(c?.suspendedUntil&&new Date(c.suspendedUntil)>new Date())return toast('Rezervările sunt suspendate pentru acest număr până la '+fmtDate(c.suspendedUntil));
+  if(!c){c={id:uid(),name:d.name,phone:d.phone,city:'',address:'',points:0,suspendedUntil:null};clients.push(c)}
+  o.stock=+(o.stock-d.quantity).toFixed(2);
+  reservations.push({id:uid(),offerId:o.id,product:o.name,name:d.name,phone:d.phone,quantity:d.quantity,
+    createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+d.duration*60000).toISOString(),status:'pending'});
+  save('meat_offers',offers);save('meat_clients',clients);save('meat_reservations',reservations);
+  e.target.reset();closeModal('reservationModal');renderAll();toast('Rezervare confirmată.');
+};
+$('#offerForm').onsubmit=e=>{
+  e.preventDefault();const d=Object.fromEntries(new FormData(e.target));
+  const stock=Number(d.stock);
+  offers.push({id:uid(),name:d.name,oldPrice:Number(d.oldPrice),newPrice:Number(d.newPrice),stock,initialStock:stock,
+    limit:Number(d.limit),validUntil:new Date(d.validUntil).toISOString(),defaultDuration:Number(d.defaultDuration),
+    image:d.image,description:d.description,active:true});
+  save('meat_offers',offers);e.target.reset();closeModal('offerModal');renderAll();toast('Oferta a fost publicată.');
+};
+function completeReservation(id){
+  const r=reservations.find(x=>x.id===id);if(!r||r.status!=='pending')return;
+  r.status='completed';r.completedAt=new Date().toISOString();
+  const c=clients.find(x=>x.phone===r.phone);if(c)c.points=(c.points||0)+Math.round(r.quantity*10);
+  save('meat_reservations',reservations);save('meat_clients',clients);renderAll();toast('Rezervarea a fost marcată ca predată și punctele au fost adăugate.');
+}
+function expireReservations(showToast=true){
+  let changed=0;
+  reservations.forEach(r=>{
+    if(r.status==='pending'&&new Date(r.expiresAt)<=new Date()){
+      r.status='expired';changed++;
+      const o=offers.find(x=>x.id===r.offerId);if(o)o.stock=+(o.stock+r.quantity).toFixed(2);
+      const c=clients.find(x=>x.phone===r.phone);
+      if(c){
+        const recentExpired=reservations.filter(x=>x.phone===c.phone&&x.status==='expired').length;
+        if(recentExpired>=2)c.suspendedUntil=new Date(Date.now()+7*24*3600000).toISOString();
+      }
+    }
+  });
+  if(changed){save('meat_reservations',reservations);save('meat_offers',offers);save('meat_clients',clients);renderAll()}
+  if(showToast)toast(changed?changed+' rezervări au expirat.':'Nu există rezervări expirate.');
+}
+function toggleOffer(id){const o=offers.find(x=>x.id===id);o.active=!o.active;save('meat_offers',offers);renderAll()}
+function deleteOffer(id){
+  if(!confirm('Ștergi această ofertă?'))return;
+  offers=offers.filter(x=>x.id!==id);save('meat_offers',offers);renderAll();
+}
+function simulateSms(){
+  const text=$('#smsText').value.trim();if(!text)return toast('Scrie mesajul.');
+  const count=clients.filter(c=>c.consent!==false).length;
+  smsLog.push({id:uid(),date:new Date().toISOString(),text,count});save('meat_sms_log',smsLog);$('#smsText').value='';renderSms();toast('SMS simulat pentru '+count+' clienți.');
+}
+setInterval(()=>expireReservations(false),30000);
+renderAll();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWM1IoRpPnWVg6vfiUZBtNHhQe8aMBZ3Q",
+  authDomain: "carmangerie-premium.firebaseapp.com",
+  projectId: "carmangerie-premium",
+  storageBucket: "carmangerie-premium.firebasestorage.app",
+  messagingSenderId: "111257854691",
+  appId: "1:111257854691:web:e847a9a6699829b4111bd6",
+  measurementId: "G-BS73SRJ409"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.db = db;
+window.auth = auth;
+
+console.log("Firebase conectat cu succes!");
+</script>
+
+</body>
+</html>
