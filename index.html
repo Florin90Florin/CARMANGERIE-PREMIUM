@@ -583,6 +583,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  getDocs,
+  query,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
@@ -606,6 +608,8 @@ window.db = db;
 window.auth = auth;
 window.collection = collection;
 window.addDoc = addDoc;
+window.getDocs = getDocs;
+window.query = query;
 window.serverTimestamp = serverTimestamp;
 
 console.log("Firebase conectat cu succes!");
