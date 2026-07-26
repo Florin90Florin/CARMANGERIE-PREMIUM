@@ -6,7 +6,11 @@ import {
   addDoc,
   getDocs,
   query,
-  serverTimestamp
+  serverTimestamp,
+  deleteDoc,
+  updateDoc,
+  doc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 import {
@@ -33,7 +37,11 @@ export {
   addDoc,
   getDocs,
   query,
-  serverTimestamp
+  serverTimestamp,
+  deleteDoc,
+  updateDoc,
+  doc,
+  setDoc
 };
 
 console.log("Firebase.js încărcat.");
@@ -46,13 +54,29 @@ export async function loadOffers() {
   const offers = [];
 
   snapshot.forEach((doc) => {
-    offers.push({
-      id: doc.id,
-      ...doc.data()
-    });
+  offers.push({
+    ...doc.data(),
+    id: doc.id
   });
+});
 
   console.log("Oferte încărcate:", offers);
 
   return offers;
+}
+export async function saveOffer(offer) {
+  await setDoc(
+    doc(db, "offers", offer.id),
+    offer
+  );
+
+  console.log("Oferta salvată:", offer.name);
+}
+
+export async function updateOffer(id, data) {
+  await updateDoc(doc(db, "offers", id), data);
+}
+
+export async function deleteOfferFromDb(id) {
+  await deleteDoc(doc(db, "offers", id));
 }

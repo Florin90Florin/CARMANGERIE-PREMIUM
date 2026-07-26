@@ -386,25 +386,11 @@ const $$ = s => [...document.querySelectorAll(s)];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 const load = (k, fallback=[]) => JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback));
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
-let offers = load('meat_offers');
+
+let offers = [];
 let clients = load('meat_clients');
 let reservations = load('meat_reservations');
 let smsLog = load('meat_sms_log');
-
-if(!offers.length){
-  offers = [{
-    id:uid(),name:'Ceafă de porc',oldPrice:34.99,newPrice:20.99,stock:50,initialStock:50,limit:10,
-    validUntil:new Date(Date.now()+24*3600000).toISOString(),defaultDuration:90,active:true,
-    description:'Produs proaspăt, cantitate limitată.',
-    image:'https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=1000&q=80'
-  },{
-    id:uid(),name:'Piept de pui',oldPrice:27.99,newPrice:18.49,stock:35,initialStock:35,limit:8,
-    validUntil:new Date(Date.now()+18*3600000).toISOString(),defaultDuration:60,active:true,
-    description:'Ideal pentru grătar sau gătit rapid.',
-    image:'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=1000&q=80'
-  }];
-  save('meat_offers',offers);
-}
 
 function toast(msg){
   const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
@@ -533,13 +519,34 @@ $('#reservationForm').onsubmit=e=>{
   save('meat_offers',offers);save('meat_clients',clients);save('meat_reservations',reservations);
   e.target.reset();closeModal('reservationModal');renderAll();toast('Rezervare confirmată.');
 };
-$('#offerForm').onsubmit=e=>{
-  e.preventDefault();const d=Object.fromEntries(new FormData(e.target));
-  const stock=Number(d.stock);
-  offers.push({id:uid(),name:d.name,oldPrice:Number(d.oldPrice),newPrice:Number(d.newPrice),stock,initialStock:stock,
-    limit:Number(d.limit),validUntil:new Date(d.validUntil).toISOString(),defaultDuration:Number(d.defaultDuration),
-    image:d.image,description:d.description,active:true});
-  save('meat_offers',offers);e.target.reset();closeModal('offerModal');renderAll();toast('Oferta a fost publicată.');
+$('#offerForm').onsubmit = async e => {
+  e.preventDefault();
+
+  const d = Object.fromEntries(new FormData(e.target));
+  const stock = Number(d.stock);
+
+  const offer = {
+    id: uid(),
+    name: d.name,
+    oldPrice: Number(d.oldPrice),
+    newPrice: Number(d.newPrice),
+    stock,
+    initialStock: stock,
+    limit: Number(d.limit),
+    validUntil: new Date(d.validUntil).toISOString(),
+    defaultDuration: Number(d.defaultDuration),
+    image: d.image,
+    description: d.description,
+    active: true
+  };
+
+await saveOffer(offer);
+
+await refreshOffers();
+
+e.target.reset();
+closeModal("offerModal");
+toast("Oferta a fost publicată.");
 };
 function completeReservation(id){
   const r=reservations.find(x=>x.id===id);if(!r||r.status!=='pending')return;
@@ -563,11 +570,31 @@ function expireReservations(showToast=true){
   if(changed){save('meat_reservations',reservations);save('meat_offers',offers);save('meat_clients',clients);renderAll()}
   if(showToast)toast(changed?changed+' rezervări au expirat.':'Nu există rezervări expirate.');
 }
-function toggleOffer(id){const o=offers.find(x=>x.id===id);o.active=!o.active;save('meat_offers',offers);renderAll()}
-function deleteOffer(id){
-  if(!confirm('Ștergi această ofertă?'))return;
-  offers=offers.filter(x=>x.id!==id);save('meat_offers',offers);renderAll();
+async function toggleOffer(id) {
+    const o = offers.find(x => x.id === id);
+
+    if (!o) return;
+
+    o.active = !o.active;
+
+    await window.updateOffer(id, {
+    active: o.active
+});
+
+    await window.refreshOffers();
+
+    toast(o.active ? "Oferta a fost activată." : "Oferta a fost oprită.");
 }
+async function deleteOffer(id) {
+  if (!confirm("Ștergi această ofertă?")) return;
+
+  await window.deleteOfferFromDb(id);
+
+  await window.refreshOffers();
+
+  toast("Oferta a fost ștearsă.");
+}
+
 function simulateSms(){
   const text=$('#smsText').value.trim();if(!text)return toast('Scrie mesajul.');
   const count=clients.filter(c=>c.consent!==false).length;
@@ -586,9 +613,11 @@ import {
   getDocs,
   query,
   serverTimestamp,
-  loadOffers
+  loadOffers,
+  saveOffer,
+  updateOffer,
+  deleteOfferFromDb
 } from "./firebase.js";
-
 
 window.db = db;
 window.auth = auth;
@@ -597,11 +626,23 @@ window.addDoc = addDoc;
 window.getDocs = getDocs;
 window.query = query;
 window.serverTimestamp = serverTimestamp;
+window.loadOffers = loadOffers;
+window.saveOffer = saveOffer;
+window.updateOffer = updateOffer;
+window.deleteOfferFromDb = deleteOfferFromDb;
+window.refreshOffers = refreshOffers;
 
 console.log("Firebase importat din firebase.js");
 
-const testOffers = await loadOffers();
-console.log("TEST Firestore:", testOffers);
+window.offers = offers;
+
+async function refreshOffers() {
+  offers.length = 0;
+  offers.push(...await loadOffers());
+  renderAll();
+}
+
+await refreshOffers();
 </script>
 
 </body>
