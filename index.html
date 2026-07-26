@@ -585,8 +585,10 @@ import {
   addDoc,
   getDocs,
   query,
-  serverTimestamp
+  serverTimestamp,
+  loadOffers
 } from "./firebase.js";
+
 
 window.db = db;
 window.auth = auth;
@@ -597,6 +599,9 @@ window.query = query;
 window.serverTimestamp = serverTimestamp;
 
 console.log("Firebase importat din firebase.js");
+
+const testOffers = await loadOffers();
+console.log("TEST Firestore:", testOffers);
 </script>
 
 </body>

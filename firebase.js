@@ -37,3 +37,22 @@ export {
 };
 
 console.log("Firebase.js încărcat.");
+
+
+export async function loadOffers() {
+  const q = query(collection(db, "offers"));
+  const snapshot = await getDocs(q);
+
+  const offers = [];
+
+  snapshot.forEach((doc) => {
+    offers.push({
+      id: doc.id,
+      ...doc.data()
+    });
+  });
+
+  console.log("Oferte încărcate:", offers);
+
+  return offers;
+}
