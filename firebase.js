@@ -1,11 +1,17 @@
-simport { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+
 import {
   getFirestore,
   collection,
   addDoc,
+  getDocs,
+  query,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+import {
+  getAuth
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWM1IoRpPnWVg6vfiUZBtNHhQe8aMBZ3Q",
@@ -25,7 +31,9 @@ export const auth = getAuth(app);
 export {
   collection,
   addDoc,
+  getDocs,
+  query,
   serverTimestamp
 };
 
-console.log("Firebase conectat cu succes!");
+console.log("Firebase.js încărcat.");
