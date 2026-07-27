@@ -577,7 +577,14 @@ function openReservation(id){
   const f=$('#reservationForm');f.offerId.value=o.id;f.product.value=o.name;f.duration.value=o.defaultDuration||90;
   f.quantity.max=Math.min(o.stock,o.limit);$('#reservationModal').classList.add('open');
 }
-function openOfferModal(){$('#offerModal').classList.add('open')}
+
+function openOfferModal() {
+
+    if (!requireAdmin()) return;
+
+    $("#offerModal").classList.add("open");
+
+}
 
 function openLoginModal() {
     $("#loginModal").classList.add("open");
@@ -638,6 +645,19 @@ async function logoutAdmin() {
     }
 
 }
+
+function requireAdmin() {
+
+    if (window.isAdminLogged) {
+        return true;
+    }
+
+    openLoginModal();
+
+    return false;
+
+}
+
 
 
 function closeModal(id){$('#'+id).classList.remove('open')}
@@ -723,6 +743,8 @@ await window.refreshReservations();
 $('#offerForm').onsubmit = async e => {
   e.preventDefault();
 
+  if (!requireAdmin()) return;
+
   const d = Object.fromEntries(new FormData(e.target));
 
   console.log("d.validUntil =", d.validUntil);
@@ -754,6 +776,9 @@ closeModal("offerModal");
 toast("Oferta a fost publicată.");
 };
 async function completeReservation(id) {
+
+  if (!requireAdmin()) return;
+
   const r = reservations.find(x => x.id === id);
   if (!r || r.status !== "pending") return;
 
@@ -847,6 +872,8 @@ async function expireReservations(showToast = true) {
 
 
 async function toggleOffer(id) {
+
+    if (!requireAdmin()) return;
     const o = offers.find(x => x.id === id);
 
     if (!o) return;
@@ -862,6 +889,9 @@ async function toggleOffer(id) {
     toast(o.active ? "Oferta a fost activată." : "Oferta a fost oprită.");
 }
 async function deleteOffer(id) {
+
+  if (!requireAdmin()) return;
+
   if (!confirm("Ștergi această ofertă?")) return;
 
   await window.deleteOfferFromDb(id);
@@ -872,6 +902,9 @@ async function deleteOffer(id) {
 }
 
 function simulateSms(){
+
+if (!requireAdmin()) return;
+
   const text=$('#smsText').value.trim();if(!text)return toast('Scrie mesajul.');
   const count=clients.filter(c=>c.consent!==false).length;
   smsLog.push({id:uid(),date:new Date().toISOString(),text,count});save('meat_sms_log',smsLog);$('#smsText').value='';renderSms();toast('SMS simulat pentru '+count+' clienți.');
