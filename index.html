@@ -205,7 +205,12 @@
     </div>
     <div class="nav">
       <button class="active" data-view="clientView">Clienți</button>
-      <button data-view="adminView">Administrare</button>
+      <button
+    id="adminNavButton"
+    data-view="adminView">
+    
+    Administrare
+</button>
     </div>
   </header>
 
@@ -257,7 +262,23 @@
 
         <div>
           <section id="dashboard" class="admin-section active">
-            <div class="section-title"><div><h2>Panou de administrare</h2><p>Toate datele sunt salvate local în browser.</p></div></div>
+
+    <div class="section-title">
+
+        <div>
+            <h2>Panou de administrare</h2>
+            <p>Toate datele sunt salvate în Firebase.</p>
+        </div>
+
+        <button
+            id="logoutBtn"
+            class="btn btn-danger"
+            onclick="logoutAdmin()">
+            Logout
+        </button>
+
+    </div>
+
             <div class="kpis">
               <div class="glass kpi"><span>Oferte active</span><strong id="kpiOffers">0</strong></div>
               <div class="glass kpi"><span>Rezervări active</span><strong id="kpiReservations">0</strong></div>
@@ -378,6 +399,46 @@
   </div>
 </div>
 
+<div id="loginModal" class="modal">
+  <div class="glass modal-card">
+
+    <div class="modal-head">
+      <h2>Autentificare administrator</h2>
+      <button class="icon-btn" onclick="closeModal('loginModal')">✕</button>
+    </div>
+
+    <form id="loginForm" class="form-grid">
+
+      <div class="field full">
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          required>
+      </div>
+
+      <div class="field full">
+        <label>Parolă</label>
+        <input
+          type="password"
+          name="password"
+          required>
+      </div>
+
+      <div class="field full">
+        <button
+          class="btn btn-primary"
+          type="submit">
+          Autentificare
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -419,11 +480,27 @@ function activeOffers() {
     );
 }
 
-$$('.nav button').forEach(b=>b.onclick=()=>{
-  $$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  $$('.view').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.view).classList.add('active');
-  renderAll();
+$$(".nav button").forEach((b) => b.onclick = () => {
+
+    if (b.dataset.view === "adminView" && !window.isAdminLogged) {
+
+        openLoginModal();
+
+        return;
+
+    }
+
+    $$(".nav button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+
+    $$(".view").forEach(v => v.classList.remove("active"));
+    $("#" + b.dataset.view).classList.add("active");
+
+    renderAll();
+
 });
+
+
 $$('.side-btn').forEach(b=>b.onclick=()=>{
   $$('.side-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
   $$('.admin-section').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.admin).classList.add('active');
@@ -501,6 +578,68 @@ function openReservation(id){
   f.quantity.max=Math.min(o.stock,o.limit);$('#reservationModal').classList.add('open');
 }
 function openOfferModal(){$('#offerModal').classList.add('open')}
+
+function openLoginModal() {
+    $("#loginModal").classList.add("open");
+}
+
+$("#loginForm").onsubmit = async (e) => {
+
+    e.preventDefault();
+
+    const data = Object.fromEntries(new FormData(e.target));
+
+    try {
+
+        await window.signInWithEmailAndPassword(
+            window.auth,
+            data.email,
+            data.password
+        );
+
+        
+
+        closeModal("loginModal");
+
+        toast("Autentificare reușită.");
+
+        e.target.reset();
+
+    } catch (err) {
+
+        console.error(err);
+
+        toast("Email sau parolă incorectă.");
+
+    }
+
+};
+
+async function logoutAdmin() {
+
+    try {
+
+        await window.signOut(window.auth);
+
+        $$(".view").forEach(v => v.classList.remove("active"));
+        $("#clientView").classList.add("active");
+
+        $$(".nav button").forEach(x => x.classList.remove("active"));
+        document.querySelector('[data-view="clientView"]').classList.add("active");
+
+        toast("Te-ai deconectat.");
+
+    } catch (err) {
+
+        console.error(err);
+
+        toast("Eroare la deconectare.");
+
+    }
+
+}
+
+
 function closeModal(id){$('#'+id).classList.remove('open')}
 
 
@@ -745,6 +884,11 @@ renderAll();
 import {
   db,
   auth,
+
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+
   collection,
   addDoc,
   getDocs,
@@ -772,6 +916,36 @@ import {
 
 window.db = db;
 window.auth = auth;
+
+window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+window.signOut = signOut;
+window.onAuthStateChanged = onAuthStateChanged;
+
+window.isAdminLogged = false;
+
+onAuthStateChanged(auth, (user) => {
+
+
+    if (user) {
+
+        window.isAdminLogged = true;
+
+
+        console.log("Administrator autentificat:", user.email);
+
+    } else {
+
+        window.isAdminLogged = false;
+        
+
+        console.log("Nu există administrator autentificat.");
+
+    }
+
+});
+
+
+
 window.collection = collection;
 window.addDoc = addDoc;
 window.getDocs = getDocs;
