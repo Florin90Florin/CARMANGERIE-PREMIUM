@@ -44,7 +44,7 @@ export {
   setDoc
 };
 
-console.log("Firebase.js încărcat.");
+
 
 
 export async function loadOffers() {
@@ -60,7 +60,6 @@ export async function loadOffers() {
   });
 });
 
-  console.log("Oferte încărcate:", offers);
 
   return offers;
 }
@@ -70,8 +69,71 @@ export async function saveOffer(offer) {
     offer
   );
 
-  console.log("Oferta salvată:", offer.name);
+  
 }
+
+export async function loadReservations() {
+  const q = query(collection(db, "reservations"));
+  const snapshot = await getDocs(q);
+
+  const reservations = [];
+
+  snapshot.forEach((doc) => {
+    reservations.push({
+      ...doc.data(),
+      id: doc.id
+    });
+  });
+
+  return reservations;
+}
+
+export async function saveReservation(reservation) {
+  await setDoc(
+    doc(db, "reservations", reservation.id),
+    reservation
+  );
+}
+
+export async function updateReservation(id, data) {
+  await updateDoc(doc(db, "reservations", id), data);
+}
+
+export async function deleteReservationFromDb(id) {
+  await deleteDoc(doc(db, "reservations", id));
+}
+
+export async function loadClients() {
+  const q = query(collection(db, "clients"));
+  const snapshot = await getDocs(q);
+
+  const clients = [];
+
+  snapshot.forEach((doc) => {
+    clients.push({
+      ...doc.data(),
+      id: doc.id
+    });
+  });
+
+  return clients;
+}
+
+export async function saveClient(client) {
+  await setDoc(
+    doc(db, "clients", client.id),
+    client
+  );
+}
+
+export async function updateClient(id, data) {
+  await updateDoc(doc(db, "clients", id), data);
+}
+
+export async function deleteClientFromDb(id) {
+  await deleteDoc(doc(db, "clients", id));
+}
+
 
 export async function updateOffer(id, data) {
   await updateDoc(doc(db, "offers", id), data);

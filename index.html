@@ -388,8 +388,8 @@ const load = (k, fallback=[]) => JSON.parse(localStorage.getItem(k) || JSON.stri
 const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
 let offers = [];
-let clients = load('meat_clients');
-let reservations = load('meat_reservations');
+let clients = [];
+let reservations = [];
 let smsLog = load('meat_sms_log');
 
 function toast(msg){
@@ -483,19 +483,24 @@ $('#registrationForm').onsubmit = async e => {
   e.preventDefault(); const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);
   let c=clients.find(x=>x.phone===d.phone);
   if(c)Object.assign(c,d);else clients.push({id:uid(),...d,points:0,suspendedUntil:null});
-  save('meat_clients',clients);
-  try {
-    await addDoc(collection(db, "clients"), {
+  
+try {
+    const client = {
+        id: c ? c.id : uid(),
         name: d.name,
         phone: d.phone,
         birthdate: d.birthdate || "",
         city: d.city || "",
         address: d.address || "",
         consent: d.consent ? true : false,
-        createdAt: serverTimestamp()
-    });
+        points: c?.points || 0,
+        suspendedUntil: c?.suspendedUntil || null
+    };
 
-    console.log("Client salvat în Firestore!");
+    await window.saveClient(client);
+
+    await window.refreshClients();
+
 } catch (err) {
     console.error("Eroare Firestore:", err);
 }
@@ -504,7 +509,7 @@ $('#registrationForm').onsubmit = async e => {
 };
 
 
-$('#reservationForm').onsubmit=e=>{
+$('#reservationForm').onsubmit = async e => {
   e.preventDefault();expireReservations(false);
   const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);d.quantity=Number(d.quantity);d.duration=Number(d.duration);
   const o=offers.find(x=>x.id===d.offerId);
@@ -512,12 +517,44 @@ $('#reservationForm').onsubmit=e=>{
   if(d.quantity<=0||d.quantity>o.stock||d.quantity>o.limit)return toast('Cantitatea depășește limita sau stocul disponibil.');
   let c=clients.find(x=>x.phone===d.phone);
   if(c?.suspendedUntil&&new Date(c.suspendedUntil)>new Date())return toast('Rezervările sunt suspendate pentru acest număr până la '+fmtDate(c.suspendedUntil));
-  if(!c){c={id:uid(),name:d.name,phone:d.phone,city:'',address:'',points:0,suspendedUntil:null};clients.push(c)}
+if (!c) {
+    c = {
+        id: uid(),
+        name: d.name,
+        phone: d.phone,
+        city: "",
+        address: "",
+        points: 0,
+        suspendedUntil: null
+    };
+
+    clients.push(c);
+
+    await window.saveClient(c);
+}
   o.stock=+(o.stock-d.quantity).toFixed(2);
-  reservations.push({id:uid(),offerId:o.id,product:o.name,name:d.name,phone:d.phone,quantity:d.quantity,
-    createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+d.duration*60000).toISOString(),status:'pending'});
-  save('meat_offers',offers);save('meat_clients',clients);save('meat_reservations',reservations);
-  e.target.reset();closeModal('reservationModal');renderAll();toast('Rezervare confirmată.');
+  await window.updateOffer(o.id, {
+  stock: o.stock
+});
+const reservation = {
+    id: uid(),
+    offerId: o.id,
+    product: o.name,
+    name: d.name,
+    phone: d.phone,
+    quantity: d.quantity,
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + d.duration * 60000).toISOString(),
+    status: "pending"
+};
+
+reservations.push(reservation);
+
+await window.saveReservation(reservation);
+
+  await window.refreshClients();
+await window.refreshReservations();
+  e.target.reset();closeModal('reservationModal');await window.refreshOffers();toast('Rezervare confirmată.');
 };
 $('#offerForm').onsubmit = async e => {
   e.preventDefault();
@@ -548,28 +585,99 @@ e.target.reset();
 closeModal("offerModal");
 toast("Oferta a fost publicată.");
 };
-function completeReservation(id){
-  const r=reservations.find(x=>x.id===id);if(!r||r.status!=='pending')return;
-  r.status='completed';r.completedAt=new Date().toISOString();
-  const c=clients.find(x=>x.phone===r.phone);if(c)c.points=(c.points||0)+Math.round(r.quantity*10);
-  save('meat_reservations',reservations);save('meat_clients',clients);renderAll();toast('Rezervarea a fost marcată ca predată și punctele au fost adăugate.');
+async function completeReservation(id) {
+  const r = reservations.find(x => x.id === id);
+  if (!r || r.status !== "pending") return;
+
+  r.status = "completed";
+r.completedAt = new Date().toISOString();
+
+
+await window.updateReservation(r.id, {
+  status: r.status,
+  completedAt: r.completedAt
+});
+
+
+  const c = clients.find(x => x.phone === r.phone);
+
+  if (c) {
+    c.points = (c.points || 0) + Math.round(r.quantity * 10);
+
+    await window.updateClient(c.id, {
+      points: c.points
+    });
+  }
+
+  renderAll();
+  toast("Rezervarea a fost marcată ca predată și punctele au fost adăugate.");
 }
-function expireReservations(showToast=true){
-  let changed=0;
-  reservations.forEach(r=>{
-    if(r.status==='pending'&&new Date(r.expiresAt)<=new Date()){
-      r.status='expired';changed++;
-      const o=offers.find(x=>x.id===r.offerId);if(o)o.stock=+(o.stock+r.quantity).toFixed(2);
-      const c=clients.find(x=>x.phone===r.phone);
-      if(c){
-        const recentExpired=reservations.filter(x=>x.phone===c.phone&&x.status==='expired').length;
-        if(recentExpired>=2)c.suspendedUntil=new Date(Date.now()+7*24*3600000).toISOString();
-      }
+
+async function expireReservations(showToast = true) {
+
+    let changed = 0;
+
+    for (const r of reservations) {
+
+        if (r.status === "pending" && new Date(r.expiresAt) <= new Date()) {
+
+
+            r.status = "expired";
+            changed++;
+
+            await window.updateReservation(r.id, {
+                status: "expired"
+            });
+
+            const o = offers.find(x => x.id === r.offerId);
+
+            if (o) {
+                o.stock = +(o.stock + r.quantity).toFixed(2);
+
+                await window.updateOffer(o.id, {
+                    stock: o.stock
+                });
+            }
+
+            const c = clients.find(x => x.phone === r.phone);
+
+            if (c) {
+                const recentExpired = reservations.filter(
+                    x => x.phone === c.phone && x.status === "expired"
+                ).length;
+
+                  
+
+                if (recentExpired >= 2) {
+                    c.suspendedUntil = new Date(Date.now() + 7 * 24 * 3600000).toISOString();
+
+                    await window.updateClient(c.id, {
+                        suspendedUntil: c.suspendedUntil
+                    });
+                }
+            }
+        }
     }
-  });
-  if(changed){save('meat_reservations',reservations);save('meat_offers',offers);save('meat_clients',clients);renderAll()}
-  if(showToast)toast(changed?changed+' rezervări au expirat.':'Nu există rezervări expirate.');
+
+    if (changed) {
+        await refreshOffers();
+        await refreshClients();
+        await refreshReservations();
+
+        renderAll();
+    }
+
+    if (showToast) {
+        toast(
+            changed
+                ? `${changed} rezervări au expirat.`
+                : "Nu există rezervări expirate."
+        );
+    }
 }
+
+
+
 async function toggleOffer(id) {
     const o = offers.find(x => x.id === id);
 
@@ -613,11 +721,25 @@ import {
   getDocs,
   query,
   serverTimestamp,
+
   loadOffers,
   saveOffer,
+
+  loadReservations,
+  saveReservation,
+  updateReservation,
+  deleteReservationFromDb,
+
+  loadClients,
+  saveClient,
+  updateClient,
+  deleteClientFromDb,
+
   updateOffer,
   deleteOfferFromDb
+
 } from "./firebase.js";
+
 
 window.db = db;
 window.auth = auth;
@@ -626,23 +748,55 @@ window.addDoc = addDoc;
 window.getDocs = getDocs;
 window.query = query;
 window.serverTimestamp = serverTimestamp;
+
 window.loadOffers = loadOffers;
 window.saveOffer = saveOffer;
+
+window.loadReservations = loadReservations;
+window.saveReservation = saveReservation;
+
 window.updateOffer = updateOffer;
 window.deleteOfferFromDb = deleteOfferFromDb;
 window.refreshOffers = refreshOffers;
+window.updateReservation = updateReservation;
+window.deleteReservationFromDb = deleteReservationFromDb;
+
+window.loadClients = loadClients;
+window.saveClient = saveClient;
+window.updateClient = updateClient;
+window.deleteClientFromDb = deleteClientFromDb;
+
 
 console.log("Firebase importat din firebase.js");
 
 window.offers = offers;
 
 async function refreshOffers() {
-  offers.length = 0;
-  offers.push(...await loadOffers());
-  renderAll();
+    offers.length = 0;
+    offers.push(...await loadOffers());
+    renderAll();
 }
 
+async function refreshClients() {
+    clients.length = 0;
+    clients.push(...await loadClients());
+}
+window.refreshClients = refreshClients;
+
+
+async function refreshReservations() {
+    reservations.length = 0;
+    reservations.push(...await loadReservations());
+
+    renderAll();
+}
+window.refreshReservations = refreshReservations;
+
 await refreshOffers();
+await refreshClients();
+await refreshReservations();
+
+renderAll();
 </script>
 
 </body>
