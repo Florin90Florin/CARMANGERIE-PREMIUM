@@ -398,7 +398,26 @@ function toast(msg){
 function fmtDate(v){return new Date(v).toLocaleString('ro-RO',{dateStyle:'short',timeStyle:'short'})}
 function phoneClean(v){return v.replace(/\s+/g,'').replace(/[^0-9+]/g,'')}
 function discount(o){return Math.round((1-o.newPrice/o.oldPrice)*100)}
-function activeOffers(){return offers.filter(o=>o.active && o.stock>0 && new Date(o.validUntil)>new Date())}
+
+function activeOffers() {
+    offers.forEach(o => {
+        console.log(
+            o.name,
+            "active:", o.active,
+            "stock:", o.stock,
+            "validUntil:", o.validUntil,
+            "valid:", new Date(o.validUntil) > new Date()
+        );
+    });
+
+    console.log("Acum este:", new Date());
+
+    return offers.filter(
+        o => o.active &&
+             o.stock > 0 &&
+             new Date(o.validUntil) > new Date()
+    );
+}
 
 $$('.nav button').forEach(b=>b.onclick=()=>{
   $$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -413,8 +432,14 @@ $$('.side-btn').forEach(b=>b.onclick=()=>{
 function renderOffers(){
   expireReservations(false);
   const list=activeOffers();
+
+  console.log("Oferte active:", list);
+
   $('#heroStock').textContent=list.reduce((s,o)=>s+o.stock,0).toFixed(1)+' kg disponibile';
   $('#offerGrid').innerHTML=list.length?list.map(o=>{
+
+    console.log(o);
+
     const percent=Math.max(0,Math.min(100,o.stock/o.initialStock*100));
     return `<article class="glass offer-card">
       <div class="offer-img" style="background-image:url('${o.image||'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1000&q=80'}')">
@@ -560,6 +585,10 @@ $('#offerForm').onsubmit = async e => {
   e.preventDefault();
 
   const d = Object.fromEntries(new FormData(e.target));
+
+  console.log("d.validUntil =", d.validUntil);
+  console.log("ISO =", new Date(d.validUntil).toISOString());
+
   const stock = Number(d.stock);
 
   const offer = {
@@ -774,6 +803,9 @@ window.offers = offers;
 async function refreshOffers() {
     offers.length = 0;
     offers.push(...await loadOffers());
+
+    console.log("Oferte încărcate:", offers);
+
     renderAll();
 }
 
