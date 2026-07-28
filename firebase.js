@@ -10,7 +10,8 @@ import {
   deleteDoc,
   updateDoc,
   doc,
-  setDoc
+  setDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
@@ -53,7 +54,8 @@ export {
   deleteDoc,
   updateDoc,
   doc,
-  setDoc
+  setDoc,
+  onSnapshot
 };
 
 
@@ -79,7 +81,7 @@ export async function saveOffer(offer) {
   await setDoc(
     doc(db, "offers", offer.id),
     offer
-  );
+  ); 
 
   
 }

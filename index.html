@@ -255,7 +255,23 @@
         <aside class="glass sidebar">
           <button class="side-btn active" data-admin="dashboard">📊 Panou general</button>
           <button class="side-btn" data-admin="offersAdmin">🥩 Oferte</button>
-          <button class="side-btn" data-admin="reservationsAdmin">📦 Rezervări</button>
+          <button class="side-btn" data-admin="reservationsAdmin">
+    📦 Rezervări
+    <span id="reservationBadge"
+          style="
+              display:none;
+              margin-left:8px;
+              background:#ff3b30;
+              color:white;
+              border-radius:999px;
+              padding:2px 8px;
+              font-size:12px;
+              font-weight:bold;
+          ">
+        0
+    </span>
+</button>
+
           <button class="side-btn" data-admin="clientsAdmin">👥 Clienți</button>
           <button class="side-btn" data-admin="smsAdmin">💬 SMS simulate</button>
         </aside>
@@ -457,6 +473,53 @@ let editingOfferId = null;
 
 let smsLog = load('meat_sms_log');
 
+let lastReservationCount = 0;
+let unreadReservations = 0;
+let soundEnabled = true;
+
+
+function playNotificationSound() {
+
+    if (!soundEnabled) return;
+
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(1000, audio.currentTime);
+    osc.frequency.linearRampToValueAtTime(1400, audio.currentTime + 0.15);
+
+    osc.connect(gain);
+    gain.connect(audio.destination);
+
+    gain.gain.setValueAtTime(0.4, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audio.currentTime + 0.45
+    );
+
+    osc.start();
+    osc.stop(audio.currentTime + 0.45);
+}
+
+function updateReservationBadge() {
+
+    const badge = $("#reservationBadge");
+
+    if (unreadReservations > 0) {
+
+        badge.style.display = "inline-block";
+        badge.textContent = unreadReservations;
+
+    } else {
+
+        badge.style.display = "none";
+
+    }
+
+}
 
 function toast(msg){
   const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
@@ -495,9 +558,21 @@ $$(".nav button").forEach((b) => b.onclick = () => {
 });
 
 
-$$('.side-btn').forEach(b=>b.onclick=()=>{
-  $$('.side-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
-  $$('.admin-section').forEach(v=>v.classList.remove('active'));$('#'+b.dataset.admin).classList.add('active');
+$$('.side-btn').forEach(b => b.onclick = () => {
+
+    $$('.side-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+
+    $$('.admin-section').forEach(v => v.classList.remove('active'));
+    $('#' + b.dataset.admin).classList.add('active');
+
+    if (b.dataset.admin === "reservationsAdmin") {
+
+        unreadReservations = 0;
+        updateReservationBadge();
+
+    }
+
 });
 
 function renderOffers(){
@@ -1008,6 +1083,8 @@ import {
   updateReservation,
   deleteReservationFromDb,
 
+  onSnapshot,
+
   loadClients,
   saveClient,
   updateClient,
@@ -1056,6 +1133,7 @@ window.addDoc = addDoc;
 window.getDocs = getDocs;
 window.query = query;
 window.serverTimestamp = serverTimestamp;
+window.onSnapshot = onSnapshot;
 
 window.loadOffers = loadOffers;
 window.saveOffer = saveOffer;
@@ -1099,11 +1177,56 @@ async function refreshReservations() {
 
     renderAll();
 }
+
+function listenReservations() {
+
+    const q = collection(db, "reservations");
+
+    onSnapshot(q, (snapshot) => {
+
+        reservations.length = 0;
+
+        snapshot.forEach(doc => {
+
+            reservations.push({
+                id: doc.id,
+                ...doc.data()
+            });
+
+        });
+
+        const currentCount = reservations.filter(
+    r => r.status === "pending"
+).length;
+
+if (
+    window.isAdminLogged &&
+    lastReservationCount &&
+    currentCount > lastReservationCount
+) {
+
+    unreadReservations += currentCount - lastReservationCount;
+
+    playNotificationSound();
+
+}
+
+lastReservationCount = currentCount;
+
+updateReservationBadge();
+
+renderAll();
+
+    });
+
+}
+
 window.refreshReservations = refreshReservations;
 
 await refreshOffers();
 await refreshClients();
-await refreshReservations();
+
+listenReservations();
 
 renderAll();
 </script>
