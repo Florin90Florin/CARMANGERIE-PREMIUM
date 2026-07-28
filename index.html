@@ -451,7 +451,12 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 let offers = [];
 let clients = [];
 let reservations = [];
+
+let editMode = false;
+let editingOfferId = null;
+
 let smsLog = load('meat_sms_log');
+
 
 function toast(msg){
   const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
@@ -461,18 +466,7 @@ function phoneClean(v){return v.replace(/\s+/g,'').replace(/[^0-9+]/g,'')}
 function discount(o){return Math.round((1-o.newPrice/o.oldPrice)*100)}
 
 function activeOffers() {
-    offers.forEach(o => {
-        console.log(
-            o.name,
-            "active:", o.active,
-            "stock:", o.stock,
-            "validUntil:", o.validUntil,
-            "valid:", new Date(o.validUntil) > new Date()
-        );
-    });
-
-    console.log("Acum este:", new Date());
-
+    
     return offers.filter(
         o => o.active &&
              o.stock > 0 &&
@@ -510,12 +504,10 @@ function renderOffers(){
   expireReservations(false);
   const list=activeOffers();
 
-  console.log("Oferte active:", list);
 
   $('#heroStock').textContent=list.reduce((s,o)=>s+o.stock,0).toFixed(1)+' kg disponibile';
   $('#offerGrid').innerHTML=list.length?list.map(o=>{
 
-    console.log(o);
 
     const percent=Math.max(0,Math.min(100,o.stock/o.initialStock*100));
     return `<article class="glass offer-card">
@@ -535,7 +527,26 @@ function renderOffers(){
 function renderAdminOffers(){
   $('#adminOffers').innerHTML=offers.length?offers.map(o=>`<div class="glass card">
     <h3>${o.name}</h3><p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
-    <div class="toolbar"><button class="btn btn-secondary" onclick="toggleOffer('${o.id}')">${o.active?'Oprește':'Activează'}</button><button class="btn btn-danger" onclick="deleteOffer('${o.id}')">Șterge</button></div>
+    
+    <div class="toolbar">
+
+    <button class="btn btn-primary"
+        onclick="editOffer('${o.id}')">
+        Modifică
+    </button>
+
+    <button class="btn btn-secondary"
+        onclick="toggleOffer('${o.id}')">
+        ${o.active ? 'Oprește' : 'Activează'}
+    </button>
+
+    <button class="btn btn-danger"
+        onclick="deleteOffer('${o.id}')">
+        Șterge
+    </button>
+
+</div>
+
   </div>`).join(''):'<div class="glass empty">Nu există oferte.</div>';
 }
 function renderReservations(){
@@ -582,9 +593,51 @@ function openOfferModal() {
 
     if (!requireAdmin()) return;
 
+editMode = false;
+editingOfferId = null;
+
+const f = $("#offerForm");
+f.reset();
+
+$("#offerModal h2").textContent = "Adaugă ofertă";
+f.querySelector("button[type='submit']").textContent = "Publică oferta";
+
+
     $("#offerModal").classList.add("open");
 
 }
+
+function editOffer(id) {
+
+    const offer = offers.find(o => o.id === id);
+
+    if (!offer) return;
+
+    editMode = true;
+    editingOfferId = offer.id;
+
+    const f = $("#offerForm");
+
+    f.name.value = offer.name;
+    f.oldPrice.value = offer.oldPrice;
+    f.newPrice.value = offer.newPrice;
+    f.stock.value = offer.stock;
+    f.limit.value = offer.limit;
+    f.defaultDuration.value = offer.defaultDuration || 30;
+    f.image.value = offer.image || "";
+    f.description.value = offer.description || "";
+
+    // conversie pentru input datetime-local
+    f.validUntil.value = offer.validUntil.slice(0,16);
+
+    $("#offerModal h2").textContent = "Modifică ofertă";
+
+    f.querySelector("button[type='submit']").textContent =
+        "Salvează modificările";
+
+    $("#offerModal").classList.add("open");
+}
+
 
 function openLoginModal() {
     $("#loginModal").classList.add("open");
@@ -740,6 +793,8 @@ await window.saveReservation(reservation);
 await window.refreshReservations();
   e.target.reset();closeModal('reservationModal');await window.refreshOffers();toast('Rezervare confirmată.');
 };
+
+
 $('#offerForm').onsubmit = async e => {
   e.preventDefault();
 
@@ -747,34 +802,51 @@ $('#offerForm').onsubmit = async e => {
 
   const d = Object.fromEntries(new FormData(e.target));
 
-  console.log("d.validUntil =", d.validUntil);
-  console.log("ISO =", new Date(d.validUntil).toISOString());
-
   const stock = Number(d.stock);
 
   const offer = {
-    id: uid(),
     name: d.name,
     oldPrice: Number(d.oldPrice),
     newPrice: Number(d.newPrice),
     stock,
-    initialStock: stock,
     limit: Number(d.limit),
     validUntil: new Date(d.validUntil).toISOString(),
     defaultDuration: Number(d.defaultDuration),
     image: d.image,
-    description: d.description,
-    active: true
-  };
+    description: d.description
+};
 
-await saveOffer(offer);
+if (!editMode) {
+    offer.id = uid();
+    offer.initialStock = stock;
+    offer.active = true;
+}
+
+if (editMode) {
+
+    await window.updateOffer(editingOfferId, offer);
+
+    toast("Oferta a fost modificată.");
+
+    editMode = false;
+    editingOfferId = null;
+
+} else {
+
+    await saveOffer(offer);
+
+    toast("Oferta a fost publicată.");
+
+}
 
 await refreshOffers();
 
 e.target.reset();
+
 closeModal("offerModal");
-toast("Oferta a fost publicată.");
-};
+
+ };
+
 async function completeReservation(id) {
 
   if (!requireAdmin()) return;
@@ -1003,15 +1075,13 @@ window.updateClient = updateClient;
 window.deleteClientFromDb = deleteClientFromDb;
 
 
-console.log("Firebase importat din firebase.js");
+
 
 window.offers = offers;
 
 async function refreshOffers() {
     offers.length = 0;
     offers.push(...await loadOffers());
-
-    console.log("Oferte încărcate:", offers);
 
     renderAll();
 }
