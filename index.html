@@ -457,6 +457,35 @@
 
 <div id="toast" class="toast"></div>
 
+<div id="reservationNotification"
+     style="
+        position:fixed;
+        top:20px;
+        right:20px;
+        width:420px;
+        max-width:calc(100vw - 40px);
+
+        background:#1e293b;
+        color:#ffffff;
+
+        border-left:6px solid #16a34a;
+        border-radius:14px;
+
+        padding:18px;
+
+        box-shadow:0 12px 35px rgba(0,0,0,.35);
+
+        display:none;
+
+        z-index:99999;
+
+        transform:translateY(-20px);
+        opacity:0;
+
+        transition:all .35s ease;
+     ">
+</div>
+
 <script>
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -502,6 +531,71 @@ function playNotificationSound() {
 
     osc.start();
     osc.stop(audio.currentTime + 0.45);
+}
+
+function showReservationNotification(reservation) {
+
+    const box = $("#reservationNotification");
+
+    box.innerHTML = `
+        <div style="font-size:18px;font-weight:700;color:#4ade80;margin-bottom:14px;">
+            🔔 Rezervare nouă
+        </div>
+
+        <div style="line-height:1.8">
+
+            <div><b>👤 ${reservation.name}</b></div>
+
+            <div>📞 ${reservation.phone}</div>
+
+            <hr style="
+                border:none;
+                border-top:1px solid rgba(255,255,255,.15);
+                margin:12px 0;
+            ">
+
+            <div>🥩 <b>${reservation.product}</b></div>
+
+            <div>⚖️ ${reservation.quantity} kg</div>
+
+            <div style="
+                margin-top:14px;
+                font-size:13px;
+                opacity:.75;
+            ">
+                🕒 ${new Date().toLocaleTimeString("ro-RO",{
+                    hour:"2-digit",
+                    minute:"2-digit"
+                })}
+            </div>
+
+        </div>
+    `;
+
+    box.style.display = "block";
+
+    requestAnimationFrame(() => {
+
+        box.style.opacity = "1";
+        box.style.transform = "translateY(0)";
+
+    });
+
+    clearTimeout(box.hideTimer);
+
+    box.hideTimer = setTimeout(() => {
+
+        box.style.opacity = "0";
+        box.style.transform = "translateY(-20px)";
+
+        setTimeout(() => {
+
+            box.style.display = "none";
+
+        },350);
+
+    },5000);
+
 }
 
 function updateReservationBadge() {
@@ -1207,7 +1301,17 @@ if (
 
     unreadReservations += currentCount - lastReservationCount;
 
+    const newestReservation = reservations
+        .filter(r => r.status === "pending")
+        .sort((a, b) =>
+            new Date(b.createdAt) - new Date(a.createdAt)
+        )[0];
+
     playNotificationSound();
+
+    if (newestReservation) {
+        showReservationNotification(newestReservation);
+    }
 
 }
 
