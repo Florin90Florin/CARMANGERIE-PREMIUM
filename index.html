@@ -501,6 +501,58 @@
   </div>
 </div>
 
+<div id="storeModal" class="modal">
+  <div class="glass modal-card">
+
+    <div class="modal-head">
+      <h2>Adaugă magazin</h2>
+      <button class="icon-btn" onclick="closeModal('storeModal')">✕</button>
+    </div>
+
+    <form id="storeForm" class="form-grid">
+
+      <div class="field full">
+        <label>Nume magazin</label>
+        <input
+          name="name"
+          required
+          placeholder="Ex: Carmangeria Premium Centru">
+      </div>
+
+      <div class="field">
+        <label>Localitate</label>
+        <input
+          name="city"
+          required
+          placeholder="Ex: București">
+      </div>
+
+      <div class="field">
+        <label>Status</label>
+        <select name="status">
+          <option value="active">Activ</option>
+          <option value="inactive">Inactiv</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>Adresă</label>
+        <input
+          name="address"
+          required
+          placeholder="Stradă, număr">
+      </div>
+
+      <div class="field full">
+        <button class="btn btn-primary" type="submit">
+          Salvează magazinul
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
 
 <div id="toast" class="toast"></div>
 
@@ -789,6 +841,37 @@ function renderClients(){
     return `<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.city||'—'}</td><td>${s.done}</td><td>${s.expired}</td><td class="trust ${cls}">${s.score}%</td><td>${suspension}</td></tr>`;
   }).join(''):'<tr><td colspan="7">Nu există clienți.</td></tr>';
 }
+
+function renderStores() {
+
+    const table = $("#storesTable");
+
+    if (!table) return;
+
+    if (!stores.length) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5">Nu există magazine.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    table.innerHTML = stores.map(store => `
+        <tr>
+            <td>${store.name}</td>
+            <td>${store.city}</td>
+            <td>Neasociat</td>
+            <td>
+                <span class="status ${store.status === "active" ? "completed" : "expired"}">
+                    ${store.status === "active" ? "Activ" : "Inactiv"}
+                </span>
+            </td>
+            <td>—</td>
+        </tr>
+    `).join("");
+}
+
 function renderKpis(){
   $('#kpiOffers').textContent=activeOffers().length;
   $('#kpiReservations').textContent=reservations.filter(r=>r.status==='pending').length;
@@ -798,7 +881,15 @@ function renderKpis(){
 function renderSms(){
   $('#smsLog').innerHTML=smsLog.length?'<h3>Istoric</h3>'+smsLog.slice().reverse().map(x=>`<div class="glass card" style="margin-top:10px"><strong>${fmtDate(x.date)}</strong><p>${x.text}</p><small>${x.count} destinatari</small></div>`).join(''):'';
 }
-function renderAll(){renderOffers();renderAdminOffers();renderReservations();renderClients();renderKpis();renderSms()}
+function renderAll(){
+    renderOffers();
+    renderAdminOffers();
+    renderReservations();
+    renderClients();
+    renderKpis();
+    renderSms();
+    renderStores();
+}
 
 function openRegistration(){$('#registrationModal').classList.add('open')}
 function openReservation(id){
@@ -856,6 +947,18 @@ function editOffer(id) {
     $("#offerModal").classList.add("open");
 }
 
+
+function openStoreModal() {
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea magazinelor.");
+    }
+
+    $("#storeForm").reset();
+    $("#storeModal").classList.add("open");
+}
 
 function openLoginModal() {
     $("#loginModal").classList.add("open");
@@ -939,6 +1042,46 @@ function requireAdmin() {
 
 function closeModal(id){$('#'+id).classList.remove('open')}
 
+
+$("#storeForm").onsubmit = async (e) => {
+
+    e.preventDefault();
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea magazinelor.");
+    }
+
+    const d = Object.fromEntries(new FormData(e.target));
+
+    const store = {
+        id: uid(),
+        name: d.name,
+        city: d.city,
+        address: d.address,
+        status: d.status,
+        createdAt: new Date().toISOString()
+    };
+
+    try {
+
+        await window.saveStore(store);
+
+        stores.push(store);
+
+        e.target.reset();
+        closeModal("storeModal");
+
+        toast("Magazinul a fost adăugat.");
+
+    } catch (err) {
+
+        console.error("Eroare salvare magazin:", err);
+        toast("Magazinul nu a putut fi salvat.");
+
+    }
+};
 
 $('#registrationForm').onsubmit = async e => {
   e.preventDefault(); const d=Object.fromEntries(new FormData(e.target));d.phone=phoneClean(d.phone);
@@ -1342,6 +1485,11 @@ window.saveClient = saveClient;
 window.updateClient = updateClient;
 window.deleteClientFromDb = deleteClientFromDb;
 
+window.loadStores = loadStores;
+window.saveStore = saveStore;
+window.updateStore = updateStore;
+window.deleteStoreFromDb = deleteStoreFromDb;
+
 
 
 
@@ -1373,6 +1521,19 @@ async function refreshClients() {
     clients.push(...await loadClients());
 }
 window.refreshClients = refreshClients;
+
+async function refreshStores() {
+
+    stores.length = 0;
+
+    const allStores = await loadStores();
+
+    stores.push(...allStores);
+
+    renderStores();
+}
+
+window.refreshStores = refreshStores;
 
 
 async function refreshReservations() {
@@ -1479,6 +1640,7 @@ window.refreshReservations = refreshReservations;
 
 await refreshOffers();
 await refreshClients();
+await refreshStores();
 
 listenReservations();
 
