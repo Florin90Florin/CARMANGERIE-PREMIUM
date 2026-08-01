@@ -503,6 +503,7 @@ let editingOfferId = null;
 let smsLog = load('meat_sms_log');
 
 let lastReservationCount = 0;
+let reservationsInitialized = false;
 let unreadReservations = 0;
 let soundEnabled = true;
 
@@ -945,6 +946,7 @@ if (!c) {
 const reservation = {
     id: uid(),
     offerId: o.id,
+    locationId: o.locationId,
     product: o.name,
     name: d.name,
     phone: d.phone,
@@ -973,7 +975,7 @@ $('#offerForm').onsubmit = async e => {
 
   const stock = Number(d.stock);
 
-  const offer = {
+const offer = {
     name: d.name,
     oldPrice: Number(d.oldPrice),
     newPrice: Number(d.newPrice),
@@ -982,7 +984,8 @@ $('#offerForm').onsubmit = async e => {
     validUntil: new Date(d.validUntil).toISOString(),
     defaultDuration: Number(d.defaultDuration),
     image: d.image,
-    description: d.description
+    description: d.description,
+    locationId: window.currentAdmin?.locationId || null
 };
 
 if (!editMode) {
@@ -1166,6 +1169,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
+  doc,
   query,
   serverTimestamp,
 
@@ -1199,23 +1204,44 @@ window.onAuthStateChanged = onAuthStateChanged;
 
 window.isAdminLogged = false;
 
-onAuthStateChanged(auth, (user) => {
-
+onAuthStateChanged(auth, async (user) => {
 
     if (user) {
 
+        const adminRef = doc(db, "admins", user.uid);
+        const adminSnap = await getDoc(adminRef);
+
+        if (!adminSnap.exists()) {
+            window.isAdminLogged = false;
+            console.error("Contul nu există în colecția admins.");
+            await signOut(auth);
+            return;
+        }
+
+        const adminData = adminSnap.data();
+
+        if (adminData.active !== true) {
+            window.isAdminLogged = false;
+            console.error("Contul administratorului este dezactivat.");
+            await signOut(auth);
+            return;
+        }
+
         window.isAdminLogged = true;
+        window.currentAdmin = {
+            uid: user.uid,
+            email: user.email,
+            ...adminData
+        };
 
-
-        console.log("Administrator autentificat:", user.email);
+        console.log("Administrator autentificat:", window.currentAdmin);
 
     } else {
 
         window.isAdminLogged = false;
-        
+        window.currentAdmin = null;
 
         console.log("Nu există administrator autentificat.");
-
     }
 
 });
@@ -1253,7 +1279,21 @@ window.offers = offers;
 
 async function refreshOffers() {
     offers.length = 0;
-    offers.push(...await loadOffers());
+
+    const allOffers = await loadOffers();
+
+    if (
+        window.currentAdmin?.role === "subadmin" &&
+        window.currentAdmin?.locationId
+    ) {
+        offers.push(
+            ...allOffers.filter(
+                offer => offer.locationId === window.currentAdmin.locationId
+            )
+        );
+    } else {
+        offers.push(...allOffers);
+    }
 
     renderAll();
 }
@@ -1267,7 +1307,22 @@ window.refreshClients = refreshClients;
 
 async function refreshReservations() {
     reservations.length = 0;
-    reservations.push(...await loadReservations());
+
+    const allReservations = await loadReservations();
+
+    if (
+        window.currentAdmin?.role === "subadmin" &&
+        window.currentAdmin?.locationId
+    ) {
+        reservations.push(
+            ...allReservations.filter(
+                reservation =>
+                    reservation.locationId === window.currentAdmin.locationId
+            )
+        );
+    } else {
+        reservations.push(...allReservations);
+    }
 
     renderAll();
 }
@@ -1280,46 +1335,71 @@ function listenReservations() {
 
         reservations.length = 0;
 
+        const admin = window.currentAdmin;
+
         snapshot.forEach(doc => {
 
-            reservations.push({
+            const reservation = {
                 id: doc.id,
                 ...doc.data()
-            });
+            };
+
+            // Dacă este subadmin, vede doar rezervările magazinului lui
+            if (admin?.role === "subadmin") {
+
+                if (
+                    !reservation.locationId ||
+                    reservation.locationId !== admin.locationId
+                ) {
+                    return;
+                }
+
+            }
+
+            reservations.push(reservation);
 
         });
 
         const currentCount = reservations.filter(
-    r => r.status === "pending"
-).length;
+            r => r.status === "pending"
+        ).length;
 
-if (
-    window.isAdminLogged &&
-    lastReservationCount &&
-    currentCount > lastReservationCount
-) {
+        if (!reservationsInitialized) {
 
-    unreadReservations += currentCount - lastReservationCount;
+    // Prima încărcare: memorăm câte rezervări există deja,
+    // fără să le considerăm rezervări noi.
+    lastReservationCount = currentCount;
+    reservationsInitialized = true;
 
-    const newestReservation = reservations
-        .filter(r => r.status === "pending")
-        .sort((a, b) =>
-            new Date(b.createdAt) - new Date(a.createdAt)
-        )[0];
+} else {
 
-    playNotificationSound();
+    if (
+        window.isAdminLogged &&
+        currentCount > lastReservationCount
+    ) {
 
-    if (newestReservation) {
-        showReservationNotification(newestReservation);
+        unreadReservations += currentCount - lastReservationCount;
+
+        const newestReservation = reservations
+            .filter(r => r.status === "pending")
+            .sort((a, b) =>
+                new Date(b.createdAt) - new Date(a.createdAt)
+            )[0];
+
+        playNotificationSound();
+
+        if (newestReservation) {
+            showReservationNotification(newestReservation);
+        }
+
     }
 
+    lastReservationCount = currentCount;
 }
 
-lastReservationCount = currentCount;
+        updateReservationBadge();
 
-updateReservationBadge();
-
-renderAll();
+        renderAll();
 
     });
 
