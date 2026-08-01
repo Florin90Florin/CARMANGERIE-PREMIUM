@@ -1,4 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  initializeApp,
+  deleteApp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 
 import {
   getFirestore,
@@ -18,6 +21,7 @@ import {
 
 import {
   getAuth,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
@@ -192,4 +196,59 @@ export async function updateStore(id, data) {
 
 export async function deleteStoreFromDb(id) {
   await deleteDoc(doc(db, "stores", id));
+}
+
+// =========================
+// SUBADMIN CREATION
+// =========================
+
+export async function createSubadmin({
+  name,
+  email,
+  password,
+  access,
+  active
+}) {
+
+  const secondaryApp = initializeApp(
+    firebaseConfig,
+    "subadminCreation"
+  );
+
+  const secondaryAuth = getAuth(secondaryApp);
+
+  try {
+
+    const credential = await createUserWithEmailAndPassword(
+      secondaryAuth,
+      email,
+      password
+    );
+
+    const uid = credential.user.uid;
+    const isMainSite = access === "main";
+
+    const adminData = {
+      uid,
+      name,
+      email,
+      role: "subadmin",
+      active,
+      accessType: isMainSite ? "main" : "store",
+      locationId: isMainSite ? null : access,
+      createdAt: new Date().toISOString()
+    };
+
+    await setDoc(
+      doc(db, "admins", uid),
+      adminData
+    );
+
+    return adminData;
+
+  } finally {
+
+    await deleteApp(secondaryApp);
+
+  }
 }

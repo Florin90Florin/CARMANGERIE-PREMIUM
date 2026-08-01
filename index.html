@@ -362,12 +362,21 @@
             <p>Gestionează magazinele și accesul subadministratorilor.</p>
         </div>
 
-        <button
-            id="addStoreBtn"
-            class="btn btn-primary"
-            onclick="openStoreModal()">
-            Adaugă magazin
-        </button>
+        <div class="toolbar">
+    <button
+        id="addStoreBtn"
+        class="btn btn-primary"
+        onclick="openStoreModal()">
+        Adaugă magazin
+    </button>
+
+    <button
+        id="addSubadminBtn"
+        class="btn btn-secondary"
+        onclick="openSubadminModal()">
+        Adaugă subadministrator
+    </button>
+</div>
     </div>
 
     <div class="glass card table-wrap">
@@ -546,6 +555,77 @@
       <div class="field full">
         <button class="btn btn-primary" type="submit">
           Salvează magazinul
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<div id="subadminModal" class="modal">
+  <div class="glass modal-card">
+
+    <div class="modal-head">
+      <h2>Adaugă subadministrator</h2>
+      <button
+        class="icon-btn"
+        onclick="closeModal('subadminModal')">
+        ✕
+      </button>
+    </div>
+
+    <form id="subadminForm" class="form-grid">
+
+      <div class="field full">
+        <label>Nume</label>
+        <input
+          name="name"
+          required
+          placeholder="Ex: Ion Popescu">
+      </div>
+
+      <div class="field full">
+        <label>Email</label>
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="ion@exemplu.ro">
+      </div>
+
+      <div class="field full">
+        <label>Parolă inițială</label>
+        <input
+          name="password"
+          type="password"
+          minlength="6"
+          required
+          placeholder="Minimum 6 caractere">
+      </div>
+
+      <div class="field">
+        <label>Acces</label>
+        <select
+          id="subadminAccess"
+          name="access"
+          required>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Status</label>
+        <select name="status">
+          <option value="active">Activ</option>
+          <option value="inactive">Inactiv</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <button
+          class="btn btn-primary"
+          type="submit">
+          Creează subadministrator
         </button>
       </div>
 
@@ -960,6 +1040,35 @@ function openStoreModal() {
     $("#storeModal").classList.add("open");
 }
 
+function openSubadminModal() {
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea subadministratorilor.");
+    }
+
+    const form = $("#subadminForm");
+    const accessSelect = $("#subadminAccess");
+
+    form.reset();
+
+    accessSelect.innerHTML = `
+        <option value="main">Site principal</option>
+
+        ${stores
+            .filter(store => store.status === "active")
+            .map(store => `
+                <option value="${store.id}">
+                    ${store.name} — ${store.city}
+                </option>
+            `)
+            .join("")}
+    `;
+
+    $("#subadminModal").classList.add("open");
+}
+
 function openLoginModal() {
     $("#loginModal").classList.add("open");
 }
@@ -1080,6 +1189,59 @@ $("#storeForm").onsubmit = async (e) => {
         console.error("Eroare salvare magazin:", err);
         toast("Magazinul nu a putut fi salvat.");
 
+    }
+};
+
+
+
+$("#subadminForm").onsubmit = async (e) => {
+
+    e.preventDefault();
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea subadministratorilor.");
+    }
+
+    const d = Object.fromEntries(new FormData(e.target));
+
+    const active = d.status === "active";
+
+    try {
+
+        const subadmin = await window.createSubadmin({
+            name: d.name.trim(),
+            email: d.email.trim(),
+            password: d.password,
+            access: d.access,
+            active
+        });
+
+        console.log("Subadministrator creat:", subadmin);
+
+        e.target.reset();
+        closeModal("subadminModal");
+
+        toast("Subadministratorul a fost creat.");
+
+    } catch (err) {
+
+        console.error("Eroare creare subadministrator:", err);
+
+        if (err.code === "auth/email-already-in-use") {
+            return toast("Există deja un cont cu acest email.");
+        }
+
+        if (err.code === "auth/weak-password") {
+            return toast("Parola este prea slabă.");
+        }
+
+        if (err.code === "auth/invalid-email") {
+            return toast("Adresa de email nu este validă.");
+        }
+
+        toast("Subadministratorul nu a putut fi creat.");
     }
 };
 
@@ -1392,7 +1554,8 @@ deleteOfferFromDb,
 loadStores,
 saveStore,
 updateStore,
-deleteStoreFromDb
+deleteStoreFromDb,
+createSubadmin
 
 } from "./firebase.js";
 
@@ -1489,7 +1652,7 @@ window.loadStores = loadStores;
 window.saveStore = saveStore;
 window.updateStore = updateStore;
 window.deleteStoreFromDb = deleteStoreFromDb;
-
+window.createSubadmin = createSubadmin;
 
 
 
