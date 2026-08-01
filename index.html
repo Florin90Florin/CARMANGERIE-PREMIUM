@@ -273,6 +273,15 @@
 </button>
 
           <button class="side-btn" data-admin="clientsAdmin">👥 Clienți</button>
+
+  <button
+    id="storesAdminBtn"
+    class="side-btn"
+    data-admin="storesAdmin"
+    style="display:none;">
+    🏪 Magazine
+</button>
+
           <button class="side-btn" data-admin="smsAdmin">💬 SMS simulate</button>
         </aside>
 
@@ -344,6 +353,44 @@
               <tbody id="clientTable"></tbody>
             </table></div>
           </section>
+
+<section id="storesAdmin" class="admin-section">
+
+    <div class="section-title">
+        <div>
+            <h2>Magazine și administratori</h2>
+            <p>Gestionează magazinele și accesul subadministratorilor.</p>
+        </div>
+
+        <button
+            id="addStoreBtn"
+            class="btn btn-primary"
+            onclick="openStoreModal()">
+            Adaugă magazin
+        </button>
+    </div>
+
+    <div class="glass card table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Magazin</th>
+                    <th>Localitate</th>
+                    <th>Subadministrator</th>
+                    <th>Status</th>
+                    <th>Acțiune</th>
+                </tr>
+            </thead>
+
+            <tbody id="storesTable">
+                <tr>
+                    <td colspan="5">Nu există magazine.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
 
           <section id="smsAdmin" class="admin-section">
             <div class="section-title"><div><h2>SMS simulate</h2><p>În această versiune locală, mesajele nu sunt trimise real.</p></div></div>
@@ -496,6 +543,7 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 let offers = [];
 let clients = [];
 let reservations = [];
+let stores = [];
 
 let editMode = false;
 let editingOfferId = null;
@@ -851,6 +899,12 @@ async function logoutAdmin() {
 
         await window.signOut(window.auth);
 
+        const storesAdminBtn = document.getElementById("storesAdminBtn");
+
+if (storesAdminBtn) {
+    storesAdminBtn.style.display = "none";
+}
+
         $$(".view").forEach(v => v.classList.remove("active"));
         $("#clientView").classList.add("active");
 
@@ -1189,8 +1243,13 @@ import {
   updateClient,
   deleteClientFromDb,
 
-  updateOffer,
-  deleteOfferFromDb
+ updateOffer,
+deleteOfferFromDb,
+
+loadStores,
+saveStore,
+updateStore,
+deleteStoreFromDb
 
 } from "./firebase.js";
 
@@ -1233,6 +1292,17 @@ onAuthStateChanged(auth, async (user) => {
             email: user.email,
             ...adminData
         };
+
+const storesAdminBtn = document.getElementById("storesAdminBtn");
+
+
+if (storesAdminBtn) {
+    if (window.currentAdmin.role === "administrator") {
+        storesAdminBtn.style.display = "block";
+    } else {
+        storesAdminBtn.style.display = "none";
+    }
+}
 
         console.log("Administrator autentificat:", window.currentAdmin);
 

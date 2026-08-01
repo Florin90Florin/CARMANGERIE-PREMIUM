@@ -158,3 +158,38 @@ export async function updateOffer(id, data) {
 export async function deleteOfferFromDb(id) {
   await deleteDoc(doc(db, "offers", id));
 }
+
+// =========================
+// STORES
+// =========================
+
+export async function loadStores() {
+  const q = query(collection(db, "stores"));
+  const snapshot = await getDocs(q);
+
+  const stores = [];
+
+  snapshot.forEach((doc) => {
+    stores.push({
+      ...doc.data(),
+      id: doc.id
+    });
+  });
+
+  return stores;
+}
+
+export async function saveStore(store) {
+  await setDoc(
+    doc(db, "stores", store.id),
+    store
+  );
+}
+
+export async function updateStore(id, data) {
+  await updateDoc(doc(db, "stores", id), data);
+}
+
+export async function deleteStoreFromDb(id) {
+  await deleteDoc(doc(db, "stores", id));
+}
