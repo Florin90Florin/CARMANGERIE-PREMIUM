@@ -229,7 +229,9 @@ export async function createSubadmin({
   name,
   email,
   password,
+  role,
   access,
+  permissions,
   active
 }) {
 
@@ -251,16 +253,17 @@ export async function createSubadmin({
     const uid = credential.user.uid;
     const isMainSite = access === "main";
 
-    const adminData = {
-      uid,
-      name,
-      email,
-      role: "subadmin",
-      active,
-      accessType: isMainSite ? "main" : "store",
-      locationId: isMainSite ? null : access,
-      createdAt: new Date().toISOString()
-    };
+   const adminData = {
+  uid,
+  name,
+  email,
+  role,
+  active,
+  accessType: isMainSite ? "main" : "store",
+  locationId: isMainSite ? null : access,
+  permissions,
+  createdAt: new Date().toISOString()
+};
 
     await setDoc(
       doc(db, "admins", uid),
@@ -274,4 +277,34 @@ export async function createSubadmin({
     await deleteApp(secondaryApp);
 
   }
+}
+
+export async function updateAdmin(uid, {
+  name,
+  role,
+  access,
+  permissions,
+  active
+}) {
+
+  const isMainSite = access === "main";
+
+  const adminData = {
+    name,
+    role,
+    active,
+    accessType: isMainSite ? "main" : "store",
+    locationId: isMainSite ? null : access,
+    permissions
+  };
+
+  await updateDoc(
+    doc(db, "admins", uid),
+    adminData
+  );
+
+  return {
+    uid,
+    ...adminData
+  };
 }

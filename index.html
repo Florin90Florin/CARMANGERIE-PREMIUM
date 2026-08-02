@@ -129,11 +129,17 @@
     .section-title p{margin:0}
     .empty{padding:34px;text-align:center;color:var(--muted)}
     .modal{
-      position:fixed;inset:0;background:rgba(0,0,0,.68);display:none;place-items:center;
-      z-index:100;padding:20px;
-    }
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.68);
+  display:none;
+  place-items:start center;
+  z-index:100;
+  padding:20px;
+  overflow-y:auto;
+}
     .modal.open{display:grid}
-    .modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;padding:24px}
+    .modal-card{width:min(620px,100%);max-height:85vh;overflow-y:auto;overflow-x:hidden;padding:24px;box-sizing:border-box}
     .modal-head{display:flex;justify-content:space-between;gap:16px;align-items:center}
     .icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#fff}
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -457,6 +463,14 @@
   <div class="glass modal-card">
     <div class="modal-head"><h2>Adaugă ofertă</h2><button class="icon-btn" onclick="closeModal('offerModal')">✕</button></div>
     <form id="offerForm" class="form-grid">
+
+      <div class="field full" id="offerStoreField" style="display:none;">
+  <label>Magazin</label>
+  <select name="locationId" id="offerLocationId">
+    <option value="">Selectează magazinul</option>
+  </select>
+</div>
+      
       <div class="field full"><label>Denumire produs</label><input name="name" required placeholder="Ex: Ceafă de porc"></div>
       <div class="field"><label>Preț vechi / kg</label><input name="oldPrice" type="number" step="0.01" required></div>
       <div class="field"><label>Preț ofertă / kg</label><input name="newPrice" type="number" step="0.01" required></div>
@@ -544,6 +558,8 @@
         </select>
       </div>
 
+     
+
       <div class="field full">
         <label>Adresă</label>
         <input
@@ -604,6 +620,17 @@
           placeholder="Minimum 6 caractere">
       </div>
 
+       <div class="field">
+    <label>Rol</label>
+    <select
+        id="subadminRole"
+        name="role"
+        required>
+        <option value="subadmin">Subadministrator</option>
+        <option value="seller">Vânzător</option>
+    </select>
+</div> 
+
       <div class="field">
         <label>Acces</label>
         <select
@@ -620,6 +647,74 @@
           <option value="inactive">Inactiv</option>
         </select>
       </div>
+
+ <div class="field full">
+    <label>Permisiuni</label>
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+        margin-top:6px;
+    ">
+
+        <label class="check">
+            <input type="checkbox" name="perm_dashboard" checked>
+            Panou general
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_offers_view">
+            Vezi ofertele
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_offers_create">
+            Creează oferte
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_offers_edit">
+            Modifică oferte
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_offers_delete">
+            Șterge / oprește oferte
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_reservations_view">
+            Vezi rezervările
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_reservations_complete">
+            Marchează rezervarea „Predat”
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_clients_view">
+            Vezi clienții
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_sms">
+            SMS
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_stores_manage">
+            Administrare magazine
+        </label>
+
+        <label class="check">
+            <input type="checkbox" name="perm_users_manage">
+            Administrare utilizatori
+        </label>
+
+    </div>
+</div>
 
       <div class="field full">
         <button
@@ -798,9 +893,12 @@ function updateReservationBadge() {
         }
 
         // Subadministratorul vede doar rezervările locației lui.
-        if (window.currentAdmin?.role === "subadmin") {
-            return r.locationId === window.currentAdmin.locationId;
-        }
+        if (
+    window.currentAdmin?.role === "subadmin" ||
+    window.currentAdmin?.role === "seller"
+) {
+    return r.locationId === window.currentAdmin.locationId;
+}
 
         return false;
     }).length;
@@ -887,33 +985,74 @@ function renderOffers(){
   }).join(''):`<div class="glass empty">Momentan nu există oferte active.</div>`;
 }
 function renderAdminOffers(){
-  $('#adminOffers').innerHTML=offers.length?offers.map(o=>`<div class="glass card">
-    <h3>${o.name}</h3><p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
-    
-    <div class="toolbar">
 
-    <button class="btn btn-primary"
-        onclick="editOffer('${o.id}')">
-        Modifică
-    </button>
+  const isMainAdmin =
+      window.currentAdmin?.role === "administrator";
 
-    <button class="btn btn-secondary"
-        onclick="toggleOffer('${o.id}')">
-        ${o.active ? 'Oprește' : 'Activează'}
-    </button>
+  const canEdit =
+      isMainAdmin ||
+      window.currentAdmin?.permissions?.offersEdit === true;
 
-    <button class="btn btn-danger"
-        onclick="deleteOffer('${o.id}')">
-        Șterge
-    </button>
+  const canDelete =
+      isMainAdmin ||
+      window.currentAdmin?.permissions?.offersDelete === true;
 
-</div>
+  $('#adminOffers').innerHTML = offers.length
+    ? offers.map(o => `<div class="glass card">
 
-  </div>`).join(''):'<div class="glass empty">Nu există oferte.</div>';
+        <h3>${o.name}</h3>
+        <p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
+
+        <div class="toolbar">
+
+          ${canEdit ? `
+            <button class="btn btn-primary"
+                onclick="editOffer('${o.id}')">
+                Modifică
+            </button>
+          ` : ''}
+
+          ${canDelete ? `
+            <button class="btn btn-secondary"
+                onclick="toggleOffer('${o.id}')">
+                ${o.active ? 'Oprește' : 'Activează'}
+            </button>
+
+            <button class="btn btn-danger"
+                onclick="deleteOffer('${o.id}')">
+                Șterge
+            </button>
+          ` : ''}
+
+        </div>
+
+      </div>`).join('')
+    : '<div class="glass empty">Nu există oferte.</div>';
 }
+
 function renderReservations(){
   const q=($('#reservationSearch')?.value||'').toLowerCase();
-  const rows=reservations.filter(r=>[r.name,r.phone,r.product].join(' ').toLowerCase().includes(q));
+
+  const rows=reservations.filter(r => {
+    const matchesSearch = [r.name, r.phone, r.product]
+      .join(' ')
+      .toLowerCase()
+      .includes(q);
+
+    if (!matchesSearch) return false;
+
+    const admin = window.currentAdmin;
+
+    if (
+      (admin?.role === "subadmin" || admin?.role === "seller") &&
+      admin.accessType === "store"
+    ) {
+      return r.locationId === admin.locationId;
+    }
+
+    return true;
+  });
+
   $('#reservationTable').innerHTML=rows.length?rows.slice().reverse().map(r=>`<tr>
     <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td><td>${r.quantity} kg</td><td>${fmtDate(r.expiresAt)}</td>
     <td><span class="status ${r.status}">${r.status==='pending'?'În așteptare':r.status==='completed'?'Ridicată':'Expirată'}</span></td>
@@ -932,7 +1071,10 @@ function renderClients() {
 
     // Subadminul vede doar clienții care au rezervări
     // în zona la care el are acces
-    if (window.currentAdmin?.role === "subadmin") {
+    if (
+    window.currentAdmin?.role === "subadmin" ||
+    window.currentAdmin?.role === "seller"
+) {
 
         const visiblePhones = new Set(
             reservations.map(r => r.phone)
@@ -977,7 +1119,6 @@ function renderClients() {
 function renderStores() {
 
     const table = $("#storesTable");
-
     if (!table) return;
 
     if (!stores.length) {
@@ -991,36 +1132,202 @@ function renderStores() {
 
     table.innerHTML = stores.map(store => {
 
-        const storeSubadmins = admins.filter(admin =>
-            admin.role === "subadmin" &&
+        // Toți utilizatorii asociați magazinului:
+        // subadministratori + vânzători
+        const storeUsers = admins.filter(admin =>
+            (admin.role === "subadmin" || admin.role === "seller") &&
             admin.accessType === "store" &&
             admin.locationId === store.id
         );
 
-        const subadminText = storeSubadmins.length
-            ? storeSubadmins.map(admin => admin.name || admin.email).join(", ")
+        const usersText = storeUsers.length
+            ? storeUsers.map(admin => {
+
+                const roleText =
+                    admin.role === "seller"
+                        ? "Vânzător"
+                        : "Subadministrator";
+
+                const statusText =
+                    admin.active === false
+                        ? "Inactiv"
+                        : "Activ";
+
+               return `
+    <div style="
+        margin-bottom:10px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+    ">
+        <div>
+            <strong>${admin.name || admin.email}</strong>
+            <br>
+            <span style="font-size:12px;color:var(--muted);">
+                ${roleText} • ${statusText}
+            </span>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            style="padding:7px 10px;font-size:12px;"
+            onclick="editSubadmin('${admin.uid}')">
+            Modifică
+        </button>
+    </div>
+`;
+
+            }).join("")
             : "Neasociat";
 
         return `
             <tr>
+
                 <td>${store.name}</td>
 
                 <td>${store.city}</td>
 
-                <td>${subadminText}</td>
+                <td>${usersText}</td>
 
                 <td>
-                    <span class="status ${store.status === "active" ? "completed" : "expired"}">
-                        ${store.status === "active" ? "Activ" : "Inactiv"}
+                    <span class="status ${
+                        store.status === "active"
+                            ? "completed"
+                            : "expired"
+                    }">
+                        ${
+                            store.status === "active"
+                                ? "Activ"
+                                : "Inactiv"
+                        }
                     </span>
                 </td>
 
-                <td>—</td>
+                <td>
+                    <button
+                        class="btn btn-secondary"
+                        onclick="editStore('${store.id}')">
+                        Modifică
+                    </button>
+                </td>
+
             </tr>
         `;
 
     }).join("");
 }
+
+function editSubadmin(uid) {
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea utilizatorilor.");
+    }
+
+    const admin = admins.find(a => a.uid === uid);
+
+    if (!admin) {
+        return toast("Utilizatorul nu a fost găsit.");
+    }
+
+    const form = $("#subadminForm");
+    const accessSelect = $("#subadminAccess");
+
+    // Construim din nou lista magazinelor
+    accessSelect.innerHTML = `
+        <option value="main">Site principal</option>
+        ${stores
+            .filter(store => store.status === "active")
+            .map(store => `
+                <option value="${store.id}">
+                    ${store.name} — ${store.city}
+                </option>
+            `)
+            .join("")}
+    `;
+
+    // Date utilizator
+    form.name.value = admin.name || "";
+    form.email.value = admin.email || "";
+    form.role.value = admin.role || "subadmin";
+
+    accessSelect.value =
+        admin.accessType === "main"
+            ? "main"
+            : admin.locationId;
+
+    form.status.value =
+        admin.active === false
+            ? "inactive"
+            : "active";
+
+    // La editare NU schimbăm parola momentan
+    form.password.value = "";
+    form.password.required = false;
+
+    // Permisiuni existente
+    const p = admin.permissions || {};
+
+    form.perm_dashboard.checked = !!p.dashboard;
+
+    form.perm_offers_view.checked = !!p.offersView;
+    form.perm_offers_create.checked = !!p.offersCreate;
+    form.perm_offers_edit.checked = !!p.offersEdit;
+    form.perm_offers_delete.checked = !!p.offersDelete;
+
+    form.perm_reservations_view.checked = !!p.reservationsView;
+    form.perm_reservations_complete.checked = !!p.reservationsComplete;
+
+    form.perm_clients_view.checked = !!p.clientsView;
+    form.perm_sms.checked = !!p.sms;
+    form.perm_stores_manage.checked = !!p.storesManage;
+    form.perm_users_manage.checked = !!p.usersManage;
+
+    // Marcăm formularul ca EDITARE
+    form.dataset.editUid = admin.uid;
+
+    $("#subadminModal h2").textContent = "Modifică utilizator";
+
+    form.querySelector("button[type='submit']").textContent =
+        "Salvează modificările";
+
+    $("#subadminModal").classList.add("open");
+}
+
+function editStore(id) {
+
+    if (!requireAdmin()) return;
+
+    if (window.currentAdmin?.role !== "administrator") {
+        return toast("Nu ai acces la administrarea magazinelor.");
+    }
+
+    const store = stores.find(s => s.id === id);
+
+    if (!store) {
+        return toast("Magazinul nu a fost găsit.");
+    }
+
+    const f = $("#storeForm");
+
+    f.name.value = store.name || "";
+    f.city.value = store.city || "";
+    f.address.value = store.address || "";
+    f.status.value = store.status || "active";
+
+    f.dataset.editId = store.id;
+
+    $("#storeModal h2").textContent = "Modifică magazin";
+
+    f.querySelector("button[type='submit']").textContent =
+        "Salvează modificările";
+
+    $("#storeModal").classList.add("open");
+}
+
 
 function renderKpis(){
   $('#kpiOffers').textContent=activeOffers().length;
@@ -1029,8 +1336,12 @@ function renderKpis(){
 
   const visibleClientPhones = new Set(reservations.map(r => r.phone));
 
+
 $('#kpiClients').textContent =
-  window.currentAdmin?.role === "subadmin"
+  (
+    window.currentAdmin?.role === "subadmin" ||
+    window.currentAdmin?.role === "seller"
+  )
     ? clients.filter(c => visibleClientPhones.has(c.phone)).length
     : clients.length;
 
@@ -1062,21 +1373,66 @@ function openOfferModal() {
 
     if (!requireAdmin()) return;
 
-editMode = false;
-editingOfferId = null;
+    // Administratorul principal are acces complet.
+// Subadmin / seller trebuie să aibă explicit permisiunea offersCreate.
+if (
+    window.currentAdmin?.role !== "administrator" &&
+    window.currentAdmin?.permissions?.offersCreate !== true
+) {
+    alert("Nu ai permisiunea să creezi oferte.");
+    return;
+}
 
-const f = $("#offerForm");
-f.reset();
+    editMode = false;
+    editingOfferId = null;
 
-$("#offerModal h2").textContent = "Adaugă ofertă";
-f.querySelector("button[type='submit']").textContent = "Publică oferta";
+    const f = $("#offerForm");
+    f.reset();
 
+    const storeField = $("#offerStoreField");
+    const storeSelect = $("#offerLocationId");
+
+    // Administratorul principal alege magazinul
+    if (window.currentAdmin?.role === "administrator") {
+
+        storeField.style.display = "";
+
+        storeSelect.innerHTML =
+            `<option value="">Selectează magazinul</option>` +
+            stores
+                .filter(store => store.active !== false)
+                .map(store =>
+                    `<option value="${store.id}">${store.name}</option>`
+                )
+                .join("");
+
+        storeSelect.required = true;
+
+    } else {
+
+        // Subadmin / seller folosesc automat magazinul atribuit contului
+        storeField.style.display = "none";
+        storeSelect.required = false;
+        storeSelect.value = "";
+    }
+
+    $("#offerModal h2").textContent = "Adaugă ofertă";
+    f.querySelector("button[type='submit']").textContent = "Publică oferta";
 
     $("#offerModal").classList.add("open");
-
 }
 
 function editOffer(id) {
+
+      // Administratorul principal are acces complet.
+    // Subadministratorul / seller-ul trebuie să aibă explicit permisiunea offersEdit.
+    if (
+        window.currentAdmin?.role !== "administrator" &&
+        window.currentAdmin?.permissions?.offersEdit !== true
+    ) {
+        alert("Nu ai permisiunea să modifici oferte.");
+        return;
+    }
 
     const offer = offers.find(o => o.id === id);
 
@@ -1086,6 +1442,35 @@ function editOffer(id) {
     editingOfferId = offer.id;
 
     const f = $("#offerForm");
+
+    const storeField = $("#offerStoreField");
+    const storeSelect = $("#offerLocationId");
+
+    // Administratorul principal poate vedea și selecta magazinul
+    if (window.currentAdmin?.role === "administrator") {
+
+        storeField.style.display = "";
+
+        storeSelect.innerHTML =
+            `<option value="">Selectează magazinul</option>` +
+            stores
+                .filter(store => store.active !== false)
+                .map(store =>
+                    `<option value="${store.id}">${store.name}</option>`
+                )
+                .join("");
+
+        // Selectăm magazinul căruia îi aparține deja oferta
+        storeSelect.value = offer.locationId || "";
+        storeSelect.required = true;
+
+    } else {
+
+        // Seller / subadmin rămâne pe magazinul atribuit lui
+        storeField.style.display = "none";
+        storeSelect.required = false;
+        storeSelect.value = "";
+    }
 
     f.name.value = offer.name;
     f.oldPrice.value = offer.oldPrice;
@@ -1106,7 +1491,6 @@ function editOffer(id) {
 
     $("#offerModal").classList.add("open");
 }
-
 
 function openStoreModal() {
 
@@ -1132,6 +1516,12 @@ function openSubadminModal() {
     const accessSelect = $("#subadminAccess");
 
     form.reset();
+    delete form.dataset.editUid;
+
+$("#subadminModal h2").textContent = "Adaugă subadministrator";
+
+form.querySelector('button[type="submit"]').textContent =
+    "Creează subadministrator";
 
     accessSelect.innerHTML = `
         <option value="main">Site principal</option>
@@ -1235,6 +1625,33 @@ function requireAdmin() {
 
 }
 
+function applyAdminPermissions() {
+
+    const admin = window.currentAdmin;
+    if (!admin) return;
+
+    const isSupreme = admin.role === "administrator";
+    const p = admin.permissions || {};
+
+    const setVisible = (selector, visible) => {
+        const el = document.querySelector(selector);
+        if (el) el.style.display = visible ? "" : "none";
+    };
+
+    // MENIU LATERAL
+    setVisible('[data-admin="dashboard"]', isSupreme || p.dashboard);
+    setVisible('[data-admin="offersAdmin"]', isSupreme || p.offersView);
+    setVisible('[data-admin="reservationsAdmin"]', isSupreme || p.reservationsView);
+    setVisible('[data-admin="clientsAdmin"]', isSupreme || p.clientsView);
+    setVisible('[data-admin="smsAdmin"]', isSupreme || p.sms);
+    setVisible('[data-admin="storesAdmin"]', isSupreme || p.storesManage);
+
+    // BUTOANE DE CREARE OFERTĂ
+    document.querySelectorAll('[onclick="openOfferModal()"]').forEach(btn => {
+        btn.style.display = (isSupreme || p.offersCreate) ? "" : "none";
+    });
+}
+
 
 
 function closeModal(id){$('#'+id).classList.remove('open')}
@@ -1252,27 +1669,47 @@ $("#storeForm").onsubmit = async (e) => {
 
     const d = Object.fromEntries(new FormData(e.target));
 
-    const store = {
-        id: uid(),
-        name: d.name,
-        city: d.city,
-        address: d.address,
-        status: d.status,
-        createdAt: new Date().toISOString()
-    };
+   const editId = e.target.dataset.editId;
 
-    try {
+const store = {
+    name: d.name,
+    city: d.city,
+    address: d.address,
+    status: d.status
+};
 
-        await window.saveStore(store);
+   try {
 
-       await window.refreshStores();
+    if (editId) {
 
-        e.target.reset();
-        closeModal("storeModal");
+        await window.updateStore(editId, store);
+
+        toast("Magazinul a fost modificat.");
+
+    } else {
+
+        const newStore = {
+            id: uid(),
+            ...store,
+            createdAt: new Date().toISOString()
+        };
+
+        await window.saveStore(newStore);
 
         toast("Magazinul a fost adăugat.");
+    }
 
-    } catch (err) {
+    await window.refreshStores();
+
+    e.target.reset();
+    delete e.target.dataset.editId;
+
+    $("#storeModal h2").textContent = "Adaugă magazin";
+    e.target.querySelector("button[type='submit']").textContent = "Salvează magazin";
+
+    closeModal("storeModal");
+
+} catch (err) {
 
         console.error("Eroare salvare magazin:", err);
         toast("Magazinul nu a putut fi salvat.");
@@ -1296,17 +1733,54 @@ $("#subadminForm").onsubmit = async (e) => {
 
     const active = d.status === "active";
 
+    const permissions = {
+    dashboard: !!d.perm_dashboard,
+    offersView: !!d.perm_offers_view,
+    offersCreate: !!d.perm_offers_create,
+    offersEdit: !!d.perm_offers_edit,
+    offersDelete: !!d.perm_offers_delete,
+    reservationsView: !!d.perm_reservations_view,
+    reservationsComplete: !!d.perm_reservations_complete,
+    clientsView: !!d.perm_clients_view,
+    sms: !!d.perm_sms,
+    storesManage: !!d.perm_stores_manage,
+    usersManage: !!d.perm_users_manage
+};
+
     try {
 
-        const subadmin = await window.createSubadmin({
-            name: d.name.trim(),
-            email: d.email.trim(),
-            password: d.password,
-            access: d.access,
-            active
-        });
+        const editUid = e.target.dataset.editUid;
 
-        console.log("Subadministrator creat:", subadmin);
+if (editUid) {
+
+    // EDITARE utilizator existent
+    const updatedAdmin = await window.updateAdmin(editUid, {
+        name: d.name.trim(),
+        role: d.role,
+        access: d.access,
+        permissions,
+        active
+    });
+
+    console.log("Utilizator modificat:", updatedAdmin);
+
+    delete e.target.dataset.editUid;
+
+} else {
+
+    // CREARE utilizator nou
+    const subadmin = await window.createSubadmin({
+        name: d.name.trim(),
+        email: d.email.trim(),
+        password: d.password,
+        role: d.role,
+        access: d.access,
+        permissions,
+        active
+    });
+
+    console.log("Subadministrator creat:", subadmin);
+}
 
         await window.refreshAdmins();
 
@@ -1418,6 +1892,28 @@ await window.refreshReservations();
 $('#offerForm').onsubmit = async e => {
   e.preventDefault();
 
+if (!requireAdmin()) return;
+
+// CREARE
+if (
+    !editMode &&
+    window.currentAdmin?.role !== "administrator" &&
+    window.currentAdmin?.permissions?.offersCreate !== true
+) {
+    alert("Nu ai permisiunea să creezi oferte.");
+    return;
+}
+
+// EDITARE
+if (
+    editMode &&
+    window.currentAdmin?.role !== "administrator" &&
+    window.currentAdmin?.permissions?.offersEdit !== true
+) {
+    alert("Nu ai permisiunea să modifici oferte.");
+    return;
+}
+
   if (!requireAdmin()) return;
 
   const d = Object.fromEntries(new FormData(e.target));
@@ -1434,7 +1930,10 @@ const offer = {
     defaultDuration: Number(d.defaultDuration),
     image: d.image,
     description: d.description,
-    locationId: window.currentAdmin?.locationId || null
+    locationId:
+    window.currentAdmin?.role === "administrator"
+        ? d.locationId
+        : window.currentAdmin?.locationId || null
 };
 
 if (!editMode) {
@@ -1567,6 +2066,17 @@ async function expireReservations(showToast = true) {
 async function toggleOffer(id) {
 
     if (!requireAdmin()) return;
+
+    // Administratorul principal are acces complet.
+    // Subadministratorul / seller-ul are nevoie de offersDelete.
+    if (
+        window.currentAdmin?.role !== "administrator" &&
+        window.currentAdmin?.permissions?.offersDelete !== true
+    ) {
+        alert("Nu ai permisiunea să oprești sau să activezi oferte.");
+        return;
+    }
+
     const o = offers.find(x => x.id === id);
 
     if (!o) return;
@@ -1574,24 +2084,35 @@ async function toggleOffer(id) {
     o.active = !o.active;
 
     await window.updateOffer(id, {
-    active: o.active
-});
+        active: o.active
+    });
 
     await window.refreshOffers();
 
     toast(o.active ? "Oferta a fost activată." : "Oferta a fost oprită.");
 }
+
 async function deleteOffer(id) {
 
-  if (!requireAdmin()) return;
+    if (!requireAdmin()) return;
 
-  if (!confirm("Ștergi această ofertă?")) return;
+    // Administratorul principal are acces complet.
+    // Subadministratorul / seller-ul are nevoie de offersDelete.
+    if (
+        window.currentAdmin?.role !== "administrator" &&
+        window.currentAdmin?.permissions?.offersDelete !== true
+    ) {
+        alert("Nu ai permisiunea să ștergi oferte.");
+        return;
+    }
 
-  await window.deleteOfferFromDb(id);
+    if (!confirm("Ștergi această ofertă?")) return;
 
-  await window.refreshOffers();
+    await window.deleteOfferFromDb(id);
 
-  toast("Oferta a fost ștearsă.");
+    await window.refreshOffers();
+
+    toast("Oferta a fost ștearsă.");
 }
 
 function simulateSms(){
@@ -1646,7 +2167,8 @@ saveStore,
 updateStore,
 deleteStoreFromDb,
 loadAdmins,
-createSubadmin
+createSubadmin,
+updateAdmin
 
 } from "./firebase.js";
 
@@ -1694,6 +2216,21 @@ onAuthStateChanged(auth, async (user) => {
 reservationsInitialized = false;
 window.knownPendingReservationIds = new Set();
 
+await refreshReservations();
+
+window.knownPendingReservationIds = new Set(
+    reservations
+        .filter(r => r.status === "pending")
+        .map(r => r.id)
+);
+
+reservationsInitialized = true;
+
+console.log(
+    "NOTIFICĂRI PREGĂTITE DUPĂ LOGIN:",
+    [...window.knownPendingReservationIds]
+);
+
 const storesAdminBtn = document.getElementById("storesAdminBtn");
 
 
@@ -1706,6 +2243,8 @@ if (storesAdminBtn) {
 }
 
        console.log("Administrator autentificat:", window.currentAdmin);
+
+applyAdminPermissions();
 
 await refreshOffers();
 await refreshClients();
@@ -1755,6 +2294,7 @@ window.saveStore = saveStore;
 window.updateStore = updateStore;
 window.deleteStoreFromDb = deleteStoreFromDb;
 window.createSubadmin = createSubadmin;
+window.updateAdmin = updateAdmin;
 
 
 
@@ -1765,7 +2305,10 @@ async function refreshOffers() {
 
     const allOffers = await loadOffers();
 
-    if (window.currentAdmin?.role === "subadmin") {
+  if (
+    window.currentAdmin?.role === "subadmin" ||
+    window.currentAdmin?.role === "seller"
+) {
 
         // Subadmin pentru un magazin
         if (window.currentAdmin.accessType === "store") {
@@ -1835,7 +2378,10 @@ async function refreshReservations() {
 
     const allReservations = await loadReservations();
 
-    if (window.currentAdmin?.role === "subadmin") {
+    if (
+    window.currentAdmin?.role === "subadmin" ||
+    window.currentAdmin?.role === "seller"
+) {
 
         // Subadmin pentru un magazin
         if (window.currentAdmin.accessType === "store") {
@@ -1892,14 +2438,20 @@ function listenReservations() {
             };
 
             // SUBADMIN MAGAZIN
-            if (admin.role === "subadmin" && admin.accessType === "store") {
+            if (
+              (admin.role === "subadmin" || admin.role === "seller") &&
+              admin.accessType === "store"
+                ) {
                 if (reservation.locationId !== admin.locationId) {
                     return;
                 }
             }
 
             // SUBADMIN SITE PRINCIPAL
-            if (admin.role === "subadmin" && admin.accessType === "main") {
+            if (
+                (admin.role === "subadmin" || admin.role === "seller") &&
+                  admin.accessType === "main"
+                      ) {
                 if (reservation.locationId) {
                     return;
                 }
@@ -1967,7 +2519,7 @@ function listenReservations() {
 
 window.refreshReservations = refreshReservations;
 
-await refreshOffers();
+
 await refreshClients();
 await refreshStores();
 await refreshAdmins();
