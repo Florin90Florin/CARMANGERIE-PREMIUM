@@ -785,18 +785,33 @@ function showReservationNotification(reservation) {
 function updateReservationBadge() {
 
     const badge = $("#reservationBadge");
+    if (!badge) return;
 
-    if (unreadReservations > 0) {
+    // Numărăm rezervările active pe care administratorul curent
+    // are voie să le vadă.
+    const pendingCount = reservations.filter(r => {
+        if (r.status !== "pending") return false;
 
+        // Administratorul suprem vede toate rezervările.
+        if (window.currentAdmin?.role === "administrator") {
+            return true;
+        }
+
+        // Subadministratorul vede doar rezervările locației lui.
+        if (window.currentAdmin?.role === "subadmin") {
+            return r.locationId === window.currentAdmin.locationId;
+        }
+
+        return false;
+    }).length;
+
+    if (pendingCount > 0) {
         badge.style.display = "inline-block";
-        badge.textContent = unreadReservations;
-
+        badge.textContent = pendingCount;
     } else {
-
         badge.style.display = "none";
-
+        badge.textContent = "0";
     }
-
 }
 
 function toast(msg){
@@ -844,12 +859,6 @@ $$('.side-btn').forEach(b => b.onclick = () => {
     $$('.admin-section').forEach(v => v.classList.remove('active'));
     $('#' + b.dataset.admin).classList.add('active');
 
-    if (b.dataset.admin === "reservationsAdmin") {
-
-        unreadReservations = 0;
-        updateReservationBadge();
-
-    }
 
 });
 
@@ -1181,6 +1190,14 @@ async function logoutAdmin() {
     try {
 
         await window.signOut(window.auth);
+
+        lastReservationCount = 0;
+reservationsInitialized = false;
+unreadReservations = 0;
+
+reservations.length = 0;
+
+updateReservationBadge();
 
         const storesAdminBtn = document.getElementById("storesAdminBtn");
 
@@ -1673,6 +1690,10 @@ onAuthStateChanged(auth, async (user) => {
             ...adminData
         };
 
+// Resetăm starea notificărilor pentru administratorul autentificat
+reservationsInitialized = false;
+window.knownPendingReservationIds = new Set();
+
 const storesAdminBtn = document.getElementById("storesAdminBtn");
 
 
@@ -1689,6 +1710,8 @@ if (storesAdminBtn) {
 await refreshOffers();
 await refreshClients();
 await refreshReservations();
+
+updateReservationBadge();
 
 
     } else {
@@ -1844,11 +1867,18 @@ async function refreshReservations() {
     renderAll();
 }
 
+
 function listenReservations() {
 
     const q = collection(db, "reservations");
 
     onSnapshot(q, (snapshot) => {
+
+        // Dacă nu este autentificat niciun administrator,
+        // nu inițializăm sistemul de notificări.
+        if (!window.isAdminLogged || !window.currentAdmin) {
+            return;
+        }
 
         reservations.length = 0;
 
@@ -1861,71 +1891,78 @@ function listenReservations() {
                 ...doc.data()
             };
 
-            // Filtrare rezervări în funcție de accesul subadminului
-if (admin?.role === "subadmin") {
+            // SUBADMIN MAGAZIN
+            if (admin.role === "subadmin" && admin.accessType === "store") {
+                if (reservation.locationId !== admin.locationId) {
+                    return;
+                }
+            }
 
-    // Subadmin magazin
-    if (admin.accessType === "store") {
-        if (reservation.locationId !== admin.locationId) {
-            return;
-        }
-    }
-
-    // Subadmin site principal
-    if (admin.accessType === "main") {
-        if (reservation.locationId) {
-            return;
-        }
-    }
-}
+            // SUBADMIN SITE PRINCIPAL
+            if (admin.role === "subadmin" && admin.accessType === "main") {
+                if (reservation.locationId) {
+                    return;
+                }
+            }
 
             reservations.push(reservation);
-
         });
 
-        const currentCount = reservations.filter(
+        const pendingReservations = reservations.filter(
             r => r.status === "pending"
-        ).length;
+        );
 
+        // Prima citire DUPĂ autentificare:
+        // rezervările deja existente devin cunoscute,
+        // fără popup.
         if (!reservationsInitialized) {
 
-    // Prima încărcare: memorăm câte rezervări există deja,
-    // fără să le considerăm rezervări noi.
-    lastReservationCount = currentCount;
-    reservationsInitialized = true;
+            window.knownPendingReservationIds = new Set(
+                pendingReservations.map(r => r.id)
+            );
 
-} else {
+            reservationsInitialized = true;
 
-    if (
-        window.isAdminLogged &&
-        currentCount > lastReservationCount
-    ) {
+            console.log(
+                "NOTIFICĂRI INIȚIALIZATE:",
+                [...window.knownPendingReservationIds]
+            );
 
-        unreadReservations += currentCount - lastReservationCount;
+        } else {
 
-        const newestReservation = reservations
-            .filter(r => r.status === "pending")
-            .sort((a, b) =>
-                new Date(b.createdAt) - new Date(a.createdAt)
-            )[0];
+            const newReservations = pendingReservations.filter(
+                r => !window.knownPendingReservationIds.has(r.id)
+            );
 
-        playNotificationSound();
+            console.log("TEST NOTIFICARE:", {
+                adminLogged: window.isAdminLogged,
+                pending: pendingReservations.map(r => r.id),
+                known: [...window.knownPendingReservationIds],
+                noi: newReservations.map(r => r.id)
+            });
 
-        if (newestReservation) {
-            showReservationNotification(newestReservation);
+            if (newReservations.length > 0) {
+
+                const newestReservation = newReservations
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            new Date(b.createdAt) - new Date(a.createdAt)
+                    )[0];
+
+                playNotificationSound();
+
+                showReservationNotification(newestReservation);
+            }
+
+            window.knownPendingReservationIds = new Set(
+                pendingReservations.map(r => r.id)
+            );
         }
 
-    }
-
-    lastReservationCount = currentCount;
-}
-
         updateReservationBadge();
-
         renderAll();
-
     });
-
 }
 
 window.refreshReservations = refreshReservations;
