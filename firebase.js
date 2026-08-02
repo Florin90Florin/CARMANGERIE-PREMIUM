@@ -198,6 +198,29 @@ export async function deleteStoreFromDb(id) {
   await deleteDoc(doc(db, "stores", id));
 }
 
+
+// =========================
+// ADMINS
+// =========================
+
+export async function loadAdmins() {
+
+  const q = query(collection(db, "admins"));
+  const snapshot = await getDocs(q);
+
+  const admins = [];
+
+  snapshot.forEach((doc) => {
+    admins.push({
+      ...doc.data(),
+      id: doc.id
+    });
+  });
+
+  return admins;
+}
+
+
 // =========================
 // SUBADMIN CREATION
 // =========================

@@ -676,6 +676,9 @@ let offers = [];
 let clients = [];
 let reservations = [];
 let stores = [];
+let admins = [];
+
+
 
 let editMode = false;
 let editingOfferId = null;
@@ -914,12 +917,52 @@ function clientStats(c){
   const total=done+expired; const score=total?Math.round(done/total*100):100;
   return {done,expired,score};
 }
-function renderClients(){
-  $('#clientTable').innerHTML=clients.length?clients.map(c=>{
-    const s=clientStats(c), cls=s.score>=85?'good':s.score>=60?'medium':'bad';
-    const suspension=c.suspendedUntil&&new Date(c.suspendedUntil)>new Date()?fmtDate(c.suspendedUntil):'Nu';
-    return `<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.city||'—'}</td><td>${s.done}</td><td>${s.expired}</td><td class="trust ${cls}">${s.score}%</td><td>${suspension}</td></tr>`;
-  }).join(''):'<tr><td colspan="7">Nu există clienți.</td></tr>';
+function renderClients() {
+
+    let visibleClients = clients;
+
+    // Subadminul vede doar clienții care au rezervări
+    // în zona la care el are acces
+    if (window.currentAdmin?.role === "subadmin") {
+
+        const visiblePhones = new Set(
+            reservations.map(r => r.phone)
+        );
+
+        visibleClients = clients.filter(c =>
+            visiblePhones.has(c.phone)
+        );
+    }
+
+    $('#clientTable').innerHTML = visibleClients.length
+        ? visibleClients.map(c => {
+
+            const s = clientStats(c);
+            const cls =
+                s.score >= 85 ? 'good' :
+                s.score >= 60 ? 'medium' :
+                'bad';
+
+            const suspension =
+                c.suspendedUntil &&
+                new Date(c.suspendedUntil) > new Date()
+                    ? fmtDate(c.suspendedUntil)
+                    : 'Nu';
+
+            return `
+                <tr>
+                    <td>${c.name}</td>
+                    <td>${c.phone}</td>
+                    <td>${c.city || '—'}</td>
+                    <td>${s.done}</td>
+                    <td>${s.expired}</td>
+                    <td class="trust ${cls}">${s.score}%</td>
+                    <td>${suspension}</td>
+                </tr>
+            `;
+
+        }).join('')
+        : '<tr><td colspan="7">Nu există clienți.</td></tr>';
 }
 
 function renderStores() {
@@ -937,27 +980,55 @@ function renderStores() {
         return;
     }
 
-    table.innerHTML = stores.map(store => `
-        <tr>
-            <td>${store.name}</td>
-            <td>${store.city}</td>
-            <td>Neasociat</td>
-            <td>
-                <span class="status ${store.status === "active" ? "completed" : "expired"}">
-                    ${store.status === "active" ? "Activ" : "Inactiv"}
-                </span>
-            </td>
-            <td>—</td>
-        </tr>
-    `).join("");
+    table.innerHTML = stores.map(store => {
+
+        const storeSubadmins = admins.filter(admin =>
+            admin.role === "subadmin" &&
+            admin.accessType === "store" &&
+            admin.locationId === store.id
+        );
+
+        const subadminText = storeSubadmins.length
+            ? storeSubadmins.map(admin => admin.name || admin.email).join(", ")
+            : "Neasociat";
+
+        return `
+            <tr>
+                <td>${store.name}</td>
+
+                <td>${store.city}</td>
+
+                <td>${subadminText}</td>
+
+                <td>
+                    <span class="status ${store.status === "active" ? "completed" : "expired"}">
+                        ${store.status === "active" ? "Activ" : "Inactiv"}
+                    </span>
+                </td>
+
+                <td>—</td>
+            </tr>
+        `;
+
+    }).join("");
 }
 
 function renderKpis(){
   $('#kpiOffers').textContent=activeOffers().length;
+
   $('#kpiReservations').textContent=reservations.filter(r=>r.status==='pending').length;
-  $('#kpiClients').textContent=clients.length;
+
+  const visibleClientPhones = new Set(reservations.map(r => r.phone));
+
+$('#kpiClients').textContent =
+  window.currentAdmin?.role === "subadmin"
+    ? clients.filter(c => visibleClientPhones.has(c.phone)).length
+    : clients.length;
+
   $('#kpiKg').textContent=reservations.filter(r=>r.status==='pending').reduce((s,r)=>s+r.quantity,0).toFixed(1);
 }
+
+
 function renderSms(){
   $('#smsLog').innerHTML=smsLog.length?'<h3>Istoric</h3>'+smsLog.slice().reverse().map(x=>`<div class="glass card" style="margin-top:10px"><strong>${fmtDate(x.date)}</strong><p>${x.text}</p><small>${x.count} destinatari</small></div>`).join(''):'';
 }
@@ -1177,7 +1248,7 @@ $("#storeForm").onsubmit = async (e) => {
 
         await window.saveStore(store);
 
-        stores.push(store);
+       await window.refreshStores();
 
         e.target.reset();
         closeModal("storeModal");
@@ -1219,6 +1290,8 @@ $("#subadminForm").onsubmit = async (e) => {
         });
 
         console.log("Subadministrator creat:", subadmin);
+
+        await window.refreshAdmins();
 
         e.target.reset();
         closeModal("subadminModal");
@@ -1555,6 +1628,7 @@ loadStores,
 saveStore,
 updateStore,
 deleteStoreFromDb,
+loadAdmins,
 createSubadmin
 
 } from "./firebase.js";
@@ -1610,7 +1684,12 @@ if (storesAdminBtn) {
     }
 }
 
-        console.log("Administrator autentificat:", window.currentAdmin);
+       console.log("Administrator autentificat:", window.currentAdmin);
+
+await refreshOffers();
+await refreshClients();
+await refreshReservations();
+
 
     } else {
 
@@ -1663,16 +1742,31 @@ async function refreshOffers() {
 
     const allOffers = await loadOffers();
 
-    if (
-        window.currentAdmin?.role === "subadmin" &&
-        window.currentAdmin?.locationId
-    ) {
-        offers.push(
-            ...allOffers.filter(
-                offer => offer.locationId === window.currentAdmin.locationId
-            )
-        );
+    if (window.currentAdmin?.role === "subadmin") {
+
+        // Subadmin pentru un magazin
+        if (window.currentAdmin.accessType === "store") {
+
+            offers.push(
+                ...allOffers.filter(
+                    offer => offer.locationId === window.currentAdmin.locationId
+                )
+            );
+
+        // Subadmin pentru Site principal
+        } else if (window.currentAdmin.accessType === "main") {
+
+            offers.push(
+                ...allOffers.filter(
+                    offer => !offer.locationId
+                )
+            );
+
+        }
+
     } else {
+
+        // Administratorul principal vede toate ofertele
         offers.push(...allOffers);
     }
 
@@ -1699,22 +1793,51 @@ async function refreshStores() {
 window.refreshStores = refreshStores;
 
 
+async function refreshAdmins() {
+
+    admins.length = 0;
+
+    const allAdmins = await loadAdmins();
+
+    admins.push(...allAdmins);
+
+    renderStores();
+}
+
+window.refreshAdmins = refreshAdmins;
+
+
 async function refreshReservations() {
     reservations.length = 0;
 
     const allReservations = await loadReservations();
 
-    if (
-        window.currentAdmin?.role === "subadmin" &&
-        window.currentAdmin?.locationId
-    ) {
-        reservations.push(
-            ...allReservations.filter(
-                reservation =>
-                    reservation.locationId === window.currentAdmin.locationId
-            )
-        );
+    if (window.currentAdmin?.role === "subadmin") {
+
+        // Subadmin pentru un magazin
+        if (window.currentAdmin.accessType === "store") {
+
+            reservations.push(
+                ...allReservations.filter(
+                    reservation =>
+                        reservation.locationId === window.currentAdmin.locationId
+                )
+            );
+
+        // Subadmin pentru Site principal
+        } else if (window.currentAdmin.accessType === "main") {
+
+            reservations.push(
+                ...allReservations.filter(
+                    reservation => !reservation.locationId
+                )
+            );
+
+        }
+
     } else {
+
+        // Administratorul principal vede toate rezervările
         reservations.push(...allReservations);
     }
 
@@ -1738,17 +1861,23 @@ function listenReservations() {
                 ...doc.data()
             };
 
-            // Dacă este subadmin, vede doar rezervările magazinului lui
-            if (admin?.role === "subadmin") {
+            // Filtrare rezervări în funcție de accesul subadminului
+if (admin?.role === "subadmin") {
 
-                if (
-                    !reservation.locationId ||
-                    reservation.locationId !== admin.locationId
-                ) {
-                    return;
-                }
+    // Subadmin magazin
+    if (admin.accessType === "store") {
+        if (reservation.locationId !== admin.locationId) {
+            return;
+        }
+    }
 
-            }
+    // Subadmin site principal
+    if (admin.accessType === "main") {
+        if (reservation.locationId) {
+            return;
+        }
+    }
+}
 
             reservations.push(reservation);
 
@@ -1804,6 +1933,7 @@ window.refreshReservations = refreshReservations;
 await refreshOffers();
 await refreshClients();
 await refreshStores();
+await refreshAdmins();
 
 listenReservations();
 
