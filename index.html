@@ -470,6 +470,26 @@
               <div><h2>Gestionare oferte</h2><p>Adaugă, oprește sau șterge ofertele.</p></div>
               <button class="btn btn-primary" onclick="openOfferModal()">Ofertă nouă</button>
             </div>
+
+            <div
+    id="adminOfferStoreFilterWrap"
+    class="toolbar"
+    style="display:none; align-items:center; margin-bottom:18px;"
+>
+    <label for="adminOfferStoreFilter" style="margin:0;">
+        Magazin:
+    </label>
+
+    <select
+        id="adminOfferStoreFilter"
+        onchange="renderAdminOffers()"
+        style="max-width:320px;"
+    >
+        <option value="all">Toate magazinele</option>
+        <option value="main">Site principal</option>
+    </select>
+</div>
+
             <div id="adminOffers" class="grid grid-2"></div>
           </section>
 
@@ -480,7 +500,7 @@
               <button class="btn btn-secondary" onclick="expireReservations()">Actualizează expirările</button>
             </div>
             <div class="glass card table-wrap"><table>
-              <thead><tr><th>Client</th><th>Telefon</th><th>Produs</th><th>Cantitate</th><th>Expiră</th><th>Status</th><th>Acțiune</th></tr></thead>
+              <thead><tr><th>Client</th><th>Telefon</th><th>Produs</th><th>Cantitate</th><th>Observații</th><th>Expiră</th><th>Status</th><th>Acțiune</th></tr></thead>
               <tbody id="reservationTable"></tbody>
             </table></div>
           </section>
@@ -587,6 +607,14 @@
         <option value="60">1 oră</option><option value="90">1 oră și 30 minute</option><option value="120">2 ore</option>
         <option value="180">3 ore</option><option value="240">4 ore</option>
       </select></div>
+      <div class="field full">
+    <label>Observații <span style="color:var(--muted);">(opțional)</span></label>
+    <textarea
+        name="notes"
+        rows="3"
+        maxlength="300"
+        placeholder="Ex: Dacă se poate, felii mai groase. Ajung după ora 18:00."></textarea>
+</div>
       <div class="field full"><button class="btn btn-primary" type="submit">Confirmă rezervarea</button></div>
     </form>
   </div>
@@ -970,6 +998,18 @@ function showReservationNotification(reservation) {
 
             <div>⚖️ ${reservation.quantity} kg</div>
 
+            ${reservation.notes ? `
+    <div style="
+        margin-top:10px;
+        padding:10px;
+        border-radius:10px;
+        background:rgba(255,255,255,.06);
+    ">
+        📝 <b>Observații:</b><br>
+        ${reservation.notes}
+    </div>
+` : ''}
+
             <div style="
                 margin-top:14px;
                 font-size:13px;
@@ -1119,8 +1159,34 @@ function renderOffers(){
 }
 function renderAdminOffers(){
 
-  const isMainAdmin =
-      window.currentAdmin?.role === "administrator";
+    const filterWrap = $('#adminOfferStoreFilterWrap');
+const filterSelect = $('#adminOfferStoreFilter');
+
+const isMainAdmin =
+    window.currentAdmin?.role === "administrator";
+
+if (filterWrap && filterSelect) {
+
+    filterWrap.style.display = isMainAdmin ? "flex" : "none";
+
+    if (isMainAdmin) {
+
+        const currentValue = filterSelect.value;
+
+        filterSelect.innerHTML = `
+            <option value="all">Toate magazinele</option>
+            <option value="main">Site principal</option>
+            ${stores.map(store => `
+                <option value="${store.id}">${store.name}</option>
+            `).join('')}
+        `;
+
+        if ([...filterSelect.options].some(opt => opt.value === currentValue)) {
+            filterSelect.value = currentValue;
+        }
+    }
+}
+
 
   const canEdit =
       isMainAdmin ||
@@ -1130,8 +1196,22 @@ function renderAdminOffers(){
       isMainAdmin ||
       window.currentAdmin?.permissions?.offersDelete === true;
 
-  $('#adminOffers').innerHTML = offers.length
-    ? offers.map(o => `<div class="glass card">
+let visibleOffers = offers;
+
+if (isMainAdmin && filterSelect) {
+
+    const selectedStore = filterSelect.value;
+
+    if (selectedStore === "main") {
+        visibleOffers = offers.filter(o => !o.locationId);
+    }
+    else if (selectedStore !== "all") {
+        visibleOffers = offers.filter(o => o.locationId === selectedStore);
+    }
+}
+
+  $('#adminOffers').innerHTML = visibleOffers.length
+    ? visibleOffers.map(o => `<div class="glass card">
 
         <h3>${o.name}</h3>
         <p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
@@ -1187,7 +1267,7 @@ function renderReservations(){
   });
 
   $('#reservationTable').innerHTML=rows.length?rows.slice().reverse().map(r=>`<tr>
-    <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td><td>${r.quantity} kg</td><td>${fmtDate(r.expiresAt)}</td>
+    <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td><td>${r.quantity} kg</td><td>${r.notes || '—'}</td><td>${fmtDate(r.expiresAt)}</td>
     <td><span class="status ${r.status}">${r.status==='pending'?'În așteptare':r.status==='completed'?'Ridicată':'Expirată'}</span></td>
     <td>${
   r.status === 'pending' &&
@@ -1199,7 +1279,7 @@ function renderReservations(){
     : '—'
 }</td>
 
-  </tr>`).join(''):'<tr><td colspan="7">Nu există rezervări.</td></tr>';
+  </tr>`).join(''):'<tr><td colspan="8">Nu există rezervări.</td></tr>';
 }
 function clientStats(c){
   const rs=reservations.filter(r=>r.phone===c.phone);
@@ -2131,11 +2211,12 @@ if (!c) {
 const reservation = {
     id: uid(),
     offerId: o.id,
-    locationId: o.locationId,
+    locationId: o.locationId || null,
     product: o.name,
     name: d.name,
     phone: d.phone,
     quantity: d.quantity,
+    notes: (d.notes || "").trim(),
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + d.duration * 60000).toISOString(),
     status: "pending"
