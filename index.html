@@ -377,6 +377,27 @@
       <div class="section-title" id="offers">
         <div><h2>Ofertele momentului</h2><p>Rezervările expiră automat dacă nu sunt ridicate la timp.</p></div>
       </div>
+
+      <div class="glass card" style="margin-bottom:20px;">
+    <div class="form-grid">
+
+        <div class="field">
+            <label for="clientCitySelect">Localitatea ta</label>
+            <select id="clientCitySelect">
+                <option value="">Alege localitatea</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="clientStoreSelect">Magazin</label>
+            <select id="clientStoreSelect" disabled>
+                <option value="">Alege magazinul</option>
+            </select>
+        </div>
+
+    </div>
+</div>
+
       <div id="offerGrid" class="grid grid-3"></div>
 
       <div class="section-title">
@@ -1133,9 +1154,91 @@ $$('.side-btn').forEach(b => b.onclick = () => {
 
 });
 
+function renderClientStoreSelector() {
+    const citySelect = $("#clientCitySelect");
+    const storeSelect = $("#clientStoreSelect");
+
+    if (!citySelect || !storeSelect) return;
+
+    const activeStores = stores.filter(store => store.active !== false);
+
+    const cities = [...new Set(
+        activeStores
+            .map(store => store.city)
+            .filter(Boolean)
+    )].sort();
+
+    citySelect.innerHTML =
+        `<option value="">Alege localitatea</option>` +
+        cities.map(city =>
+            `<option value="${city}">${city}</option>`
+        ).join("");
+
+        const savedCity = localStorage.getItem("selectedClientCity") || "";
+const savedStore = localStorage.getItem("selectedClientStore") || "";
+
+if (savedCity && cities.includes(savedCity)) {
+    citySelect.value = savedCity;
+
+    const matchingStores = activeStores.filter(store =>
+        store.city === savedCity
+    );
+
+    storeSelect.innerHTML =
+        `<option value="">Alege magazinul</option>` +
+        matchingStores.map(store =>
+            `<option value="${store.id}">${store.name}</option>`
+        ).join("");
+
+    storeSelect.disabled = false;
+
+    if (matchingStores.some(store => store.id === savedStore)) {
+        storeSelect.value = savedStore;
+    }
+}
+}
+
+$("#clientCitySelect")?.addEventListener("change", function () {
+    const city = this.value;
+    const storeSelect = $("#clientStoreSelect");
+
+    storeSelect.innerHTML = `<option value="">Alege magazinul</option>`;
+    storeSelect.disabled = true;
+
+    if (!city) return;
+
+    const matchingStores = stores.filter(store =>
+        store.active !== false &&
+        store.city === city
+    );
+
+    storeSelect.innerHTML =
+        `<option value="">Alege magazinul</option>` +
+        matchingStores.map(store =>
+            `<option value="${store.id}">${store.name}</option>`
+        ).join("");
+
+    storeSelect.disabled = false;
+});
+
+$("#clientStoreSelect")?.addEventListener("change", function () {
+    localStorage.setItem("selectedClientStore", this.value);
+    localStorage.setItem(
+        "selectedClientCity",
+        $("#clientCitySelect")?.value || ""
+    );
+
+    renderOffers();
+});
+
+
 function renderOffers(){
   expireReservations(false);
-  const list=activeOffers();
+  const selectedStoreId = $("#clientStoreSelect")?.value || "";
+
+const list = selectedStoreId
+    ? activeOffers().filter(o => o.locationId === selectedStoreId)
+    : [];
 
 
   $('#heroStock').textContent=list.reduce((s,o)=>s+o.stock,0).toFixed(1)+' kg disponibile';
@@ -1331,7 +1434,16 @@ function renderClients() {
                 <tr>
                     <td>${c.name}</td>
                     <td>${c.phone}</td>
-                    <td>${c.city || '—'}</td>
+                    <td>${
+    c.city ||
+    stores.find(s =>
+        reservations.some(r =>
+            r.phone === c.phone &&
+            r.locationId === s.id
+        )
+    )?.city ||
+    '—'
+}</td>
                     <td>${s.done}</td>
                     <td>${s.expired}</td>
                     <td class="trust ${cls}">${s.score}%</td>
@@ -1594,6 +1706,7 @@ function renderSms(){
   $('#smsLog').innerHTML=smsLog.length?'<h3>Istoric</h3>'+smsLog.slice().reverse().map(x=>`<div class="glass card" style="margin-top:10px"><strong>${fmtDate(x.date)}</strong><p>${x.text}</p><small>${x.count} destinatari</small></div>`).join(''):'';
 }
 function renderAll(){
+    renderClientStoreSelector();
     renderOffers();
     renderAdminOffers();
     renderReservations();
@@ -2878,6 +2991,7 @@ window.refreshReservations = refreshReservations;
 await refreshClients();
 await refreshStores();
 await refreshAdmins();
+await refreshOffers();
 
 listenReservations();
 
