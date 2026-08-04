@@ -15,7 +15,8 @@ import {
   updateDoc,
   doc,
   setDoc,
-  onSnapshot
+  onSnapshot,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
 
@@ -106,6 +107,44 @@ export async function loadReservations() {
   });
 
   return reservations;
+}
+
+export async function createReservationAtomic(reservation) {
+
+  const offerRef = doc(db, "offers", reservation.offerId);
+  const reservationRef = doc(db, "reservations", reservation.id);
+
+  await runTransaction(db, async (transaction) => {
+
+    // Citim stocul REAL direct din Firestore
+    const offerSnap = await transaction.get(offerRef);
+
+    if (!offerSnap.exists()) {
+      throw new Error("OFFER_NOT_FOUND");
+    }
+
+    const offer = offerSnap.data();
+    const currentStock = Number(offer.stock || 0);
+    const quantity = Number(reservation.quantity || 0);
+
+    if (offer.active !== true) {
+      throw new Error("OFFER_INACTIVE");
+    }
+
+    if (quantity <= 0 || quantity > currentStock) {
+      throw new Error("INSUFFICIENT_STOCK");
+    }
+
+    const newStock = +(currentStock - quantity).toFixed(2);
+
+    // Scădem stocul
+    transaction.update(offerRef, {
+      stock: newStock
+    });
+
+    // Creăm rezervarea în aceeași tranzacție
+    transaction.set(reservationRef, reservation);
+  });
 }
 
 export async function saveReservation(reservation) {

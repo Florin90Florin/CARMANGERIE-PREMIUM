@@ -521,7 +521,7 @@
               <button class="btn btn-secondary" onclick="expireReservations()">Actualizează expirările</button>
             </div>
             <div class="glass card table-wrap"><table>
-              <thead><tr><th>Client</th><th>Telefon</th><th>Produs</th><th>Cantitate</th><th>Observații</th><th>Expiră</th><th>Status</th><th>Acțiune</th></tr></thead>
+              <thead><tr><th>Client</th><th>Telefon</th><th>Produs</th><th>Magazin</th><th>Cantitate</th><th>Observații</th><th>Expiră</th><th>Status</th><th>Acțiune</th></tr></thead>
               <tbody id="reservationTable"></tbody>
             </table></div>
           </section>
@@ -1429,7 +1429,13 @@ function renderReservations(){
   });
 
   $('#reservationTable').innerHTML=rows.length?rows.slice().reverse().map(r=>`<tr>
-    <td>${r.name}</td><td>${r.phone}</td><td>${r.product}</td><td>${r.quantity} kg</td><td>${r.notes || '—'}</td><td>${fmtDate(r.expiresAt)}</td>
+    <td>${r.name}</td>
+<td>${r.phone}</td>
+<td>${r.product}</td>
+<td>${stores.find(s => s.id === r.locationId)?.name || 'Site principal'}</td>
+<td>${r.quantity} kg</td>
+<td>${r.notes || '—'}</td>
+<td>${fmtDate(r.expiresAt)}</td>
     <td><span class="status ${r.status}">${r.status==='pending'?'În așteptare':r.status==='completed'?'Ridicată':'Expirată'}</span></td>
     <td>${
   r.status === 'pending' &&
@@ -1441,7 +1447,7 @@ function renderReservations(){
     : '—'
 }</td>
 
-  </tr>`).join(''):'<tr><td colspan="8">Nu există rezervări.</td></tr>';
+  </tr>`).join(''):'<tr><td colspan="9">Nu există rezervări.</td></tr>';
 }
 function clientStats(c){
   const rs=reservations.filter(r=>r.phone===c.phone);
@@ -2376,10 +2382,7 @@ if (!c) {
 
     await window.saveClient(c);
 }
-  o.stock=+(o.stock-d.quantity).toFixed(2);
-  await window.updateOffer(o.id, {
-  stock: o.stock
-});
+ 
 const reservation = {
     id: uid(),
     offerId: o.id,
@@ -2394,9 +2397,33 @@ const reservation = {
     status: "pending"
 };
 
-reservations.push(reservation);
+try {
 
-await window.saveReservation(reservation);
+    await window.createReservationAtomic(reservation);
+
+} catch (err) {
+
+    console.error("Eroare rezervare:", err);
+
+    if (err.message === "INSUFFICIENT_STOCK") {
+        await window.refreshOffers();
+        return toast("Stocul nu mai este suficient. Oferta a fost actualizată.");
+    }
+
+    if (err.message === "OFFER_INACTIVE") {
+        await window.refreshOffers();
+        return toast("Oferta nu mai este activă.");
+    }
+
+    if (err.message === "OFFER_NOT_FOUND") {
+        await window.refreshOffers();
+        return toast("Oferta nu mai există.");
+    }
+
+    return toast("Rezervarea nu a putut fi efectuată. Încearcă din nou.");
+}
+
+reservations.push(reservation);
 
   await window.refreshClients();
 await window.refreshReservations();
@@ -2672,6 +2699,7 @@ import {
 
   loadReservations,
   saveReservation,
+  createReservationAtomic,
   updateReservation,
   deleteReservationFromDb,
 
@@ -2785,7 +2813,11 @@ updateReservationBadge();
 
     updateHeaderMenu();
 
-    console.log("Nu există administrator autentificat.");
+    // Clientul neautentificat trebuie să primească datele publice
+    await refreshStores();
+    await refreshOffers();
+
+    console.log("Mod client: ofertele publice au fost încărcate.");
 }
 
 });
@@ -2804,6 +2836,7 @@ window.saveOffer = saveOffer;
 
 window.loadReservations = loadReservations;
 window.saveReservation = saveReservation;
+window.createReservationAtomic = createReservationAtomic;
 
 window.updateOffer = updateOffer;
 window.deleteOfferFromDb = deleteOfferFromDb;
@@ -2874,6 +2907,7 @@ window.refreshClients = refreshClients;
 
 async function refreshStores() {
 
+
     stores.length = 0;
 
     const allStores = await loadStores();
@@ -2881,6 +2915,7 @@ async function refreshStores() {
     stores.push(...allStores);
 
     renderStores();
+    
 }
 
 window.refreshStores = refreshStores;
@@ -3048,7 +3083,7 @@ window.refreshReservations = refreshReservations;
 
 
 await refreshClients();
-await refreshStores();
+
 await refreshAdmins();
 
 
