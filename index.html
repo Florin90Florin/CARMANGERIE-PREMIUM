@@ -1122,6 +1122,15 @@ function activeOffers() {
     );
 }
 
+// Actualizează automat ofertele când expiră, fără refresh
+setInterval(() => {
+    renderOffers();
+
+    if (window.isAdminLogged) {
+        renderAdminOffers();
+    }
+}, 1000);
+
 $$(".nav button").forEach((b) => b.onclick = () => {
 
     if (b.dataset.view === "adminView" && !window.isAdminLogged) {
@@ -1314,10 +1323,59 @@ if (isMainAdmin && filterSelect) {
 }
 
   $('#adminOffers').innerHTML = visibleOffers.length
-    ? visibleOffers.map(o => `<div class="glass card">
+  ? visibleOffers.map(o => {
 
-        <h3>${o.name}</h3>
-        <p>${o.stock.toFixed(1)} kg rămase • ${o.newPrice.toFixed(2)} lei/kg</p>
+      const isExpired = new Date(o.validUntil) <= new Date();
+
+      let statusText = 'ACTIVĂ';
+      let statusColor = '#22c55e';
+
+      if (isExpired) {
+          statusText = 'EXPIRATĂ';
+          statusColor = '#ef4444';
+      } else if (o.active === false) {
+          statusText = 'OPRITĂ';
+          statusColor = '#f59e0b';
+      }
+
+      return `<div class="glass card">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;
+            margin-bottom:8px;
+        ">
+            <h3 style="margin:0">${o.name}</h3>
+
+            <span style="
+                font-size:11px;
+                font-weight:800;
+                padding:5px 9px;
+                border-radius:999px;
+                background:${statusColor};
+                color:white;
+            ">
+                ${statusText}
+            </span>
+        </div>
+
+        <p>
+            ${o.stock.toFixed(1)} kg rămase •
+            ${o.newPrice.toFixed(2)} lei/kg
+        </p>
+
+        ${isExpired ? `
+            <p style="
+                color:#ef4444;
+                font-size:12px;
+                font-weight:700;
+                margin-top:6px;
+            ">
+                Expirată la ${new Date(o.validUntil).toLocaleString('ro-RO')}
+            </p>
+        ` : ''}
 
         <div class="toolbar">
 
@@ -1342,8 +1400,9 @@ if (isMainAdmin && filterSelect) {
 
         </div>
 
-      </div>`).join('')
-    : '<div class="glass empty">Nu există oferte.</div>';
+      </div>`;
+    }).join('')
+  : '<div class="glass empty">Nu există oferte.</div>';
 }
 
 function renderReservations(){
@@ -2991,7 +3050,7 @@ window.refreshReservations = refreshReservations;
 await refreshClients();
 await refreshStores();
 await refreshAdmins();
-await refreshOffers();
+
 
 listenReservations();
 
