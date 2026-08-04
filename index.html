@@ -1767,9 +1767,38 @@ $('#kpiClients').textContent =
 }
 
 
-function renderSms(){
-  $('#smsLog').innerHTML=smsLog.length?'<h3>Istoric</h3>'+smsLog.slice().reverse().map(x=>`<div class="glass card" style="margin-top:10px"><strong>${fmtDate(x.date)}</strong><p>${x.text}</p><small>${x.count} destinatari</small></div>`).join(''):'';
+function renderSms() {
+    let visibleSmsLog = smsLog;
+
+    // Subadmin / seller cu acces la un magazin
+    // vede doar istoricul SMS al magazinului lui
+    if (
+        (window.currentAdmin?.role === "subadmin" ||
+            window.currentAdmin?.role === "seller") &&
+        window.currentAdmin?.accessType === "store"
+    ) {
+        visibleSmsLog = smsLog.filter(x =>
+            x.locationId === window.currentAdmin.locationId
+        );
+    }
+
+    $('#smsLog').innerHTML = visibleSmsLog.length
+        ? '<h3>Istoric</h3>' +
+        visibleSmsLog
+            .slice()
+            .reverse()
+            .map(x => `
+                <div class="glass card" style="margin-top:10px">
+                    <strong>${fmtDate(x.date)}</strong>
+                    <p>${x.text}</p>
+                    <small>${x.count} destinatari</small>
+                </div>
+            `)
+            .join('')
+        : '';
 }
+
+
 function renderAll(){
     renderClientStoreSelector();
     renderOffers();
@@ -2665,14 +2694,59 @@ async function deleteOffer(id) {
     toast("Oferta a fost ștearsă.");
 }
 
-function simulateSms(){
+function simulateSms() {
 
-if (!requireAdmin()) return;
+    if (!requireAdmin()) return;
 
-  const text=$('#smsText').value.trim();if(!text)return toast('Scrie mesajul.');
-  const count=clients.filter(c=>c.consent!==false).length;
-  smsLog.push({id:uid(),date:new Date().toISOString(),text,count});save('meat_sms_log',smsLog);$('#smsText').value='';renderSms();toast('SMS simulat pentru '+count+' clienți.');
+    const text = $('#smsText').value.trim();
+
+    if (!text) return toast('Scrie mesajul.');
+
+    let smsClients = clients;
+
+    // Subadmin / seller cu acces la un magazin
+    // poate trimite doar clienților care au rezervări la magazinul lui
+    if (
+        (window.currentAdmin?.role === "subadmin" ||
+            window.currentAdmin?.role === "seller") &&
+        window.currentAdmin?.accessType === "store"
+    ) {
+
+        const visiblePhones = new Set(
+            reservations
+                .filter(r =>
+                    r.locationId === window.currentAdmin.locationId
+                )
+                .map(r => r.phone)
+        );
+
+        smsClients = clients.filter(c =>
+            visiblePhones.has(c.phone)
+        );
+    }
+
+    // Numărăm doar clienții care și-au dat consimțământul
+    const count = smsClients.filter(c =>
+        c.consent !== false
+    ).length;
+
+    smsLog.push({
+        id: uid(),
+        date: new Date().toISOString(),
+        text,
+        count,
+        locationId: window.currentAdmin?.locationId || null
+    });
+
+    save('meat_sms_log', smsLog);
+
+    $('#smsText').value = '';
+
+    renderSms();
+
+    toast('SMS simulat pentru ' + count + ' clienți.');
 }
+
 setInterval(()=>expireReservations(false),30000);
 renderAll();
 </script>
