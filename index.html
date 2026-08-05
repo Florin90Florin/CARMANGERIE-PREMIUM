@@ -2402,7 +2402,7 @@ if (!c) {
         id: uid(),
         name: d.name,
         phone: d.phone,
-        city: "",
+        city: $("#clientCitySelect")?.value || "",
         address: "",
         points: 0,
         suspendedUntil: null
