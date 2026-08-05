@@ -2199,6 +2199,7 @@ if (addSubadminBtn) {
         (isSupreme || p.usersManage) ? "" : "none";
 }
 
+
 }
 
 
@@ -2858,20 +2859,35 @@ console.log(
     [...window.knownPendingReservationIds]
 );
 
-const storesAdminBtn = document.getElementById("storesAdminBtn");
-
-
-if (storesAdminBtn) {
-    if (window.currentAdmin.role === "administrator") {
-        storesAdminBtn.style.display = "block";
-    } else {
-        storesAdminBtn.style.display = "none";
-    }
-}
 
        console.log("Administrator autentificat:", window.currentAdmin);
 
 applyAdminPermissions();
+
+// După autentificare, deschidem prima secțiune permisă
+const firstAllowedAdminButton = [...document.querySelectorAll(".side-btn")]
+    .find(btn => btn.style.display !== "none");
+
+if (firstAllowedAdminButton) {
+
+    document.querySelectorAll(".side-btn").forEach(btn =>
+        btn.classList.remove("active")
+    );
+
+    document.querySelectorAll(".admin-section").forEach(section =>
+        section.classList.remove("active")
+    );
+
+    firstAllowedAdminButton.classList.add("active");
+
+    const targetSection = document.getElementById(
+        firstAllowedAdminButton.dataset.admin
+    );
+
+    if (targetSection) {
+        targetSection.classList.add("active");
+    }
+}
 
 await refreshOffers();
 await refreshClients();
