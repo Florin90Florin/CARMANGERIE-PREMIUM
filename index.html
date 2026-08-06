@@ -7,19 +7,31 @@
     <title>Carmangeria Premium — Oferte și rezervări</title>
     <style>
         :root {
-            --bg: #0f1115;
-            --panel: #171a21;
-            --panel-2: #1f2430;
-            --text: #f7f7f8;
-            --muted: #a9afbd;
-            --accent: #e63946;
-            --accent-2: #ff6b6b;
-            --success: #2ecc71;
-            --warning: #f1c40f;
-            --danger: #ff4d4f;
-            --border: rgba(255, 255, 255, .08);
-            --shadow: 0 18px 50px rgba(0, 0, 0, .35);
-            --radius: 22px;
+            --bg: #080908;
+            --panel: #111210;
+            --panel-2: #181916;
+
+            --text: #f5f0e6;
+            --muted: #b8b0a2;
+
+            --gold: #c89b3c;
+            --gold-light: #e2bd68;
+            --gold-dark: #8f6822;
+
+            --red: #8f1714;
+            --red-dark: #5f0d0b;
+
+            --accent: #a71916;
+            --accent-2: #c62a24;
+
+            --success: #31c85a;
+            --warning: #d8a63d;
+            --danger: #c62828;
+
+            --border: rgba(200, 155, 60, .28);
+            --shadow: 0 18px 50px rgba(0, 0, 0, .55);
+
+            --radius: 14px;
         }
 
         * {
@@ -34,10 +46,16 @@
             margin: 0;
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             color: var(--text);
+
             background:
-                radial-gradient(circle at top left, rgba(230, 57, 70, .18), transparent 28%),
-                radial-gradient(circle at bottom right, rgba(255, 107, 107, .10), transparent 24%),
-                var(--bg);
+                radial-gradient(circle at 50% 0%,
+                    rgba(200, 155, 60, .055),
+                    transparent 32%),
+                linear-gradient(180deg,
+                    #080908 0%,
+                    #0b0c0a 45%,
+                    #080908 100%);
+
             min-height: 100vh;
         }
 
@@ -60,37 +78,145 @@
             position: sticky;
             top: 0;
             z-index: 30;
+
+            min-height: 76px;
+            padding: 0 5vw;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 5vw;
+
+            background: rgba(8, 9, 8, .96);
             backdrop-filter: blur(18px);
-            background: rgba(15, 17, 21, .82);
-            border-bottom: 1px solid var(--border);
+
+            border-bottom: 1px solid rgba(200, 155, 60, .20);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 22px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-weight: 800
+            gap: 11px;
         }
 
-        .logo {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
+        .brand-mark {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+
+    color: var(--gold-light);
+
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+
+    background:
+        radial-gradient(circle at center,
+            rgba(200, 155, 60, .08) 0%,
+            rgba(200, 155, 60, .025) 55%,
+            transparent 70%);
+
+    box-shadow:
+        inset 0 0 0 3px rgba(200, 155, 60, .035),
+        inset 0 0 12px rgba(200, 155, 60, .12),
+        0 0 18px rgba(200, 155, 60, .06);
+
+    flex-shrink: 0;
+}
+
+.brand-meat-icon {
+    width: 30px;
+    height: 30px;
+    display: block;
+    color: var(--gold-light);
+    transform: rotate(-12deg);
+}
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .brand-text strong {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #f2eadb;
+}   
+
+       .brand-text span {
+    margin-top: 6px;
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--gold);
+}
+
+
+        .header-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #e5ded0;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .location-pin {
+            color: var(--gold);
+            font-size: 10px;
+        }
+
+        .header-location .location-pin {
+            width: 16px;
+            height: 16px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-location .location-pin svg {
+            width: 16px;
+            height: 16px;
+
+            fill: #d5a64a;
+        }
+
+        .header-cart {
+            width: 42px;
+            height: 42px;
+
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, var(--accent), #8e1321);
-            box-shadow: 0 10px 25px rgba(230, 57, 70, .3);
-            font-size: 22px;
+
+            border: 0;
+            background: transparent;
+
+            color: var(--gold-light);
+            font-size: 19px;
+
+            border-radius: 50%;
         }
 
-        .brand small {
-            display: block;
-            color: var(--muted);
-            font-weight: 500
+        .header-cart:hover {
+            background: rgba(200, 155, 60, .10);
         }
 
         .nav {
@@ -130,12 +256,13 @@
             height: 44px;
             display: grid;
             place-items: center;
-            border: 1px solid var(--border);
-            background: rgba(255, 255, 255, .04);
-            color: var(--text);
+            border: 0;
+            background: transparent;
+            color: var(--gold-light);
             border-radius: 14px;
-            font-size: 22px;
+            font-size: 28px;
             line-height: 1;
+            padding: 0;
         }
 
         .menu-toggle:hover {
@@ -145,7 +272,7 @@
         .header-menu {
             position: absolute;
             top: 54px;
-            right: 0;
+            left: 0;
             width: 220px;
             padding: 8px;
             display: none;
@@ -176,14 +303,47 @@
 
         .info-strip {
             width: 100%;
-            padding: 9px 16px;
-            text-align: center;
+            min-height: 52px;
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+
+            background:
+                linear-gradient(90deg,
+                    #650c09 0%,
+                    #971a15 50%,
+                    #650c09 100%);
+
+            border-top: 1px solid rgba(200, 155, 60, .15);
+            border-bottom: 1px solid rgba(200, 155, 60, .20);
+
+            color: #f4e9dc;
+
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .30);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .info-icon {
+            color: var(--gold-light);
+            font-size: 18px;
+        }
+
+        .info-dot {
+            color: var(--gold);
             font-size: 13px;
-            font-weight: 700;
-            letter-spacing: .2px;
-            color: #f2f2f2;
-            background: rgba(230, 57, 70, .10);
-            border-bottom: 1px solid var(--border);
         }
 
         @media(max-width:620px) {
@@ -208,11 +368,304 @@
         }
 
         .hero {
+            position: relative;
+            min-height: 360px;
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            align-items: center;
+
+            overflow: hidden;
+
+            border: 0;
+            border-radius: 0;
+
+            background:
+                linear-gradient(90deg,
+                    #050605 0%,
+                    #050605 25%,
+                    rgba(5, 6, 5, .98) 32%,
+                    rgba(5, 6, 5, .86) 40%,
+                    rgba(5, 6, 5, .35) 52%,
+                    rgba(5, 6, 5, .08) 65%,
+                    rgba(5, 6, 5, 0) 100%),
+                url('https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1800&q=90') center right / cover no-repeat;
+
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, .55),
+                inset 0 0 80px rgba(0, 0, 0, .22);
+        }
+
+        #clientView .premium-hero {
+            width: min(1380px, 100vw);
+            max-width: none;
+
+            margin-left: 50%;
+            transform: translateX(-50%);
+
+            border: none !important;
+            outline: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+
+            width: 62%;
+            padding: 46px 64px;
+        }
+
+        .hero-kicker {
+            margin-bottom: 12px;
+
+            color: var(--gold-light);
+
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+        }
+
+        .hero-content h1 {
+            margin: 0;
+
+            max-width: 760px;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(38px, 3.4vw, 56px);
+            line-height: 1.05;
+            font-weight: 700;
+
+            color: #f5f0e6;
+
+            text-shadow: 0 3px 18px rgba(0, 0, 0, .55);
+        }
+
+        .hero-content p {
+            margin: 20px 0 0;
+
+            font-size: 17px;
+            line-height: 1.7;
+
+            color: #d3cabd;
+        }
+
+        .hero-actions {
+            margin-top: 28px;
+        }
+
+        .hero-cta {
+            min-height: 48px;
+            padding: 0 26px;
+
+            border: 1px solid #d6ad55;
+            border-radius: 5px;
+
+            background:
+                linear-gradient(135deg,
+                    #e0ba65,
+                    #bd8c32);
+
+            color: #120e07;
+
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .5px;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, .35),
+                inset 0 1px rgba(255, 255, 255, .30);
+
+            transition:
+                transform .18s ease,
+                filter .18s ease;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+        }
+
+        .hero-stock-box {
+            position: absolute;
+            z-index: 3;
+
+            right: 24px;
+            bottom: 22px;
+
+            min-width: 260px;
+            padding: 14px 18px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            background: rgba(8, 8, 7, .82);
+            backdrop-filter: blur(10px);
+
+            border: 1px solid rgba(200, 155, 60, .35);
+            border-radius: 9px;
+
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .40);
+        }
+
+        .hero-stock-box strong {
+            color: var(--gold-light);
+            font-size: 15px;
+        }
+
+        .hero-stock-box span {
+            color: #c9c0b2;
+            font-size: 11px;
+        }
+
+        .store-selector-premium {
+            position: relative;
+            z-index: 5;
+
+            width: min(1120px, 86vw);
+            min-height: 74px;
+
+            margin: 14px auto 28px;
+            padding: 12px 18px;
+
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(20, 21, 19, .98),
+                    rgba(12, 13, 12, .98));
+
+            border: 1px solid rgba(200, 155, 60, .45);
+            border-radius: 8px;
+
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+        }
+
+        .store-selector-icon {
+            flex: 0 0 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .store-selector-icon svg {
+            width: 32px;
+            height: 32px;
+
+            fill: var(--gold-light);
+
+            filter: drop-shadow(0 2px 5px rgba(200, 155, 60, .18));
+        }
+
+        .store-selector-fields {
+            flex: 1;
+
             display: grid;
-            grid-template-columns: 1.15fr .85fr;
-            gap: 24px;
-            align-items: stretch;
-            margin-bottom: 26px;
+            grid-template-columns: 1fr 1.25fr;
+            gap: 12px;
+        }
+
+        .store-field {
+            min-width: 0;
+        }
+
+        .store-field label {
+            display: block;
+
+            margin: 0 0 3px;
+
+            color: #bdb4a6;
+
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .store-field select {
+            width: 100%;
+
+            padding: 4px 24px 4px 0;
+
+            border: 0;
+            outline: 0;
+
+            background: transparent;
+
+            color: #f5f0e6;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+        .store-field select option {
+            background: #111210;
+            color: #f5f0e6;
+        }
+
+        .store-field select:disabled {
+            opacity: .55;
+            cursor: default;
+        }
+
+        .store-status {
+            flex: 0 0 300px;
+
+            padding-left: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 22px;
+
+            border-left: 1px solid rgba(200, 155, 60, .22);
+        }
+
+        .store-open,
+        .store-stock {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .store-open {
+            align-items: flex-end;
+        }
+
+        .store-open strong {
+            color: #3bd568;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .store-open span {
+            margin-top: 4px;
+            color: #eee7dc;
+            font-size: 12px;
+        }
+
+        .store-stock {
+            padding-left: 20px;
+            border-left: 1px solid rgba(200, 155, 60, .18);
+        }
+
+        .store-stock strong {
+            color: var(--gold-light);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .store-stock span {
+            margin-top: 4px;
+            color: #9f978b;
+            font-size: 10px;
         }
 
         .hero-card,
@@ -336,6 +789,13 @@
             grid-template-columns: repeat(3, 1fr)
         }
 
+        #clientView #offerGrid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            align-items: stretch;
+        }
+
         .grid-2 {
             grid-template-columns: repeat(2, 1fr)
         }
@@ -349,11 +809,586 @@
             padding: 0
         }
 
+
+        #clientView .premium-offer-card {
+            position: relative;
+            overflow: hidden;
+
+            display: flex;
+            flex-direction: column;
+
+            min-width: 0;
+
+            background:
+                linear-gradient(180deg,
+                    #171815 0%,
+                    #10110f 100%);
+
+            border: 1px solid rgba(200, 155, 60, .30);
+            border-radius: 9px;
+
+            box-shadow: 0 14px 35px rgba(0, 0, 0, .35);
+
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+        }
+
+        #clientView .premium-offer-card:hover {
+            transform: translateY(-5px);
+
+            border-color: rgba(200, 155, 60, .55);
+
+            box-shadow: 0 20px 42px rgba(0, 0, 0, .48);
+        }
+
         .offer-img {
             height: 210px;
             background: #222 center/cover;
             position: relative
         }
+
+
+        #clientView .premium-offer-card .offer-img {
+            position: relative;
+
+            width: 100%;
+            height: 205px;
+
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+
+            border-radius: 0;
+        }
+
+        #clientView .premium-offer-card .discount {
+            position: absolute;
+
+            top: 14px;
+            left: 14px;
+
+            padding: 7px 11px;
+
+            background: #a71916;
+
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 4px;
+
+            color: #fff;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .35);
+        }
+
+        #clientView .premium-offer-card .offer-body {
+            flex: 1;
+
+            padding: 18px 18px 17px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .premium-offer-name {
+            margin: 0;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 20px;
+            line-height: 1.2;
+
+            color: #f3ecdf;
+        }
+
+        .premium-offer-description {
+            min-height: 38px;
+            margin: 8px 0 14px;
+
+            color: #a9a195;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .premium-price-row {
+            margin-top: auto;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .premium-price-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #clientView .premium-offer-card .old-price {
+            margin-bottom: 3px;
+
+            color: #8f887e;
+            font-size: 12px;
+            text-decoration: line-through;
+        }
+
+        #clientView .premium-offer-card .price {
+            color: #e7ad43;
+
+            font-size: 24px;
+            line-height: 1;
+            font-weight: 800;
+        }
+
+        #clientView .premium-offer-card .price small {
+            color: #eee7dc;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .premium-stock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+
+            text-align: right;
+        }
+
+        .premium-stock span {
+            color: #8f887e;
+            font-size: 10px;
+        }
+
+        .premium-stock strong {
+            margin-top: 3px;
+
+            color: #eee7dc;
+            font-size: 13px;
+        }
+
+        #clientView .premium-offer-card .progress {
+            width: 100%;
+            height: 5px;
+
+            margin: 13px 0 10px;
+
+            overflow: hidden;
+
+            background: #292a27;
+            border-radius: 999px;
+        }
+
+        #clientView .premium-offer-card .progress span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            transition: width .3s ease, background .3s ease;
+        }
+
+        /* Stoc bun */
+        #clientView .premium-offer-card .progress.high span {
+            background: linear-gradient(90deg,
+                    #239447,
+                    #62c96f);
+        }
+
+        /* Stoc mediu */
+        #clientView .premium-offer-card .progress.medium span {
+            background: linear-gradient(90deg,
+                    #c37b19,
+                    #e0b24c);
+        }
+
+        /* Stoc mic */
+        #clientView .premium-offer-card .progress.low span {
+            background: linear-gradient(90deg,
+                    #8f1512,
+                    #d42b24);
+        }
+
+        .all-offers-wrap {
+            display: flex;
+            justify-content: center;
+
+            margin: 26px 0 42px;
+        }
+
+        .all-offers-btn {
+            min-width: 250px;
+            min-height: 46px;
+
+            padding: 0 26px;
+
+            background: transparent;
+
+            border: 1px solid rgba(218, 168, 65, .75);
+            border-radius: 4px;
+
+            color: #e0b04b;
+
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .4px;
+
+            cursor: pointer;
+
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
+        }
+
+        .all-offers-btn:hover {
+            background: #d8a641;
+            color: #0a0b09;
+            transform: translateY(-1px);
+        }
+
+        .premium-benefits {
+            width: 100%;
+            margin: 0;
+            padding: 34px 42px;
+
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+
+            background: #eee8dc;
+
+            border-top: 1px solid rgba(200, 155, 60, .45);
+            border-bottom: 1px solid rgba(200, 155, 60, .35);
+        }
+
+        .benefit-item {
+            min-height: 90px;
+            padding: 4px 34px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .benefit-item+.benefit-item {
+            border-left: 1px solid rgba(110, 92, 58, .22);
+        }
+
+        .benefit-icon {
+            flex: 0 0 46px;
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #b98b38;
+            border-radius: 50%;
+
+            color: #9c6c20;
+
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .benefit-item h3 {
+            margin: 0 0 6px;
+
+            color: #2a241c;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .benefit-item p {
+            max-width: 240px;
+            margin: 0;
+
+            color: #665e53;
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .premium-cta {
+            position: relative;
+            overflow: hidden;
+
+            min-height: 230px;
+            padding: 44px 60px;
+
+            display: flex;
+            align-items: center;
+
+            background:
+                radial-gradient(circle at 80% 50%,
+                    rgba(150, 32, 25, .35),
+                    transparent 42%),
+                linear-gradient(110deg,
+                    #310807 0%,
+                    #5e0d0a 55%,
+                    #270706 100%);
+
+            border-bottom: 1px solid rgba(200, 155, 60, .30);
+        }
+
+        .premium-cta::after {
+            content: "";
+
+            position: absolute;
+            top: -80px;
+            right: 8%;
+
+            width: 320px;
+            height: 320px;
+
+            border: 1px solid rgba(218, 168, 65, .08);
+            border-radius: 50%;
+
+            pointer-events: none;
+        }
+
+        .premium-cta-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 620px;
+        }
+
+        .premium-cta-kicker {
+            color: #d7a94c;
+
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+        }
+
+        .premium-cta h2 {
+            margin: 7px 0 10px;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 34px;
+            line-height: 1.1;
+
+            color: #f3ecdf;
+        }
+
+        .premium-cta p {
+            max-width: 520px;
+            margin: 0;
+
+            color: #c7b8aa;
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .premium-cta-btn {
+            min-width: 155px;
+            min-height: 42px;
+
+            margin-top: 20px;
+            padding: 0 20px;
+
+            border: 1px solid #d5a64a;
+            border-radius: 4px;
+
+            background: #d5a64a;
+
+            color: #160c07;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform .2s ease,
+                filter .2s ease;
+        }
+
+        .premium-cta-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+        }
+
+        .premium-footer {
+            background:
+                linear-gradient(180deg,
+                    #11120f 0%,
+                    #090a08 100%);
+
+            border-top: 1px solid rgba(211, 164, 69, .35);
+
+            color: #a9a297;
+        }
+
+        .premium-footer-main {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 48px 42px 40px;
+
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+            gap: 55px;
+        }
+
+        .footer-brand {
+            max-width: 270px;
+        }
+
+        .footer-logo {
+            width: 48px;
+            height: 48px;
+
+            margin-bottom: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #c9973e;
+            border-radius: 50%;
+
+            color: #d7a94c;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .footer-brand strong {
+            display: block;
+
+            color: #eee7dc;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 17px;
+            letter-spacing: 1px;
+        }
+
+        .footer-brand>div:nth-child(2) span {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #c9973e;
+
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .footer-brand p {
+            margin: 14px 0 0;
+
+            color: #777268;
+
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .footer-column h3 {
+            margin: 0 0 9px;
+
+            color: #d5a64a;
+
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .footer-column span {
+            color: #8d887f;
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .footer-column strong {
+            color: #c6beb2;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .premium-footer-bottom {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 18px 42px 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            border-top: 1px solid rgba(255, 255, 255, .07);
+
+            color: #666159;
+
+            font-size: 10px;
+        }
+
+
+        .premium-offer-meta {
+            margin-bottom: 14px;
+
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+
+            color: #9f978b;
+            font-size: 10px;
+        }
+
+        .premium-offer-meta span:last-child {
+            text-align: right;
+        }
+
+        .premium-reserve-btn {
+            width: 100%;
+            min-height: 44px;
+
+            margin-top: auto;
+
+            border: 0;
+            border-radius: 4px;
+
+            background:
+                linear-gradient(90deg,
+                    #8f1210 0%,
+                    #b51d18 100%);
+
+            color: #fff;
+
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .3px;
+
+            cursor: pointer;
+
+            transition:
+                filter .2s ease,
+                transform .2s ease;
+        }
+
+        .premium-reserve-btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
 
         .discount {
             position: absolute;
@@ -423,6 +1458,32 @@
             align-items: end;
             margin: 34px 0 16px;
             gap: 20px
+        }
+
+        #clientView #offers {
+            justify-content: center;
+            text-align: center;
+            margin-top: 38px;
+            margin-bottom: 26px;
+        }
+
+        #clientView #offers h2 {
+            margin: 0;
+
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 32px;
+            letter-spacing: .5px;
+            font-weight: 700;
+            text-transform: uppercase;
+
+            color: #f3ecdf;
+        }
+
+        #clientView #offers p {
+            margin: 7px 0 0;
+
+            color: #c7beb0;
+            font-size: 14px;
         }
 
         .section-title p {
@@ -729,27 +1790,18 @@
             }
         }
     </style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
     <div class="app">
         <header class="topbar">
 
-            <div class="brand">
-                <div class="logo">🥩</div>
-                <div>
-                    Carmangeria Premium
-                    <small>Oferte locale și rezervări rapide</small>
-                </div>
-            </div>
-
-            <div class="header-actions">
-
-                <div class="nav">
-                    <button class="active" data-view="clientView">
-                        Clienți
-                    </button>
-                </div>
+            <div class="header-left">
 
                 <div class="menu-wrap">
 
@@ -767,6 +1819,10 @@
                             Panou administrare
                         </button>
 
+                        <button id="menuHome" type="button" style="display:none;">
+                            Acasă
+                        </button>
+
                         <button id="menuLogout" type="button" style="display:none;">
                             Deconectare
                         </button>
@@ -779,87 +1835,228 @@
 
                 </div>
 
+                <div class="brand">
+                    <div class="brand-mark">
+    <svg class="brand-meat-icon" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M17 15
+                 C24 9, 38 10, 46 17
+                 C53 23, 55 34, 49 43
+                 C43 52, 30 56, 20 51
+                 C11 47, 7 38, 10 29
+                 C11 23, 13 19, 17 15Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"/>
+
+        <path d="M24 22
+                 C30 18, 39 19, 43 25
+                 C47 31, 44 38, 38 41
+                 C31 44, 23 41, 20 35
+                 C17 30, 19 25, 24 22Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"/>
+
+        <circle cx="32" cy="31" r="5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"/>
+    </svg>
+</div>
+
+                    <div class="brand-text">
+                        <strong>CARMANGERIE</strong>
+                        <span>PREMIUM</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="header-location">
+                <span class="location-pin">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
+                    </svg>
+                </span>
+                <span id="headerLocationName">Alege magazinul</span>
             </div>
 
         </header>
 
         <div class="info-strip">
-            Oferte limitate &nbsp;•&nbsp; Calitate garantată &nbsp;•&nbsp; Ridicare rapidă
+
+            <div class="info-item">
+                <span class="info-icon">♨</span>
+                <span>Oferte limitate</span>
+            </div>
+
+            <span class="info-dot">•</span>
+
+            <div class="info-item">
+                <span class="info-icon">♙</span>
+                <span>Calitate garantată</span>
+            </div>
+
+            <span class="info-dot">•</span>
+
+            <div class="info-item">
+                <span class="info-icon">▣</span>
+                <span>Ridicare rapidă</span>
+            </div>
+
         </div>
 
         <main>
             <section id="clientView" class="view active">
-                <div class="hero">
-                    <div class="hero-card">
-                        <span class="eyebrow">🔥 Oferte limitate în timp</span>
-                        <h1>Carne proaspătă.<br>Prețuri mai bune.</h1>
-                        <p>Rezervă rapid cantitatea dorită, ridic-o în intervalul stabilit și câștigă puncte de
-                            fidelitate.</p>
+                <div class="hero premium-hero">
+
+                    <div class="hero-content">
+
+                        <div class="hero-kicker">
+                            CARNE PROASPĂTĂ, ZILNIC
+                        </div>
+
+                        <h1>
+                            Calitate premium<br>
+                            pentru mesele tale
+                        </h1>
+
+                        <p>
+                            Alege din ofertele noastre speciale<br>
+                            și bucură-te de gustul autentic.
+                        </p>
+
                         <div class="hero-actions">
-                            <button class="btn btn-primary"
-                                onclick="document.getElementById('offers').scrollIntoView()">Vezi ofertele</button>
-                            <button class="btn btn-secondary" onclick="openRegistration()">Înscrie-te pentru
-                                SMS</button>
+                            <button class="hero-cta" type="button"
+                                onclick="document.getElementById('offers').scrollIntoView({behavior:'smooth'})">
+                                VEZI OFERTELE
+                            </button>
                         </div>
+
                     </div>
-                    <div class="hero-card hero-side">
-                        <div></div>
-                        <div class="stat">
-                            <strong id="heroStock">0 kg disponibile</strong>
-                            <p style="margin:5px 0 0">Stocul se actualizează automat după fiecare rezervare.</p>
-                        </div>
-                    </div>
+
                 </div>
 
-                <div class="section-title" id="offers">
-                    <div>
-                        <h2>Ofertele momentului</h2>
-                        <p>Rezervările expiră automat dacă nu sunt ridicate la timp.</p>
+                <div class="store-selector-premium">
+
+                    <div class="store-selector-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z" />
+                        </svg>
                     </div>
-                </div>
 
-                <div class="glass card" style="margin-bottom:20px;">
-                    <div class="form-grid">
+                    <div class="store-selector-fields">
 
-                        <div class="field">
-                            <label for="clientCitySelect">Localitatea ta</label>
+                        <div class="store-field">
+                            <label for="clientCitySelect">Alege localitatea</label>
+
                             <select id="clientCitySelect">
                                 <option value="">Alege localitatea</option>
                             </select>
                         </div>
 
-                        <div class="field">
-                            <label for="clientStoreSelect">Magazin</label>
+                        <div class="store-field">
+                            <label for="clientStoreSelect">Magazinul</label>
+
                             <select id="clientStoreSelect" disabled>
                                 <option value="">Alege magazinul</option>
                             </select>
                         </div>
 
                     </div>
+
+                    <div class="store-status">
+
+                        <div class="store-open">
+                            <strong>Deschis</strong>
+                            <span>08:00 - 20:00</span>
+                        </div>
+
+                        <div class="store-stock">
+                            <strong id="heroStock">0 kg disponibile</strong>
+                            <span>stoc în ofertele active</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section-title" id="offers">
+                    <div>
+                        <h2>OFERTELE SĂPTĂMÂNII</h2>
+                        <p>Descoperă cele mai bune oferte</p>
+                    </div>
                 </div>
 
                 <div id="offerGrid" class="grid grid-3"></div>
 
-                <div class="section-title">
-                    <div>
-                        <h2>Cum funcționează</h2>
-                        <p>Trei pași simpli.</p>
-                    </div>
+                <div class="all-offers-wrap">
+                    <button type="button" class="all-offers-btn">
+                        VEZI TOATE OFERTELE
+                    </button>
                 </div>
-                <div class="grid grid-3">
-                    <div class="glass card">
-                        <h3>1. Alegi oferta</h3>
-                        <p>Selectezi produsul și cantitatea dorită.</p>
+
+
+                <div class="premium-benefits">
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✓</div>
+
+                        <div>
+                            <h3>Calitate garantată</h3>
+                            <p>Carne proaspătă, atent selectată, de la furnizori de încredere.</p>
+                        </div>
                     </div>
-                    <div class="glass card">
-                        <h3>2. Primești confirmarea</h3>
-                        <p>Rezervarea este salvată cu numărul tău de telefon.</p>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">★</div>
+
+                        <div>
+                            <h3>Prețuri corecte</h3>
+                            <p>Oferte reale și transparente, fără costuri ascunse.</p>
+                        </div>
                     </div>
-                    <div class="glass card">
-                        <h3>3. Ridici produsul</h3>
-                        <p>Angajatul caută numărul tău și marchează rezervarea ca predată.</p>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">→</div>
+
+                        <div>
+                            <h3>Ridicare rapidă</h3>
+                            <p>Comandă online și ridică rapid din magazinul ales de tine.</p>
+                        </div>
                     </div>
+
                 </div>
+
+
+                <section class="premium-cta">
+
+                    <div class="premium-cta-content">
+
+                        <span class="premium-cta-kicker">
+                            REZERVĂ SIMPLU ȘI RAPID
+                        </span>
+
+                        <h2>Planifică din timp</h2>
+
+                        <p>
+                            Alege produsele preferate, rezervă cantitatea dorită
+                            și ridică totul direct din magazin.
+                        </p>
+
+                        <button type="button" class="premium-cta-btn"
+                            onclick="document.getElementById('offers').scrollIntoView({behavior:'smooth'})">
+                            VEZI OFERTELE
+                        </button>
+
+                    </div>
+
+                </section>
+
             </section>
 
             <section id="adminView" class="view">
@@ -974,7 +2171,7 @@
                                     expirările</button>
                             </div>
 
-                            
+
 
                             <div class="glass card table-wrap">
                                 <table>
@@ -1041,27 +2238,27 @@
                             </div>
 
                             <div id="supremeAdminsWrap" style="display:none; margin-bottom:20px;">
-    <h3 style="margin:0 0 12px;">Administratori supremi</h3>
+                                <h3 style="margin:0 0 12px;">Administratori supremi</h3>
 
-    <div class="glass card table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nume</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Acțiune</th>
-                </tr>
-            </thead>
+                                <div class="glass card table-wrap">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Nume</th>
+                                                <th>Email</th>
+                                                <th>Status</th>
+                                                <th>Acțiune</th>
+                                            </tr>
+                                        </thead>
 
-            <tbody id="supremeAdminsTable">
-                <tr>
-                    <td colspan="4">Nu există administratori supremi.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                                        <tbody id="supremeAdminsTable">
+                                            <tr>
+                                                <td colspan="4">Nu există administratori supremi.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
                             <div class="glass card table-wrap">
                                 <table>
@@ -1108,7 +2305,56 @@
             </section>
         </main>
 
-        <div class="footer">Versiune demonstrativă locală • Carmangeria Premium</div>
+        <footer class="premium-footer">
+
+            <div class="premium-footer-main">
+
+                <div class="footer-brand">
+                    <div class="footer-logo">CP</div>
+
+                    <div>
+                        <strong>CARMANGERIE</strong>
+                        <span>PREMIUM</span>
+                    </div>
+
+                    <p>
+                        Calitate, prospețime și gust autentic,
+                        în fiecare zi.
+                    </p>
+                </div>
+
+                <div class="footer-column">
+                    <h3>INFORMAȚII</h3>
+                    <span>Oferte săptămânale</span>
+                    <span>Rezervări produse</span>
+                    <span>Magazine</span>
+                </div>
+
+                <div class="footer-column">
+                    <h3>PROGRAM</h3>
+                    <span>Luni - Sâmbătă</span>
+                    <strong>08:00 - 20:00</strong>
+                    <span>Duminică</span>
+                    <strong>08:00 - 14:00</strong>
+                </div>
+
+                <div class="footer-column">
+                    <h3>CONTACT</h3>
+                    <span>Telefon magazin</span>
+                    <span>Adresă magazin</span>
+                    <span>România</span>
+                </div>
+
+            </div>
+
+            <div class="premium-footer-bottom">
+                <span>© 2026 Carmangerie Premium. Toate drepturile rezervate.</span>
+                <span>Calitate premium pentru mesele tale.</span>
+            </div>
+
+        </footer>
+
+
     </div>
 
     <div id="registrationModal" class="modal">
@@ -1618,13 +2864,27 @@
             );
         }
 
-        // Actualizează automat ofertele când expiră, fără refresh
-        setInterval(() => {
-            renderOffers();
+        // Verifică ofertele expirate fără să reconstruiască inutil cardurile
+        let lastActiveOfferIds = "";
 
-            if (window.isAdminLogged) {
-                renderAdminOffers();
+        setInterval(() => {
+
+            const currentActiveOfferIds = activeOffers()
+                .map(o => o.id)
+                .sort()
+                .join("|");
+
+            if (currentActiveOfferIds !== lastActiveOfferIds) {
+
+                lastActiveOfferIds = currentActiveOfferIds;
+
+                renderOffers();
+
+                if (window.isAdminLogged) {
+                    renderAdminOffers();
+                }
             }
+
         }, 1000);
 
         $$(".nav button").forEach((b) => b.onclick = () => {
@@ -1700,6 +2960,11 @@
                 if (matchingStores.some(store => store.id === savedStore)) {
                     storeSelect.value = savedStore;
                 }
+                const headerLocation = $("#headerLocationName");
+
+                if (headerLocation && storeSelect.value) {
+                    headerLocation.textContent = savedCity;
+                }
             }
         }
 
@@ -1727,11 +2992,20 @@
         });
 
         $("#clientStoreSelect")?.addEventListener("change", function () {
+
+            const selectedCity = $("#clientCitySelect")?.value || "";
+
             localStorage.setItem("selectedClientStore", this.value);
-            localStorage.setItem(
-                "selectedClientCity",
-                $("#clientCitySelect")?.value || ""
-            );
+            localStorage.setItem("selectedClientCity", selectedCity);
+
+            const headerLocation = $("#headerLocationName");
+
+            if (headerLocation) {
+                headerLocation.textContent =
+                    this.value && selectedCity
+                        ? selectedCity
+                        : "Alege magazinul";
+            }
 
             renderOffers();
         });
@@ -1751,18 +3025,68 @@
 
 
                 const percent = Math.max(0, Math.min(100, o.stock / o.initialStock * 100));
-                return `<article class="glass offer-card">
-      <div class="offer-img" style="background-image:url('${o.image || 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1000&q=80'}')">
+
+                const stockLevel =
+                    percent > 60 ? 'high' :
+                        percent >= 30 ? 'medium' :
+                            'low';
+
+                return `
+<article class="offer-card premium-offer-card">
+
+    <div class="offer-img"
+         style="background-image:url('${o.image || 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1000&q=80'}')">
+
         <span class="discount">-${discount(o)}%</span>
-      </div>
-      <div class="offer-body">
-        <div class="offer-title"><div><h3 style="margin:0">${o.name}</h3><span class="old-price">${o.oldPrice.toFixed(2)} lei/kg</span></div><div class="price">${o.newPrice.toFixed(2)} lei</div></div>
-        <p>${o.description || ''}</p>
-        <div class="progress"><span style="width:${percent}%"></span></div>
-        <div class="meta"><span class="pill">${o.stock.toFixed(1)} kg rămase</span><span class="pill">Max. ${o.limit} kg/client</span><span class="pill">Până la ${fmtDate(o.validUntil)}</span></div>
-        <button class="btn btn-primary" style="width:100%" onclick="openReservation('${o.id}')">Rezervă acum</button>
-      </div>
-    </article>`;
+
+    </div>
+
+    <div class="offer-body">
+
+        <h3 class="premium-offer-name">${o.name}</h3>
+
+        <p class="premium-offer-description">
+            ${o.description || ''}
+        </p>
+
+        <div class="premium-price-row">
+
+            <div class="premium-price-box">
+                <span class="old-price">
+                    ${o.oldPrice.toFixed(2)} lei/kg
+                </span>
+
+                <div class="price">
+                    ${o.newPrice.toFixed(2)}
+                    <small>lei/kg</small>
+                </div>
+            </div>
+
+            <div class="premium-stock">
+                <span>Stoc disponibil</span>
+                <strong>${o.stock.toFixed(1)} kg</strong>
+            </div>
+
+        </div>
+
+        <div class="progress ${stockLevel}">
+    <span style="width:${percent}%"></span>
+</div>
+
+        <div class="premium-offer-meta">
+            <span>Max. ${o.limit} kg/client</span>
+            <span>Până la ${fmtDate(o.validUntil)}</span>
+        </div>
+
+        <button class="premium-reserve-btn"
+                type="button"
+                onclick="openReservation('${o.id}')">
+            REZERVĂ
+        </button>
+
+    </div>
+
+</article>`;
             }).join('') : `<div class="glass empty">Momentan nu există oferte active.</div>`;
         }
         function renderAdminOffers() {
@@ -1934,34 +3258,33 @@
 <td>${fmtDate(r.expiresAt)}</td>
     <td><span class="status ${r.status}">${r.status === 'pending' ? 'În așteptare' : r.status === 'completed' ? 'Ridicată' : 'Expirată'}</span></td>
     <td>
-    ${
-        r.status === 'pending' &&
-        (
-            window.currentAdmin?.role === "administrator" ||
-            window.currentAdmin?.permissions?.reservationsComplete === true
-        )
-        ? `
+    ${r.status === 'pending' &&
+                    (
+                        window.currentAdmin?.role === "administrator" ||
+                        window.currentAdmin?.permissions?.reservationsComplete === true
+                    )
+                    ? `
             <button
                 class="btn btn-success"
                 onclick="completeReservation('${r.id}')">
                 Predat
             </button>
         `
-        :
-        r.status === 'expired' &&
-        (
-            window.currentAdmin?.role === "administrator" ||
-            window.currentAdmin?.role === "subadmin"
-        )
-        ? `
+                    :
+                    r.status === 'expired' &&
+                        (
+                            window.currentAdmin?.role === "administrator" ||
+                            window.currentAdmin?.role === "subadmin"
+                        )
+                        ? `
             <button
                 class="btn btn-secondary"
                 onclick="correctExpiredReservation('${r.id}')">
                 Corectează ca predată
             </button>
         `
-        : '—'
-    }
+                        : '—'
+                }
 </td>
 
   </tr>`).join('') : '<tr><td colspan="9">Nu există rezervări.</td></tr>';
@@ -2038,34 +3361,34 @@
 
         function renderSupremeAdmins() {
 
-    const wrap = $("#supremeAdminsWrap");
-    const table = $("#supremeAdminsTable");
+            const wrap = $("#supremeAdminsWrap");
+            const table = $("#supremeAdminsTable");
 
-    if (!wrap || !table) return;
+            if (!wrap || !table) return;
 
-    // Doar administratorii supremi văd această zonă
-    if (window.currentAdmin?.role !== "administrator") {
-        wrap.style.display = "none";
-        table.innerHTML = "";
-        return;
-    }
+            // Doar administratorii supremi văd această zonă
+            if (window.currentAdmin?.role !== "administrator") {
+                wrap.style.display = "none";
+                table.innerHTML = "";
+                return;
+            }
 
-    wrap.style.display = "block";
+            wrap.style.display = "block";
 
-    const supremeAdmins = admins.filter(admin =>
-        admin.role === "administrator"
-    );
+            const supremeAdmins = admins.filter(admin =>
+                admin.role === "administrator"
+            );
 
-    table.innerHTML = supremeAdmins.length
-        ? supremeAdmins.map(admin => {
+            table.innerHTML = supremeAdmins.length
+                ? supremeAdmins.map(admin => {
 
-            const statusText =
-                admin.active === false ? "Inactiv" : "Activ";
+                    const statusText =
+                        admin.active === false ? "Inactiv" : "Activ";
 
-            const statusClass =
-                admin.active === false ? "expired" : "completed";
+                    const statusClass =
+                        admin.active === false ? "expired" : "completed";
 
-            return `
+                    return `
                 <tr>
                     <td><strong>${admin.name || "—"}</strong></td>
                     <td>${admin.email || "—"}</td>
@@ -2084,19 +3407,19 @@
                     </td>
                 </tr>
             `;
-        }).join("")
-        : `
+                }).join("")
+                : `
             <tr>
                 <td colspan="4">Nu există administratori supremi.</td>
             </tr>
         `;
-}
+        }
 
         function renderStores() {
 
-    renderSupremeAdmins();
+            renderSupremeAdmins();
 
-    const table = $("#storesTable");
+            const table = $("#storesTable");
             if (!table) return;
 
             if (!stores.length) {
@@ -2565,6 +3888,7 @@
 
             const loginBtn = document.getElementById("menuLogin");
             const adminBtn = document.getElementById("menuAdmin");
+            const homeBtn = document.getElementById("menuHome");
             const logoutBtn = document.getElementById("menuLogout");
 
             if (loginBtn) {
@@ -2573,6 +3897,10 @@
 
             if (adminBtn) {
                 adminBtn.style.display = logged ? "block" : "none";
+            }
+
+            if (homeBtn) {
+                homeBtn.style.display = logged ? "block" : "none";
             }
 
             if (logoutBtn) {
@@ -2609,6 +3937,26 @@
             $$(".nav button").forEach(x => x.classList.remove("active"));
         };
 
+        document.getElementById("menuHome").onclick = () => {
+
+            document.getElementById("headerMenu").classList.remove("open");
+
+            $$(".view").forEach(v => v.classList.remove("active"));
+            $("#clientView").classList.add("active");
+
+            $$(".nav button").forEach(x => x.classList.remove("active"));
+
+            const clientNavBtn = document.querySelector('[data-view="clientView"]');
+
+            if (clientNavBtn) {
+                clientNavBtn.classList.add("active");
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        };
 
         document.getElementById("menuLogout").onclick = () => {
 
@@ -2701,7 +4049,12 @@
                 $("#clientView").classList.add("active");
 
                 $$(".nav button").forEach(x => x.classList.remove("active"));
-                document.querySelector('[data-view="clientView"]').classList.add("active");
+
+                const clientNavBtn = document.querySelector('[data-view="clientView"]');
+
+                if (clientNavBtn) {
+                    clientNavBtn.classList.add("active");
+                }
 
                 toast("Te-ai deconectat.");
 
@@ -3148,120 +4501,120 @@
             toast("Rezervarea a fost marcată ca predată și punctele au fost adăugate.");
         }
 
-async function correctExpiredReservation(id) {
+        async function correctExpiredReservation(id) {
 
-    if (!requireAdmin()) return;
+            if (!requireAdmin()) return;
 
-    // Doar administrator suprem sau subadministrator
-    if (
-        window.currentAdmin?.role !== "administrator" &&
-        window.currentAdmin?.role !== "subadmin"
-    ) {
-        alert("Nu ai permisiunea să corectezi rezervările expirate.");
-        return;
-    }
-
-    const r = reservations.find(x => x.id === id);
-
-    if (!r || r.status !== "expired") {
-        alert("Rezervarea nu mai este expirată.");
-        return;
-    }
-
-    const o = offers.find(x => x.id === r.offerId);
-
-    if (!o) {
-        alert("Oferta asociată rezervării nu mai există.");
-        return;
-    }
-
-    const quantity = Number(r.quantity) || 0;
-    const currentStock = Number(o.stock) || 0;
-
-    // La expirare cantitatea a fost pusă înapoi în stoc.
-    // Pentru a o marca ulterior ca predată trebuie retrasă din nou.
-    if (currentStock < quantity) {
-        alert(
-            `Corectarea nu poate fi făcută.\n\n` +
-            `Stoc disponibil: ${currentStock} kg\n` +
-            `Cantitate rezervată: ${quantity} kg`
-        );
-        return;
-    }
-
-    const confirmed = confirm(
-        `Confirmi că rezervarea pentru ${r.name || r.phone} a fost de fapt predată?\n\n` +
-        `Cantitate: ${quantity} kg\n` +
-        `Produs: ${r.productName || r.product || "—"}\n\n` +
-        `Cantitatea va fi scăzută din nou din stoc.`
-    );
-
-    if (!confirmed) return;
-
-    try {
-
-        // 1. Scădem din nou cantitatea din stoc
-        o.stock = +(currentStock - quantity).toFixed(2);
-
-        await window.updateOffer(o.id, {
-            stock: o.stock
-        });
-
-        // 2. Transformăm rezervarea expirată în predată
-        r.status = "completed";
-        r.completedAt = new Date().toISOString();
-
-        await window.updateReservation(r.id, {
-            status: "completed",
-            completedAt: r.completedAt
-        });
-
-        // 3. Actualizăm clientul
-        const c = clients.find(x => x.phone === r.phone);
-
-        if (c) {
-
-            // Adăugăm punctele pentru comanda predată
-            c.points = (c.points || 0) + Math.round(quantity * 10);
-
-            // Recalculăm numărul de rezervări expirate
-            // r este deja "completed", deci nu mai intră aici
-            const remainingExpired = reservations.filter(
-                x => x.phone === c.phone && x.status === "expired"
-            ).length;
-
-            const clientUpdate = {
-                points: c.points
-            };
-
-            // Dacă după corectare nu mai are 2 expirări,
-            // eliminăm suspendarea produsă de regula noastră.
-            if (remainingExpired < 2) {
-                c.suspendedUntil = null;
-                clientUpdate.suspendedUntil = null;
+            // Doar administrator suprem sau subadministrator
+            if (
+                window.currentAdmin?.role !== "administrator" &&
+                window.currentAdmin?.role !== "subadmin"
+            ) {
+                alert("Nu ai permisiunea să corectezi rezervările expirate.");
+                return;
             }
 
-            await window.updateClient(c.id, clientUpdate);
+            const r = reservations.find(x => x.id === id);
+
+            if (!r || r.status !== "expired") {
+                alert("Rezervarea nu mai este expirată.");
+                return;
+            }
+
+            const o = offers.find(x => x.id === r.offerId);
+
+            if (!o) {
+                alert("Oferta asociată rezervării nu mai există.");
+                return;
+            }
+
+            const quantity = Number(r.quantity) || 0;
+            const currentStock = Number(o.stock) || 0;
+
+            // La expirare cantitatea a fost pusă înapoi în stoc.
+            // Pentru a o marca ulterior ca predată trebuie retrasă din nou.
+            if (currentStock < quantity) {
+                alert(
+                    `Corectarea nu poate fi făcută.\n\n` +
+                    `Stoc disponibil: ${currentStock} kg\n` +
+                    `Cantitate rezervată: ${quantity} kg`
+                );
+                return;
+            }
+
+            const confirmed = confirm(
+                `Confirmi că rezervarea pentru ${r.name || r.phone} a fost de fapt predată?\n\n` +
+                `Cantitate: ${quantity} kg\n` +
+                `Produs: ${r.productName || r.product || "—"}\n\n` +
+                `Cantitatea va fi scăzută din nou din stoc.`
+            );
+
+            if (!confirmed) return;
+
+            try {
+
+                // 1. Scădem din nou cantitatea din stoc
+                o.stock = +(currentStock - quantity).toFixed(2);
+
+                await window.updateOffer(o.id, {
+                    stock: o.stock
+                });
+
+                // 2. Transformăm rezervarea expirată în predată
+                r.status = "completed";
+                r.completedAt = new Date().toISOString();
+
+                await window.updateReservation(r.id, {
+                    status: "completed",
+                    completedAt: r.completedAt
+                });
+
+                // 3. Actualizăm clientul
+                const c = clients.find(x => x.phone === r.phone);
+
+                if (c) {
+
+                    // Adăugăm punctele pentru comanda predată
+                    c.points = (c.points || 0) + Math.round(quantity * 10);
+
+                    // Recalculăm numărul de rezervări expirate
+                    // r este deja "completed", deci nu mai intră aici
+                    const remainingExpired = reservations.filter(
+                        x => x.phone === c.phone && x.status === "expired"
+                    ).length;
+
+                    const clientUpdate = {
+                        points: c.points
+                    };
+
+                    // Dacă după corectare nu mai are 2 expirări,
+                    // eliminăm suspendarea produsă de regula noastră.
+                    if (remainingExpired < 2) {
+                        c.suspendedUntil = null;
+                        clientUpdate.suspendedUntil = null;
+                    }
+
+                    await window.updateClient(c.id, clientUpdate);
+                }
+
+                // 4. Reîncărcăm datele din Firestore
+                await refreshOffers();
+                await refreshClients();
+                await refreshReservations();
+
+                renderAll();
+
+                toast("Rezervarea expirată a fost corectată ca predată.");
+
+            } catch (error) {
+
+                console.error("Eroare la corectarea rezervării expirate:", error);
+
+                alert(
+                    "A apărut o eroare la corectarea rezervării. Verifică datele înainte de a încerca din nou."
+                );
+            }
         }
-
-        // 4. Reîncărcăm datele din Firestore
-        await refreshOffers();
-        await refreshClients();
-        await refreshReservations();
-
-        renderAll();
-
-        toast("Rezervarea expirată a fost corectată ca predată.");
-
-    } catch (error) {
-
-        console.error("Eroare la corectarea rezervării expirate:", error);
-
-        alert(
-            "A apărut o eroare la corectarea rezervării. Verifică datele înainte de a încerca din nou."
-        );
-    }
-}
 
         async function expireReservations(showToast = true) {
 
