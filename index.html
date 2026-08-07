@@ -79,7 +79,7 @@
             top: 0;
             z-index: 30;
 
-            min-height: 76px;
+            min-height: 92px;
             padding: 0 5vw;
 
             display: flex;
@@ -98,69 +98,44 @@
             gap: 22px;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-        }
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
 
-        .brand-mark {
-    width: 48px;
-    height: 48px;
-
-    display: grid;
-    place-items: center;
-
-    border: 1px solid var(--gold);
-    border-radius: 50%;
-
-    color: var(--gold-light);
-
-    font-family: "Cinzel", Georgia, serif;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0;
-
-    background:
-        radial-gradient(circle at center,
-            rgba(200, 155, 60, .08) 0%,
-            rgba(200, 155, 60, .025) 55%,
-            transparent 70%);
-
-    box-shadow:
-        inset 0 0 0 3px rgba(200, 155, 60, .035),
-        inset 0 0 12px rgba(200, 155, 60, .12),
-        0 0 18px rgba(200, 155, 60, .06);
-
+.brand-logo {
+    height: 74px;
+    width: auto;
+    display: block;
+    margin-right: 14px;
     flex-shrink: 0;
 }
 
-.brand-meat-icon {
-    width: 30px;
-    height: 30px;
-    display: block;
-    color: var(--gold-light);
-    transform: rotate(-12deg);
-}
+
 
         .brand-text {
-            display: flex;
-            flex-direction: column;
-            line-height: 1;
-        }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1;
 
-        .brand-text strong {
+    position: relative;
+    top: 2px;
+}
+
+.brand-text strong {
     font-family: "Cinzel", Georgia, serif;
-    font-size: 22px;
+    font-size: 23px;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     color: #f2eadb;
-}   
+}
 
-       .brand-text span {
-    margin-top: 6px;
+.brand-text span {
+    margin-top: 5px;
     font-family: "Cinzel", Georgia, serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: 6px;
     color: var(--gold);
@@ -328,7 +303,7 @@
         .info-item {
             display: flex;
             align-items: center;
-            gap: 9px;
+            gap: 6px;
 
             font-size: 14px;
             font-weight: 600;
@@ -336,10 +311,20 @@
             text-transform: none;
         }
 
-        .info-icon {
-            color: var(--gold-light);
-            font-size: 18px;
-        }
+  .info-icon{
+    font-size:22px;
+    color:var(--gold);
+    font-variation-settings:
+        'FILL' 0,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 24;
+
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
 
         .info-dot {
             color: var(--gold);
@@ -390,7 +375,7 @@
                     rgba(5, 6, 5, .35) 52%,
                     rgba(5, 6, 5, .08) 65%,
                     rgba(5, 6, 5, 0) 100%),
-                url('https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=1800&q=90') center right / cover no-repeat;
+                url('poze/hero-premium.png') right center / 75% auto no-repeat;
 
             box-shadow:
                 0 24px 60px rgba(0, 0, 0, .55),
@@ -1217,6 +1202,29 @@
             filter: brightness(1.08);
         }
 
+.premium-sms-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-left:14px;
+    padding:14px 28px;
+    border:1px solid rgba(200,155,60,.28);
+    border-radius:14px;
+    background:rgba(255,255,255,.05);
+    color:#fff;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:.4px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.premium-sms-btn:hover{
+    background:rgba(200,155,60,.12);
+    border-color:#c89b3c;
+    transform:translateY(-2px);
+}
+
         .premium-footer {
             background:
                 linear-gradient(180deg,
@@ -1389,6 +1397,14 @@
             transform: translateY(-1px);
         }
 
+     #premiumRegistrationContainer{
+    position:absolute;
+    right:90px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+}
 
         .discount {
             position: absolute;
@@ -1789,11 +1805,56 @@
                 letter-spacing: -1px
             }
         }
+
+        @media (max-width:768px){
+
+    .hero{
+        min-height:620px;
+        background-size:130% auto;
+        background-position:center bottom;
+    }
+
+    .hero-content{
+        max-width:100%;
+        padding-top:20px;
+    }
+
+    .hero h1{
+        font-size:42px;
+    }
+
+    .hero p{
+        max-width:320px;
+    }
+
+}
+
+@media (max-width:400px){
+
+    .hero h1{
+        font-size:34px;
+        line-height:1.05;
+    }
+
+    .hero p{
+        font-size:18px;
+        max-width:220px;
+    }
+
+    .hero{
+        background-size:150% auto;
+        background-position:right bottom;
+    }
+
+}
+
     </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
 
 </head>
 
@@ -1836,41 +1897,16 @@
                 </div>
 
                 <div class="brand">
-                    <div class="brand-mark">
-    <svg class="brand-meat-icon" viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M17 15
-                 C24 9, 38 10, 46 17
-                 C53 23, 55 34, 49 43
-                 C43 52, 30 56, 20 51
-                 C11 47, 7 38, 10 29
-                 C11 23, 13 19, 17 15Z"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"/>
+    <img src="poze/logo-premium.png"
+         alt="Carmangerie Premium"
+         class="brand-logo">
 
-        <path d="M24 22
-                 C30 18, 39 19, 43 25
-                 C47 31, 44 38, 38 41
-                 C31 44, 23 41, 20 35
-                 C17 30, 19 25, 24 22Z"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"/>
-
-        <circle cx="32" cy="31" r="5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"/>
-    </svg>
+    <div class="brand-text">
+        <strong>CARMANGERIE</strong>
+        <span>PREMIUM</span>
+    </div>
 </div>
 
-                    <div class="brand-text">
-                        <strong>CARMANGERIE</strong>
-                        <span>PREMIUM</span>
-                    </div>
-                </div>
-
-            </div>
 
 
             <div class="header-location">
@@ -1888,22 +1924,22 @@
         <div class="info-strip">
 
             <div class="info-item">
-                <span class="info-icon">♨</span>
-                <span>Oferte limitate</span>
+                <span class="material-symbols-outlined info-icon">local_fire_department</span>
+<span>Oferte limitate</span>
             </div>
 
             <span class="info-dot">•</span>
 
             <div class="info-item">
-                <span class="info-icon">♙</span>
-                <span>Calitate garantată</span>
+                <span class="material-symbols-outlined info-icon">workspace_premium</span>
+<span>Calitate garantată</span>
             </div>
 
             <span class="info-dot">•</span>
 
             <div class="info-item">
-                <span class="info-icon">▣</span>
-                <span>Ridicare rapidă</span>
+                <span class="material-symbols-outlined info-icon">local_shipping</span>
+<span>Ridicare rapidă</span>
             </div>
 
         </div>
@@ -2035,27 +2071,47 @@
 
                 <section class="premium-cta">
 
-                    <div class="premium-cta-content">
+    <div class="premium-cta-grid">
 
-                        <span class="premium-cta-kicker">
-                            REZERVĂ SIMPLU ȘI RAPID
-                        </span>
+        <div class="premium-cta-content">
 
-                        <h2>Planifică din timp</h2>
+            <span class="premium-cta-kicker">
+                REZERVĂ SIMPLU ȘI RAPID
+            </span>
 
-                        <p>
-                            Alege produsele preferate, rezervă cantitatea dorită
-                            și ridică totul direct din magazin.
-                        </p>
+            <h2>Planifică din timp</h2>
 
-                        <button type="button" class="premium-cta-btn"
-                            onclick="document.getElementById('offers').scrollIntoView({behavior:'smooth'})">
-                            VEZI OFERTELE
-                        </button>
+            <p>
+                Alege produsele preferate, rezervă cantitatea dorită
+                și ridică totul direct din magazin.
+            </p>
 
-                    </div>
+            <button type="button"
+                class="premium-cta-btn"
+                onclick="document.getElementById('offers').scrollIntoView({behavior:'smooth'})">
+                VEZI OFERTELE
+            </button>
 
-                </section>
+
+        </div>
+
+        <div id="premiumRegistrationContainer">
+
+            <!-- AICI mutăm formularul existent,
+                 NU îl duplicăm. -->
+
+ <button
+    type="button"
+    class="premium-sms-btn"
+    onclick="openRegistration()">
+    ÎNSCRIE-TE PENTRU SMS
+</button>
+
+        </div>
+
+    </div>
+
+</section>
 
             </section>
 
