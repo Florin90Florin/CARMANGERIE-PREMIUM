@@ -1,0 +1,726 @@
+/* =========================================================
+   CARMANGERIE PREMIUM - RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .topbar {
+        width: 100%;
+        min-height: 58px;
+        height: 58px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        overflow: hidden;
+    }
+
+    .header-left {
+        width: auto;
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow: hidden;
+    }
+
+    .menu-toggle {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        flex: 0 0 34px;
+        font-size: 22px;
+        padding: 0;
+    }
+
+    .brand {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .brand-logo {
+        height: 38px;
+        width: auto;
+        flex: 0 0 auto;
+        margin-right: 6px;
+    }
+
+    .brand-text {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .brand-text strong {
+        display: block;
+        font-size: 12px;
+        line-height: 1;
+        letter-spacing: .3px;
+        white-space: nowrap;
+    }
+
+    .brand-text span {
+        display: block;
+        margin-top: 3px;
+        font-size: 7px;
+        line-height: 1;
+        letter-spacing: 2px;
+        white-space: nowrap;
+    }
+
+    .header-location {
+        position: static !important;
+        width: auto !important;
+        max-width: 105px !important;
+        min-width: 0 !important;
+        flex: 0 0 auto;
+        display: flex !important;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .header-location .location-pin {
+        width: 14px;
+        height: 14px;
+        flex: 0 0 14px;
+    }
+
+    .header-location .location-pin svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .header-location span:last-child {
+        min-width: 0;
+        max-width: 82px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 9px;
+    }
+
+
+    /* =========================
+       BARA ROSIE
+       ========================= */
+
+    .info-strip {
+        width: 100%;
+        min-width: 0;
+        min-height: 52px;
+        height: auto;
+        padding: 8px 6px;
+
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 10px minmax(0, 1fr) 10px minmax(0, 1fr);
+
+        align-items: center;
+        justify-items: center;
+        gap: 0;
+
+        overflow: hidden;
+    }
+
+    .info-item {
+        width: 100%;
+        min-width: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+
+        font-size: 9px;
+        line-height: 1.1;
+
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .info-item > span:last-child {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .info-icon {
+        flex: 0 0 auto;
+        font-size: 18px !important;
+    }
+
+    .info-dot {
+        width: 10px;
+        min-width: 10px;
+        text-align: center;
+        font-size: 9px;
+    }
+
+
+    /* =========================
+       MAIN
+       ========================= */
+
+    main {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0 0 40px;
+    }
+
+
+    /* =========================
+       HERO
+       ========================= */
+
+    #clientView .premium-hero {
+        width: 100%;
+        max-width: 100%;
+        min-height: 390px;
+        margin: 0;
+        transform: none;
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(5,6,5,1) 0%,
+                rgba(5,6,5,.96) 28%,
+                rgba(5,6,5,.70) 48%,
+                rgba(5,6,5,.15) 72%,
+                rgba(5,6,5,0) 100%
+            ),
+            url('poze/hero-premium.png') right center / auto 100% no-repeat;
+
+        overflow: hidden;
+    }
+
+    #clientView .hero-content {
+        width: 62%;
+        max-width: 62%;
+        padding: 55px 0 25px 20px;
+    }
+
+    #clientView .hero-kicker {
+        font-size: 8px;
+        line-height: 1.2;
+        margin-bottom: 9px;
+        letter-spacing: 1px;
+    }
+
+    #clientView .hero-content h1 {
+        max-width: 230px;
+        font-size: 25px !important;
+        line-height: 1.05;
+        letter-spacing: -.5px;
+        margin: 0;
+    }
+
+    #clientView .hero-content p {
+        max-width: 210px;
+        font-size: 11px;
+        line-height: 1.45;
+        margin-top: 13px;
+    }
+
+    #clientView .hero-actions {
+        margin-top: 17px;
+    }
+
+    #clientView .hero-cta {
+        min-height: 36px;
+        padding: 0 15px;
+        font-size: 9px;
+    }
+
+    .hero-stock-box {
+        display: none;
+    }
+
+
+    /* =========================
+       SELECTOR MAGAZIN
+       ========================= */
+
+    .store-selector-premium {
+        width: calc(100% - 24px);
+        min-height: auto;
+        margin: 14px auto 24px;
+        padding: 14px;
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 10px;
+        border-radius: 8px;
+    }
+
+    .store-selector-icon {
+        width: 36px;
+        flex: none;
+    }
+
+    .store-selector-icon svg {
+        width: 27px;
+        height: 27px;
+    }
+
+    .store-selector-fields {
+        min-width: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .store-field label {
+        font-size: 9px;
+        margin-bottom: 2px;
+    }
+
+    .store-field select {
+        font-size: 12px;
+        padding: 3px 18px 3px 0;
+    }
+
+    .store-status {
+        grid-column: 1 / -1;
+        width: 100%;
+        padding: 10px 0 0;
+        margin-top: 2px;
+        border-left: 0;
+        border-top: 1px solid rgba(200,155,60,.22);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .store-open {
+        align-items: flex-start;
+    }
+
+    .store-open strong {
+        font-size: 11px;
+    }
+
+    .store-open span {
+        font-size: 10px;
+    }
+
+    .store-stock {
+        padding-left: 15px;
+        border-left: 1px solid rgba(200,155,60,.18);
+    }
+
+    .store-stock strong {
+        font-size: 11px;
+    }
+
+    .store-stock span {
+        font-size: 8px;
+    }
+
+
+    /* =========================
+       TITLU OFERTE
+       ========================= */
+
+    #clientView #offers {
+        margin-top: 25px;
+        margin-bottom: 18px;
+        padding: 0 15px;
+    }
+
+    #clientView #offers h2 {
+        font-size: 24px;
+        line-height: 1.1;
+    }
+
+    #clientView #offers p {
+        font-size: 11px;
+        margin-top: 6px;
+    }
+
+
+    /* =========================
+       CARDURI OFERTE
+       ========================= */
+
+    #clientView #offerGrid {
+    width: calc(100% - 16px);
+    max-width: calc(100% - 16px);
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+#clientView .premium-offer-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+#clientView .premium-offer-card .offer-img {
+    height: 100px;
+}
+
+#clientView .premium-offer-card .offer-body {
+    padding: 7px;
+}
+
+.premium-offer-name {
+    font-size: 10px;
+}
+
+.premium-offer-description {
+    font-size: 7px;
+    line-height: 1.25;
+}
+
+
+    /* =========================
+       VEZI TOATE OFERTELE
+       ========================= */
+
+    .all-offers-wrap {
+        margin: 20px 0 30px;
+        padding: 0 12px;
+    }
+
+    .all-offers-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    /* =========================
+       BENEFICII
+       ========================= */
+
+    .premium-benefits {
+        width: 100%;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .benefit-item {
+        min-height: 82px;
+        padding: 15px 20px;
+        justify-content: flex-start;
+        gap: 14px;
+    }
+
+    .benefit-item + .benefit-item {
+        border-left: 0;
+        border-top: 1px solid rgba(110,92,58,.22);
+    }
+
+    .benefit-icon {
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        font-size: 19px;
+    }
+
+    .benefit-item h3 {
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .benefit-item p {
+        max-width: none;
+        font-size: 10px;
+    }
+
+
+    /* =========================
+       CTA
+       ========================= */
+
+    .premium-cta {
+        min-height: 0;
+        padding: 32px 22px;
+    }
+
+    .premium-cta-grid {
+        width: 100%;
+    }
+
+    .premium-cta-content {
+        max-width: 100%;
+    }
+
+    .premium-cta h2 {
+        font-size: 28px;
+    }
+
+    .premium-cta p {
+        font-size: 11px;
+    }
+
+    .premium-cta-btn {
+        width: 100%;
+        margin-top: 17px;
+    }
+
+    .premium-sms-btn {
+        width: 100%;
+        margin: 10px 0 0;
+    }
+
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    .premium-footer-main {
+        width: 100%;
+        padding: 35px 22px 28px;
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .footer-brand {
+        max-width: 100%;
+    }
+
+    .footer-column {
+        gap: 6px;
+    }
+
+    .premium-footer-bottom {
+        width: 100%;
+        padding: 16px 22px 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+
+    /* =========================
+       MODALE
+       ========================= */
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-card {
+        width: 100%;
+        max-height: 92vh;
+        padding: 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+
+    /* =========================
+       ADMIN
+       ========================= */
+
+    .admin-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .sidebar {
+        position: static;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+
+    /* =========================
+       GENERAL
+       ========================= */
+
+    img {
+        max-width: 100%;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+/* =========================
+   FIX FINAL 412px
+   ========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+.app,
+main,
+#clientView {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#clientView .premium-hero {
+    min-height: 330px;
+}
+
+
+#clientView .premium-hero {
+    min-height: 300px;
+}
+
+
+#clientView .hero-content {
+    width: 58%;
+    max-width: 58%;
+    padding: 8px 0 12px 14px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+
+#clientView .hero-content h1 {
+    font-size: 20px !important;
+    max-width: 190px;
+}
+
+#clientView .hero-content p {
+    font-size: 9px;
+    max-width: 180px;
+}
+
+#clientView .hero-kicker {
+    font-size: 7px;
+}
+
+#clientView .hero-cta {
+    min-height: 31px;
+    padding: 0 11px;
+    font-size: 8px;
+}
+
+.store-selector-premium {
+    width: calc(100% - 16px);
+}
+
+#clientView #offers {
+    padding: 0 8px;
+}
+
+#clientView #offers h2 {
+    font-size: 19px;
+}
+
+/* 3 OFERTE PE ACELAȘI RÂND */
+
+#clientView #offerGrid {
+    width: calc(100% - 16px) !important;
+    max-width: calc(100% - 16px) !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+
+    gap: 6px !important;
+
+    overflow: visible !important;
+}
+
+#clientView #offerGrid > * {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#clientView .premium-offer-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#clientView .premium-offer-card .offer-img {
+    height: 95px !important;
+}
+
+#clientView .premium-offer-card .offer-body {
+    padding: 6px !important;
+}
+
+.premium-offer-name {
+    font-size: 10px !important;
+}
+
+.premium-offer-description {
+    font-size: 7px !important;
+}
+
+.premium-benefits {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.benefit-item {
+    min-width: 0;
+    padding: 10px 5px;
+    gap: 5px;
+}
+
+.benefit-item + .benefit-item {
+    border-top: 0;
+    border-left: 1px solid rgba(110,92,58,.22);
+}
+
+.benefit-icon {
+    flex: 0 0 25px;
+    width: 25px;
+    height: 25px;
+    font-size: 13px;
+}
+
+.benefit-item h3 {
+    font-size: 9px;
+}
+
+.benefit-item p {
+    font-size: 6px;
+}
+
+}
