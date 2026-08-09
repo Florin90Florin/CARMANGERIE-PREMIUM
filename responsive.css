@@ -724,3 +724,232 @@ main,
 }
 
 }
+
+
+/* =========================================================
+   MOBILE FINAL FIX – CARMANGERIE PREMIUM
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    /* =========================
+       PREVENIM ORICE SCROLL LATERAL
+       ========================= */
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden !important;
+    }
+
+    #clientView {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    #clientView .topbar {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .header-left {
+        width: auto !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .brand-text {
+        min-width: 0 !important;
+        max-width: 150px !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .brand-text span {
+        font-size: 11px !important;
+        letter-spacing: 1px !important;
+    }
+
+    #clientView .header-location {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: 60px !important;
+        min-width: 0 !important;
+        margin-left: 4px !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .header-location span {
+        font-size: 10px !important;
+        white-space: nowrap !important;
+    }
+
+    #clientView .location-pin {
+        width: 13px !important;
+        height: 13px !important;
+        flex: 0 0 13px !important;
+    }
+
+    /* =========================
+       BARA ROȘIE
+       ========================= */
+
+    #clientView .topbar + * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #clientView .benefits-bar,
+    #clientView .trust-bar,
+    #clientView .features-bar,
+    #clientView .top-features {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    /* elementele din bara roșie */
+    #clientView .benefits-bar > *,
+    #clientView .trust-bar > *,
+    #clientView .features-bar > *,
+    #clientView .top-features > * {
+        min-width: 0 !important;
+        flex: 1 1 0 !important;
+    }
+
+    /* =========================
+       HERO
+       ========================= */
+
+    #clientView .premium-hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 520px !important;
+        height: 520px !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        background-size: auto 100% !important;
+        background-position: right bottom !important;
+    }
+
+    #clientView .hero-content {
+        width: 58% !important;
+        max-width: 58% !important;
+        min-width: 0 !important;
+        padding: 70px 0 30px 28px !important;
+        box-sizing: border-box !important;
+    }
+
+    #clientView .hero-content h1 {
+        font-size: 42px !important;
+        line-height: 0.98 !important;
+        margin: 12px 0 24px !important;
+        max-width: 100% !important;
+    }
+
+    #clientView .hero-content p {
+        font-size: 17px !important;
+        line-height: 1.7 !important;
+        max-width: 100% !important;
+    }
+
+    #clientView .hero-content .hero-button,
+    #clientView .hero-content a,
+    #clientView .hero-content button {
+        max-width: 215px !important;
+        width: 215px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* =========================
+       CARDURILE – 3 PE UN RÂND
+       ========================= */
+
+    #clientView .offers-grid,
+    #clientView .offers-container,
+    #clientView .offers-list,
+    #clientView .offers-cards {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        padding: 0 10px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .offer-card,
+    #clientView .offer-item,
+    #clientView .offer {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+    }
+
+    /* =========================
+       TEXT CARDURI
+       ========================= */
+
+    #clientView .offer-card h3,
+    #clientView .offer-item h3,
+    #clientView .offer h3 {
+        font-size: 18px !important;
+        line-height: 1.05 !important;
+        word-break: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    #clientView .offer-card p,
+    #clientView .offer-item p,
+    #clientView .offer p {
+        font-size: 12px !important;
+        line-height: 1.35 !important;
+    }
+
+    /* =========================
+       SECTIUNI / IMAGINI
+       ========================= */
+
+    #clientView img {
+        max-width: 100% !important;
+    }
+
+    #clientView section {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    #clientView footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .footer-container,
+    #clientView .footer-content,
+    #clientView .footer-columns {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+}
