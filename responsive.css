@@ -729,23 +729,16 @@ main,
 /* =========================================================
    MOBILE FINAL FIX – CARMANGERIE PREMIUM
    ========================================================= */
+/* =========================================================
+   MOBILE FINAL - NOTE 20
+   ========================================================= */
 
 @media (max-width: 620px) {
-
-    /* =========================
-       PREVENIM ORICE SCROLL LATERAL
-       ========================= */
 
     html,
     body {
         width: 100%;
         max-width: 100%;
-        overflow-x: hidden !important;
-    }
-
-    #clientView {
-        width: 100% !important;
-        max-width: 100% !important;
         overflow-x: hidden !important;
     }
 
@@ -756,76 +749,72 @@ main,
     #clientView .topbar {
         width: 100% !important;
         max-width: 100% !important;
+        padding: 0 10px !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
     }
 
     #clientView .header-left {
-        width: auto !important;
-        max-width: 100% !important;
         min-width: 0 !important;
+        width: auto !important;
         flex: 1 1 auto !important;
-        overflow: hidden !important;
     }
 
-    #clientView .brand-text {
+    #clientView .brand {
         min-width: 0 !important;
-        max-width: 150px !important;
-        overflow: hidden !important;
+        flex: 1 1 auto !important;
+    }
+
+    #clientView .brand-logo {
+        height: 48px !important;
+        width: auto !important;
+    }
+
+    #clientView .brand-text strong {
+        font-size: 15px !important;
     }
 
     #clientView .brand-text span {
-        font-size: 11px !important;
-        letter-spacing: 1px !important;
+        font-size: 8px !important;
+        letter-spacing: 2px !important;
     }
 
     #clientView .header-location {
-        flex: 0 0 auto !important;
-        width: auto !important;
-        max-width: 60px !important;
-        min-width: 0 !important;
-        margin-left: 4px !important;
+        flex: 0 0 45px !important;
+        width: 45px !important;
+        max-width: 45px !important;
+        min-width: 45px !important;
         overflow: hidden !important;
+        margin: 0 !important;
+    }
+
+    #clientView .header-location .location-pin {
+        width: 13px !important;
+        height: 13px !important;
     }
 
     #clientView .header-location span {
-        font-size: 10px !important;
-        white-space: nowrap !important;
+        display: none !important;
     }
 
-    #clientView .location-pin {
-        width: 13px !important;
-        height: 13px !important;
-        flex: 0 0 13px !important;
-    }
 
     /* =========================
        BARA ROȘIE
        ========================= */
 
-    #clientView .topbar + * {
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    #clientView .benefits-bar,
-    #clientView .trust-bar,
-    #clientView .features-bar,
-    #clientView .top-features {
+    #clientView .info-strip {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
     }
 
-    /* elementele din bara roșie */
-    #clientView .benefits-bar > *,
-    #clientView .trust-bar > *,
-    #clientView .features-bar > *,
-    #clientView .top-features > * {
+    #clientView .info-item {
         min-width: 0 !important;
         flex: 1 1 0 !important;
+        font-size: 10px !important;
     }
+
 
     /* =========================
        HERO
@@ -834,11 +823,16 @@ main,
     #clientView .premium-hero {
         width: 100% !important;
         max-width: 100% !important;
-        min-height: 520px !important;
-        height: 520px !important;
+
+        min-height: 470px !important;
+        height: 470px !important;
+
         margin: 0 !important;
+        padding: 0 !important;
+
         box-sizing: border-box !important;
         overflow: hidden !important;
+
         background-size: auto 100% !important;
         background-position: right bottom !important;
     }
@@ -846,92 +840,69 @@ main,
     #clientView .hero-content {
         width: 58% !important;
         max-width: 58% !important;
-        min-width: 0 !important;
-        padding: 70px 0 30px 28px !important;
+
+        padding: 45px 0 20px 18px !important;
+
         box-sizing: border-box !important;
+    }
+
+    #clientView .hero-kicker {
+        font-size: 8px !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 8px !important;
     }
 
     #clientView .hero-content h1 {
-        font-size: 42px !important;
+        font-size: 34px !important;
         line-height: 0.98 !important;
-        margin: 12px 0 24px !important;
-        max-width: 100% !important;
+        letter-spacing: -0.5px !important;
+
+        margin: 0 0 18px 0 !important;
     }
 
     #clientView .hero-content p {
-        font-size: 17px !important;
-        line-height: 1.7 !important;
-        max-width: 100% !important;
+        font-size: 14px !important;
+        line-height: 1.45 !important;
+
+        margin-top: 0 !important;
     }
 
-    #clientView .hero-content .hero-button,
-    #clientView .hero-content a,
-    #clientView .hero-content button {
-        max-width: 215px !important;
-        width: 215px !important;
+    #clientView .hero-actions {
+        margin-top: 15px !important;
+    }
+
+    #clientView .hero-cta {
+        min-height: 42px !important;
+        padding: 0 18px !important;
+        font-size: 10px !important;
+    }
+
+
+    /* =========================
+       ORICE SECȚIUNE
+       ========================= */
+
+    #clientView section {
+        width: 100% !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
 
+
     /* =========================
-       CARDURILE – 3 PE UN RÂND
+       SECȚIUNEA CREMĂ
        ========================= */
 
-    #clientView .offers-grid,
-    #clientView .offers-container,
-    #clientView .offers-list,
-    #clientView .offers-cards {
+    #clientView .features,
+    #clientView .benefits,
+    #clientView .advantages,
+    #clientView .quality-section {
         width: 100% !important;
         max-width: 100% !important;
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 8px !important;
-        padding: 0 10px !important;
         box-sizing: border-box !important;
         overflow: hidden !important;
     }
 
-    #clientView .offer-card,
-    #clientView .offer-item,
-    #clientView .offer {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        box-sizing: border-box !important;
-        margin: 0 !important;
-    }
-
-    /* =========================
-       TEXT CARDURI
-       ========================= */
-
-    #clientView .offer-card h3,
-    #clientView .offer-item h3,
-    #clientView .offer h3 {
-        font-size: 18px !important;
-        line-height: 1.05 !important;
-        word-break: normal !important;
-        overflow-wrap: anywhere !important;
-    }
-
-    #clientView .offer-card p,
-    #clientView .offer-item p,
-    #clientView .offer p {
-        font-size: 12px !important;
-        line-height: 1.35 !important;
-    }
-
-    /* =========================
-       SECTIUNI / IMAGINI
-       ========================= */
-
-    #clientView img {
-        max-width: 100% !important;
-    }
-
-    #clientView section {
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
 
     /* =========================
        FOOTER
@@ -944,12 +915,8 @@ main,
         overflow: hidden !important;
     }
 
-    #clientView .footer-container,
-    #clientView .footer-content,
-    #clientView .footer-columns {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
+    #clientView footer * {
+        max-width: 100%;
+        box-sizing: border-box;
     }
-
 }
