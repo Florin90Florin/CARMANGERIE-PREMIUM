@@ -155,7 +155,7 @@
         overflow: hidden;
     }
 
-    .info-item > span:last-child {
+    .info-item>span:last-child {
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -198,14 +198,12 @@
         transform: none;
 
         background:
-            linear-gradient(
-                90deg,
-                rgba(5,6,5,1) 0%,
-                rgba(5,6,5,.96) 28%,
-                rgba(5,6,5,.70) 48%,
-                rgba(5,6,5,.15) 72%,
-                rgba(5,6,5,0) 100%
-            ),
+            linear-gradient(90deg,
+                rgba(5, 6, 5, 1) 0%,
+                rgba(5, 6, 5, .96) 28%,
+                rgba(5, 6, 5, .70) 48%,
+                rgba(5, 6, 5, .15) 72%,
+                rgba(5, 6, 5, 0) 100%),
             url('poze/hero-premium.png') 70% 30% / auto 100% no-repeat;
 
         overflow: hidden;
@@ -302,7 +300,7 @@
         padding: 10px 0 0;
         margin-top: 2px;
         border-left: 0;
-        border-top: 1px solid rgba(200,155,60,.22);
+        border-top: 1px solid rgba(200, 155, 60, .22);
 
         display: flex;
         align-items: center;
@@ -324,7 +322,7 @@
 
     .store-stock {
         padding-left: 15px;
-        border-left: 1px solid rgba(200,155,60,.18);
+        border-left: 1px solid rgba(200, 155, 60, .18);
     }
 
     .store-stock strong {
@@ -362,37 +360,37 @@
        ========================= */
 
     #clientView #offerGrid {
-    width: calc(100% - 16px);
-    max-width: calc(100% - 16px);
-    margin: 0 auto;
+        width: calc(100% - 16px);
+        max-width: calc(100% - 16px);
+        margin: 0 auto;
 
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
-}
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
 
-#clientView .premium-offer-card {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-}
+    #clientView .premium-offer-card {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
 
-#clientView .premium-offer-card .offer-img {
-    height: 100px;
-}
+    #clientView .premium-offer-card .offer-img {
+        height: 100px;
+    }
 
-#clientView .premium-offer-card .offer-body {
-    padding: 7px;
-}
+    #clientView .premium-offer-card .offer-body {
+        padding: 7px;
+    }
 
-.premium-offer-name {
-    font-size: 10px;
-}
+    .premium-offer-name {
+        font-size: 10px;
+    }
 
-.premium-offer-description {
-    font-size: 7px;
-    line-height: 1.25;
-}
+    .premium-offer-description {
+        font-size: 7px;
+        line-height: 1.25;
+    }
 
 
     /* =========================
@@ -411,92 +409,257 @@
 
 
     /* =========================
-       BENEFICII
+       BENEFICII - 3 PE UN SINGUR RÂND
        ========================= */
 
-    .premium-benefits {
-        width: 100%;
-        padding: 0;
-        display: grid;
-        grid-template-columns: 1fr;
+    #clientView .premium-benefits {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0 !important;
+        overflow: hidden !important;
     }
 
-    .benefit-item {
-        min-height: 82px;
-        padding: 15px 20px;
-        justify-content: flex-start;
-        gap: 14px;
+    #clientView .premium-benefits .benefit-item {
+    min-width: 0 !important;
+    min-height: 82px !important;
+    height: 82px !important;
+    padding: 5px 5px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 3px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+    #clientView .premium-benefits .benefit-item+.benefit-item {
+        border-left: 1px solid rgba(110, 92, 58, .22) !important;
+        border-top: 0 !important;
     }
 
-    .benefit-item + .benefit-item {
-        border-left: 0;
-        border-top: 1px solid rgba(110,92,58,.22);
+    #clientView .premium-benefits .benefit-icon {
+        flex: 0 0 30px !important;
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 15px !important;
     }
 
-    .benefit-icon {
-        flex: 0 0 40px;
-        width: 40px;
-        height: 40px;
-        font-size: 19px;
+    #clientView .premium-benefits .benefit-item h3 {
+        margin: 0 0 2px !important;
+        font-size: 10px !important;
+        line-height: 1.1 !important;
+        white-space: normal !important;
     }
 
-    .benefit-item h3 {
-        font-size: 15px;
-        margin-bottom: 4px;
-    }
-
-    .benefit-item p {
-        max-width: none;
-        font-size: 10px;
+    #clientView .premium-benefits .benefit-item p {
+        width: 100% !important;
+        max-width: 120px !important;
+        margin: 0 !important;
+        font-size: 7px !important;
+        line-height: 1.25 !important;
     }
 
 
     /* =========================
-       CTA
-       ========================= */
+   CTA - MOBILE
+   ========================= */
 
-    .premium-cta {
-        min-height: 0;
-        padding: 32px 22px;
+    #clientView .premium-cta {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 180px !important;
+        height: auto !important;
+
+        padding: 18px 14px 52px !important;
+        box-sizing: border-box !important;
+
+        display: block !important;
+        overflow: hidden !important;
     }
 
-    .premium-cta-grid {
-        width: 100%;
+    /* Zona de sus: stânga text / dreapta SMS */
+    #clientView .premium-cta-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        display: grid !important;
+        grid-template-columns: 1.15fr 0.85fr !important;
+        column-gap: 10px !important;
+
+        align-items: start !important;
     }
 
-    .premium-cta-content {
-        max-width: 100%;
+    /* STÂNGA - text */
+    #clientView .premium-cta-content {
+    position: static !important;
+    z-index: 2 !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    display: block !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    text-align: left !important;
+}
+
+    /* Textul CTA */
+    #clientView .premium-cta-kicker {
+        display: block !important;
+
+        margin: 0 0 4px !important;
+
+        font-size: 8px !important;
+        line-height: 1.2 !important;
+        letter-spacing: 1px !important;
     }
 
-    .premium-cta h2 {
-        font-size: 28px;
+    #clientView .premium-cta h2 {
+        margin: 3px 0 6px !important;
+
+        font-size: 25px !important;
+        line-height: 1.05 !important;
     }
 
-    .premium-cta p {
-        font-size: 11px;
+    #clientView .premium-cta p {
+        max-width: 100% !important;
+
+        margin: 0 !important;
+
+        font-size: 9px !important;
+        line-height: 1.3 !important;
     }
 
-    .premium-cta-btn {
-        width: 100%;
-        margin-top: 17px;
+    /* DREAPTA - SMS */
+    #clientView #premiumRegistrationContainer {
+        position: static !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        transform: none !important;
+
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: flex-end !important;
     }
 
-    .premium-sms-btn {
-        width: 100%;
-        margin: 10px 0 0;
+    /* Buton SMS */
+    #clientView .premium-sms-btn {
+        width: 100% !important;
+        max-width: 150px !important;
+
+        min-height: 40px !important;
+
+        margin: 25px 0 0 auto !important;
+        padding: 8px 10px !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        text-align: center !important;
+
+        border-radius: 10px !important;
+
+        font-size: 9px !important;
+        line-height: 1.2 !important;
     }
+
+    /* BUTONUL VEZI OFERTELE
+   jos, pe toată lățimea */
+    #clientView .premium-cta-btn {
+        position: absolute !important;
+
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 14px !important;
+
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+
+        min-height: 36px !important;
+
+        margin: 0 !important;
+        padding: 0 14px !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        font-size: 10px !important;
+    }
+
+    /* =========================
+   SFÂRȘIT CTA - MOBILE
+   ========================= */
 
 
     /* =========================
        FOOTER
        ========================= */
 
-    .premium-footer-main {
-        width: 100%;
-        padding: 35px 22px 28px;
-        grid-template-columns: 1fr;
-        gap: 28px;
-    }
+   .premium-footer-main {
+    width: 100%;
+    padding: 22px 12px 16px !important;
+    grid-template-columns: 1.2fr 1fr 1fr !important;
+    gap: 10px !important;
+    align-items: start !important;
+    box-sizing: border-box !important;
+}
+
+
+#clientView .premium-footer-main .footer-brand {
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+#clientView .premium-footer-main .footer-column {
+    min-width: 0 !important;
+    gap: 4px !important;
+}
+
+#clientView .premium-footer-main .footer-column h3,
+#clientView .premium-footer-main .footer-column h4 {
+    font-size: 8px !important;
+    line-height: 1.1 !important;
+    margin: 0 0 5px !important;
+}
+
+#clientView .premium-footer-main .footer-column p,
+#clientView .premium-footer-main .footer-column a,
+#clientView .premium-footer-main .footer-column span {
+    font-size: 7px !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+}
+
+#clientView .premium-footer-main .footer-brand p {
+    font-size: 7px !important;
+    line-height: 1.3 !important;
+    margin: 5px 0 0 !important;
+}
+
+
+
+
+
 
     .footer-brand {
         max-width: 100%;
@@ -507,13 +670,17 @@
     }
 
     .premium-footer-bottom {
-        width: 100%;
-        padding: 16px 22px 20px;
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-    }
+    width: 100%;
+    padding: 8px 10px 10px !important;
+    flex-direction: column;
+    text-align: center;
+    gap: 3px !important;
+}
 
+#clientView .premium-footer-bottom * {
+    font-size: 7px !important;
+    line-height: 1.2 !important;
+}
 
     /* =========================
        MODALE
@@ -576,361 +743,659 @@
         max-width: 100%;
     }
 
-/* =========================
+    /* =========================
    FIX FINAL 412px
    ========================= */
 
-* {
-    box-sizing: border-box;
-}
+    * {
+        box-sizing: border-box;
+    }
 
-html,
-body,
-.app,
-main,
-#clientView {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-}
+    html,
+    body,
+    .app,
+    main,
+    #clientView {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
 
-#clientView .premium-hero {
-    min-height: 330px;
-}
-
-
-#clientView .premium-hero {
-    min-height: 300px;
-}
+    #clientView .premium-hero {
+        min-height: 330px;
+    }
 
 
-#clientView .hero-content {
-    width: 58%;
-    max-width: 58%;
-    padding: 8px 0 12px 14px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
+    #clientView .premium-hero {
+        min-height: 300px;
+    }
 
 
-#clientView .hero-content h1 {
-    font-size: 20px !important;
-    max-width: 190px;
-}
+    #clientView .hero-content {
+        width: 58%;
+        max-width: 58%;
+        padding: 8px 0 12px 14px;
 
-#clientView .hero-content p {
-    font-size: 9px;
-    max-width: 180px;
-}
-
-#clientView .hero-kicker {
-    font-size: 7px;
-}
-
-#clientView .hero-cta {
-    min-height: 31px;
-    padding: 0 11px;
-    font-size: 8px;
-}
-
-.store-selector-premium {
-    width: calc(100% - 16px);
-}
-
-#clientView #offers {
-    padding: 0 8px;
-}
-
-#clientView #offers h2 {
-    font-size: 19px;
-}
-
-/* 3 OFERTE PE ACELAȘI RÂND */
-
-#clientView #offerGrid {
-    width: calc(100% - 16px) !important;
-    max-width: calc(100% - 16px) !important;
-
-    margin-left: auto !important;
-    margin-right: auto !important;
-
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-
-    gap: 6px !important;
-
-    overflow: visible !important;
-}
-
-#clientView #offerGrid > * {
-    min-width: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-#clientView .premium-offer-card {
-    min-width: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-#clientView .premium-offer-card .offer-img {
-    height: 95px !important;
-}
-
-#clientView .premium-offer-card .offer-body {
-    padding: 6px !important;
-}
-
-.premium-offer-name {
-    font-size: 10px !important;
-}
-
-.premium-offer-description {
-    font-size: 7px !important;
-}
-
-.premium-benefits {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.benefit-item {
-    min-width: 0;
-    padding: 10px 5px;
-    gap: 5px;
-}
-
-.benefit-item + .benefit-item {
-    border-top: 0;
-    border-left: 1px solid rgba(110,92,58,.22);
-}
-
-.benefit-icon {
-    flex: 0 0 25px;
-    width: 25px;
-    height: 25px;
-    font-size: 13px;
-}
-
-.benefit-item h3 {
-    font-size: 9px;
-}
-
-.benefit-item p {
-    font-size: 6px;
-}
-
-}
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
 
 
-/* =========================================================
+    #clientView .hero-content h1 {
+        font-size: 20px !important;
+        max-width: 190px;
+    }
+
+    #clientView .hero-content p {
+        font-size: 9px;
+        max-width: 180px;
+    }
+
+    #clientView .hero-kicker {
+        font-size: 7px;
+    }
+
+    #clientView .hero-cta {
+        min-height: 31px;
+        padding: 0 11px;
+        font-size: 8px;
+    }
+
+    .store-selector-premium {
+        width: calc(100% - 16px);
+    }
+
+    #clientView #offers {
+        padding: 0 8px;
+    }
+
+    #clientView #offers h2 {
+        font-size: 19px;
+    }
+
+    /* OFERTE MOBILE - SWIPE ORIZONTAL, FĂRĂ MODIFICARE INDEX */
+
+    #clientView #offerGrid {
+        width: calc(100% - 16px) !important;
+        max-width: calc(100% - 16px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+
+        scrollbar-width: none !important;
+        padding-bottom: 6px !important;
+    }
+
+    #clientView #offerGrid::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    #clientView #offerGrid>* {
+        flex: 0 0 calc((100% - 10px) / 2) !important;
+        width: calc((100% - 10px) / 2) !important;
+        max-width: calc((100% - 10px) / 2) !important;
+        min-width: 0 !important;
+
+        scroll-snap-align: start !important;
+    }
+
+    #clientView .premium-offer-card {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    #clientView .premium-offer-card .offer-img {
+        width: 100% !important;
+        height: 120px !important;
+        object-fit: cover !important;
+    }
+
+    #clientView .premium-offer-card .offer-body {
+        width: 100% !important;
+        padding: 9px !important;
+        box-sizing: border-box !important;
+    }
+
+    #clientView .premium-offer-card .premium-offer-name,
+    #clientView .premium-offer-card .premium-offer-description {
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        hyphens: none !important;
+    }
+
+    #clientView .premium-offer-card .premium-offer-name {
+        font-size: 13px !important;
+        line-height: 1.15 !important;
+    }
+
+    #clientView .premium-offer-card .premium-offer-description {
+        font-size: 9px !important;
+        line-height: 1.25 !important;
+        min-height: 26px !important;
+    }
+
+    /* =========================================================
    MOBILE FINAL FIX – CARMANGERIE PREMIUM
    ========================================================= */
-/* =========================================================
+    /* =========================================================
    MOBILE FINAL - NOTE 20
+   ========================================================= */
+
+    @media (max-width: 620px) {
+
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden !important;
+        }
+
+        /* =========================
+       HEADER
+       ========================= */
+
+        #clientView .topbar {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 10px !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        #clientView .header-left {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 1 1 auto !important;
+        }
+
+        #clientView .brand {
+            min-width: 0 !important;
+            flex: 1 1 auto !important;
+        }
+
+        #clientView .brand-logo {
+            height: 48px !important;
+            width: auto !important;
+        }
+
+        #clientView .brand-text strong {
+            font-size: 15px !important;
+        }
+
+        #clientView .brand-text span {
+            font-size: 8px !important;
+            letter-spacing: 2px !important;
+        }
+
+        #clientView .header-location {
+            flex: 0 0 45px !important;
+            width: 45px !important;
+            max-width: 45px !important;
+            min-width: 45px !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+        }
+
+        #clientView .header-location .location-pin {
+            width: 13px !important;
+            height: 13px !important;
+        }
+
+        #clientView .header-location span {
+            display: none !important;
+        }
+
+
+        /* =========================
+       BARA ROȘIE
+       ========================= */
+
+        #clientView .info-strip {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        #clientView .info-item {
+            min-width: 0 !important;
+            flex: 1 1 0 !important;
+            font-size: 10px !important;
+        }
+
+
+        /* =========================
+       HERO
+       ========================= */
+
+        #clientView .premium-hero {
+            width: 100% !important;
+            max-width: 100% !important;
+
+            min-height: 470px !important;
+            height: 470px !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+
+            background-size: auto 110% !important;
+            background-position: 65% 130% !important;
+        }
+
+        #clientView .hero-content {
+            width: 58% !important;
+            max-width: 58% !important;
+
+            padding: 45px 0 20px 18px !important;
+
+            box-sizing: border-box !important;
+        }
+
+        #clientView .hero-kicker {
+            font-size: 8px !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 8px !important;
+        }
+
+        #clientView .hero-content h1 {
+            font-size: 34px !important;
+            line-height: 0.98 !important;
+            letter-spacing: -0.5px !important;
+
+            margin: 0 0 18px 0 !important;
+        }
+
+        #clientView .hero-content p {
+            font-size: 14px !important;
+            line-height: 1.45 !important;
+
+            margin-top: 0 !important;
+        }
+
+        #clientView .hero-actions {
+            margin-top: 15px !important;
+        }
+
+        #clientView .hero-cta {
+            min-height: 42px !important;
+            padding: 0 18px !important;
+            font-size: 10px !important;
+        }
+
+
+        /* =========================
+       ORICE SECȚIUNE
+       ========================= */
+
+        #clientView section {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+
+        /* =========================
+       SECȚIUNEA CREMĂ
+       ========================= */
+
+        #clientView .features,
+        #clientView .benefits,
+        #clientView .advantages,
+        #clientView .quality-section {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+
+        /* =========================
+       FOOTER
+       ========================= */
+
+        #clientView footer {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
+        #clientView footer * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* =========================================
+   AJUSTARE FINALĂ HERO - TELEFON
+   ========================================= */
+
+        #clientView .premium-hero {
+
+            background-position: 65% 130% !important;
+        }
+
+        #clientView .hero-content {
+            transform: translateY(-35px);
+        }
+
+    }
+}
+
+/* =========================================================
+   FOOTER FINAL - TELEFON
+   Suprascrie stilurile din index.html fara modificarea index.html.
+   ========================================================= */
+@media (max-width: 620px) {
+    #clientView .premium-footer { width:100% !important; max-width:100% !important; overflow:hidden !important; }
+
+    #clientView .premium-footer .premium-footer-main {
+        display:grid !important;
+        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+        gap:0 !important; width:100% !important; max-width:100% !important;
+        padding:16px 8px 12px !important; box-sizing:border-box !important;
+    }
+
+    #clientView .premium-footer .footer-brand {
+        grid-column:1 / -1 !important;
+        display:grid !important;
+        grid-template-columns:48px minmax(0,1fr) !important;
+        grid-template-rows:auto auto !important;
+        align-items:center !important; column-gap:9px !important; row-gap:3px !important;
+        width:100% !important; max-width:none !important;
+        margin:0 0 12px !important; padding:0 !important;
+    }
+
+    #clientView .premium-footer .footer-logo {
+        grid-column:1 !important; grid-row:1 !important;
+        width:48px !important; height:48px !important; margin:0 !important; padding:0 !important;
+        border:0 !important; border-radius:0 !important;
+        background-image:url("poze/logo-premium.png") !important;
+        background-repeat:no-repeat !important; background-position:center !important; background-size:contain !important;
+        font-size:0 !important; color:transparent !important; line-height:0 !important;
+    }
+
+    #clientView .premium-footer .footer-brand > div:nth-child(2) {
+        grid-column:2 !important; grid-row:1 !important; min-width:0 !important; margin:0 !important; padding:0 !important;
+    }
+    #clientView .premium-footer .footer-brand strong {
+        display:block !important; margin:0 !important; font-size:14px !important; line-height:1.05 !important;
+        letter-spacing:.7px !important; white-space:nowrap !important;
+    }
+    #clientView .premium-footer .footer-brand > div:nth-child(2) span {
+        display:block !important; margin-top:2px !important; font-size:8px !important; line-height:1 !important; letter-spacing:2px !important;
+    }
+    #clientView .premium-footer .footer-brand p {
+        grid-column:1 / -1 !important; grid-row:2 !important;
+        margin:5px 0 0 !important; padding:0 !important; font-size:8px !important; line-height:1.25 !important; max-width:none !important;
+    }
+
+    #clientView .premium-footer .footer-column {
+        grid-column:auto !important; width:100% !important; min-width:0 !important; max-width:none !important;
+        display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:3px !important;
+        margin:0 !important; padding:0 5px !important; box-sizing:border-box !important;
+    }
+    #clientView .premium-footer .footer-column h3 {
+        margin:0 0 4px !important; font-size:8px !important; line-height:1 !important; letter-spacing:.7px !important;
+    }
+    #clientView .premium-footer .footer-column span,
+    #clientView .premium-footer .footer-column strong {
+        display:block !important; font-size:7px !important; line-height:1.25 !important; white-space:normal !important;
+    }
+
+    #clientView .premium-footer .premium-footer-bottom {
+        width:100% !important; max-width:100% !important; padding:7px 8px 8px !important; margin:0 !important;
+        display:flex !important; flex-direction:column !important; align-items:center !important; gap:2px !important;
+        text-align:center !important; box-sizing:border-box !important;
+    }
+    #clientView .premium-footer .premium-footer-bottom span { font-size:6px !important; line-height:1.2 !important; }
+}
+
+
+/* =========================================================
+   CARMANGERIE PREMIUM — FOOTER FINAL MOBILE
+   RÂND 1 = SIGLĂ + NUME
+   RÂND 2 = 3 COLOANE
    ========================================================= */
 
 @media (max-width: 620px) {
 
-    html,
-    body {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden !important;
-    }
-
-    /* =========================
-       HEADER
-       ========================= */
-
-    #clientView .topbar {
+    .premium-footer {
         width: 100% !important;
         max-width: 100% !important;
-        padding: 0 10px !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-    }
-
-    #clientView .header-left {
-        min-width: 0 !important;
-        width: auto !important;
-        flex: 1 1 auto !important;
-    }
-
-    #clientView .brand {
-        min-width: 0 !important;
-        flex: 1 1 auto !important;
-    }
-
-    #clientView .brand-logo {
-        height: 48px !important;
-        width: auto !important;
-    }
-
-    #clientView .brand-text strong {
-        font-size: 15px !important;
-    }
-
-    #clientView .brand-text span {
-        font-size: 8px !important;
-        letter-spacing: 2px !important;
-    }
-
-    #clientView .header-location {
-        flex: 0 0 45px !important;
-        width: 45px !important;
-        max-width: 45px !important;
-        min-width: 45px !important;
-        overflow: hidden !important;
         margin: 0 !important;
-    }
-
-    #clientView .header-location .location-pin {
-        width: 13px !important;
-        height: 13px !important;
-    }
-
-    #clientView .header-location span {
-        display: none !important;
-    }
-
-
-    /* =========================
-       BARA ROȘIE
-       ========================= */
-
-    #clientView .info-strip {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
+        padding: 0 !important;
         overflow: hidden !important;
     }
 
-    #clientView .info-item {
-        min-width: 0 !important;
-        flex: 1 1 0 !important;
-        font-size: 10px !important;
-    }
+    /* =========================================
+       RÂNDUL 1 — SIGLĂ + CARMANGERIE PREMIUM
+       ========================================= */
 
-
-    /* =========================
-       HERO
-       ========================= */
-
-    #clientView .premium-hero {
+    .premium-footer-main {
         width: 100% !important;
         max-width: 100% !important;
 
-        min-height: 470px !important;
-        height: 470px !important;
+        margin: 0 !important;
+        padding: 14px 10px 10px !important;
+
+        display: grid !important;
+
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        grid-template-rows: auto auto !important;
+
+        column-gap: 8px !important;
+        row-gap: 10px !important;
+
+        align-items: start !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .premium-footer-main .footer-brand {
+        grid-column: 1 / -1 !important;
+        grid-row: 1 !important;
+
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
 
         margin: 0 !important;
         padding: 0 !important;
 
-        box-sizing: border-box !important;
-        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
 
-        background-size: auto 110% !important;
-        background-position: 65% 130% !important;
+        gap: 8px !important;
     }
 
-    #clientView .hero-content {
-        width: 58% !important;
-        max-width: 58% !important;
+    /* SIGLA REALĂ */
+    .premium-footer-main .footer-logo {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
 
-        padding: 45px 0 20px 18px !important;
+        margin: 0 !important;
 
-        box-sizing: border-box !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+
+        background-image: url("poze/logo-premium.png") !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-size: contain !important;
+
+        font-size: 0 !important;
+        color: transparent !important;
     }
 
-    #clientView .hero-kicker {
-        font-size: 8px !important;
-        letter-spacing: 1px !important;
-        margin-bottom: 8px !important;
+    /* TEXTUL DE LÂNGĂ SIGLĂ */
+    .premium-footer-main .footer-brand > div:nth-child(2) {
+        min-width: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        justify-content: center !important;
+        align-items: flex-start !important;
     }
 
-    #clientView .hero-content h1 {
-        font-size: 34px !important;
-        line-height: 0.98 !important;
-        letter-spacing: -0.5px !important;
+    .premium-footer-main .footer-brand strong {
+        display: block !important;
 
-        margin: 0 0 18px 0 !important;
+        margin: 0 !important;
+
+        color: #eee7dc !important;
+
+        font-size: 13px !important;
+        line-height: 1 !important;
+
+        letter-spacing: .7px !important;
+        white-space: nowrap !important;
     }
 
-    #clientView .hero-content p {
-        font-size: 14px !important;
-        line-height: 1.45 !important;
+    .premium-footer-main .footer-brand > div:nth-child(2) span {
+        display: block !important;
 
-        margin-top: 0 !important;
+        margin: 3px 0 0 !important;
+
+        color: #c9973e !important;
+
+        font-size: 7px !important;
+        line-height: 1 !important;
+
+        letter-spacing: 2.5px !important;
+        white-space: nowrap !important;
     }
 
-    #clientView .hero-actions {
-        margin-top: 15px !important;
+    /* DESCRIEREA SUB SIGLĂ + NUME */
+    .premium-footer-main .footer-brand p {
+        display: none !important;
     }
 
-    #clientView .hero-cta {
-        min-height: 42px !important;
-        padding: 0 18px !important;
-        font-size: 10px !important;
-    }
-
-
-    /* =========================
-       ORICE SECȚIUNE
-       ========================= */
-
-    #clientView section {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-
-    /* =========================
-       SECȚIUNEA CREMĂ
-       ========================= */
-
-    #clientView .features,
-    #clientView .benefits,
-    #clientView .advantages,
-    #clientView .quality-section {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-    }
-
-
-    /* =========================
-       FOOTER
-       ========================= */
-
-    #clientView footer {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
-    }
-
-    #clientView footer * {
-        max-width: 100%;
-        box-sizing: border-box;
-    }
 
     /* =========================================
-   AJUSTARE FINALĂ HERO - TELEFON
-   ========================================= */
+       RÂNDUL 2 — CELE 3 COLOANE
+       ========================================= */
 
-#clientView .premium-hero {
-    
-    background-position: 65% 130% !important;
-}
+    .premium-footer-main .footer-column {
+        grid-row: 2 !important;
 
-#clientView .hero-content {
-    transform: translateY(-35px);
-}
+        width: 100% !important;
+        min-width: 0 !important;
 
+        margin: 0 !important;
+        padding: 0 4px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+
+        gap: 3px !important;
+
+        text-align: left !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* COLOANA 1 */
+    .premium-footer-main .footer-column:nth-child(2) {
+        grid-column: 1 !important;
+    }
+
+    /* COLOANA 2 */
+    .premium-footer-main .footer-column:nth-child(3) {
+        grid-column: 2 !important;
+    }
+
+    /* COLOANA 3 */
+    .premium-footer-main .footer-column:nth-child(4) {
+        grid-column: 3 !important;
+    }
+
+    .premium-footer-main .footer-column h3 {
+        width: 100% !important;
+
+        margin: 0 0 4px !important;
+
+        color: #d5a64a !important;
+
+        font-size: 8px !important;
+        line-height: 1.1 !important;
+
+        letter-spacing: .5px !important;
+
+        white-space: nowrap !important;
+    }
+
+    .premium-footer-main .footer-column span,
+    .premium-footer-main .footer-column strong {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+
+        font-size: 7px !important;
+        line-height: 1.3 !important;
+
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+
+    /* =========================================
+       BANDA FINALĂ
+       ========================================= */
+
+    .premium-footer-bottom {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 7px 8px 8px !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 2px !important;
+
+        text-align: center !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .premium-footer-bottom * {
+        margin: 0 !important;
+
+        font-size: 6.5px !important;
+        line-height: 1.2 !important;
+    }
 }
