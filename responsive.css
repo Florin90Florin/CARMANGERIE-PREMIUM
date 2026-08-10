@@ -1402,29 +1402,33 @@
 
 
 /* =========================================================
-   FIX MENIU HEADER - MOBILE
+   FIX FINAL MENIU HEADER - MOBILE
    ========================================================= */
 
 @media (max-width: 620px) {
 
-    #clientView .topbar {
+    .topbar {
         overflow: visible !important;
         position: relative !important;
         z-index: 1000 !important;
     }
 
-    #clientView .header-left {
+    .header-left {
         overflow: visible !important;
         position: relative !important;
         z-index: 1001 !important;
     }
 
-    #clientView .menu-wrap {
+    .menu-wrap {
         position: relative !important;
         z-index: 1002 !important;
     }
 
-    #clientView .header-menu {
+    .header-menu {
         z-index: 9999 !important;
+    }
+
+    .header-menu.open {
+        display: block !important;
     }
 }
