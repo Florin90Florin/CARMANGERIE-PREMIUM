@@ -1432,3 +1432,194 @@
         display: block !important;
     }
 }
+
+
+
+/* =========================================================
+   ADMIN - TABELE MOBILE
+   Scroll orizontal real pentru tabelele late
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    .admin-layout {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .admin-layout > * {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .admin-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .admin-section .table-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        display: block !important;
+
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .admin-section .table-wrap table {
+        width: max-content !important;
+        min-width: 760px !important;
+        max-width: none !important;
+    }
+}
+
+
+/* =========================================================
+   ADMIN OFERTE - CARDURI MAI COMPACTE PE MOBIL
+   Păstrăm 2 coloane
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    #adminOffers {
+        gap: 10px !important;
+    }
+
+    #adminOffers .card {
+        padding: 12px !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    #adminOffers .card h3 {
+        font-size: 15px !important;
+        line-height: 1.15 !important;
+    }
+
+    #adminOffers .card p {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+        margin: 6px 0 !important;
+    }
+
+    #adminOffers .card .toolbar {
+        gap: 6px !important;
+        margin-bottom: 0 !important;
+    }
+
+    #adminOffers .card .toolbar .btn {
+        padding: 8px 10px !important;
+        font-size: 11px !important;
+        min-height: 36px !important;
+        flex: 1 1 auto !important;
+        white-space: nowrap !important;
+    }
+
+}
+
+
+/* =========================================================
+   TABLETĂ PORTRAIT 800x1280
+   Nu modifică landscape
+   ========================================================= */
+
+@media (min-width: 621px) and (max-width: 1024px) {
+
+    .admin-layout {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .admin-layout > * {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .admin-section {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .admin-section .table-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+
+        display: block !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .admin-section .table-wrap table {
+        width: max-content !important;
+        min-width: 760px !important;
+        max-width: none !important;
+    }
+}
+
+
+
+/* =========================================================
+   TABLETĂ PORTRET - BUTON SMS
+   ========================================================= */
+
+@media (min-width: 621px) and (max-width: 1024px) {
+
+    #clientView .premium-cta {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #clientView .premium-cta-grid {
+        display: grid !important;
+        grid-template-columns: 1.15fr 0.85fr !important;
+        gap: 20px !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    #clientView #premiumRegistrationContainer {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+    }
+
+    #clientView .premium-sms-btn {
+        width: 100% !important;
+        max-width: 180px !important;
+        min-height: 42px !important;
+
+        margin: 0 !important;
+        padding: 10px 14px !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        text-align: center !important;
+        font-size: 11px !important;
+        line-height: 1.2 !important;
+    }
+}
