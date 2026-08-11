@@ -1252,6 +1252,7 @@
         .footer-logo {
             width: 48px;
             height: 48px;
+            overflow: hidden;
 
             margin-bottom: 12px;
 
@@ -1267,6 +1268,13 @@
             font-family: Georgia, "Times New Roman", serif;
             font-size: 18px;
             font-weight: 700;
+        }
+
+        .footer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .footer-brand strong {
@@ -1729,15 +1737,15 @@
 
         .toast {
             position: fixed;
-            right: 20px;
-            bottom: 20px;
+            left: 50%;
+            top: 50%;
             z-index: 200;
             background: #fff;
             color: #111;
             padding: 14px 18px;
             border-radius: 14px;
             box-shadow: var(--shadow);
-            transform: translateY(120px);
+            transform: translate(-50%, calc(-50% + 120px));
             opacity: 0;
             transition: .3s;
             max-width: 360px;
@@ -1746,6 +1754,96 @@
         .toast.show {
             transform: translateY(0);
             opacity: 1
+        }
+
+        .toast.closed-store-toast.show {
+            transform: translate(-50%, -50%);
+        }
+
+        .toast.closed-store-toast {
+            width: min(460px, calc(100vw - 40px));
+            max-width: 460px;
+            min-height: 260px;
+
+            padding: 34px 32px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            background:
+                linear-gradient(rgba(8, 8, 8, 0.78),
+                    rgba(8, 8, 8, 0.78)),
+                url("poze/logo-premium.png") center / 260px auto no-repeat;
+
+            border: 1px solid #c9973e;
+            border-radius: 18px;
+
+            box-shadow:
+                0 0 0 1px rgba(201, 151, 62, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.65),
+                0 0 35px rgba(201, 151, 62, 0.12);
+
+            color: #fff;
+        }
+
+        .toast.closed-store-toast .closed-store-title {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 18px;
+        }
+
+        .toast.closed-store-toast .closed-store-line {
+            width: 120px;
+            height: 1px;
+            background: #c9973e;
+            margin-bottom: 20px;
+        }
+
+        .toast.closed-store-toast .closed-store-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #ddd;
+            margin-bottom: 8px;
+            white-space: nowrap;
+        }
+
+        .toast.closed-store-toast .closed-store-thanks {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 16px;
+            font-style: italic;
+            color: #d7a94c;
+
+        }
+
+        .toast.closed-store-toast .closed-store-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+
+            width: 34px;
+            height: 34px;
+
+            border: 1px solid #c9973e;
+            border-radius: 50%;
+
+            background: transparent;
+            color: #d7a94c;
+
+            font-size: 20px;
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast.closed-store-toast .closed-store-close:hover {
+            background: rgba(201, 151, 62, 0.12);
         }
 
         .footer {
@@ -2005,7 +2103,7 @@
                  NU îl duplicăm. -->
 
                             <button type="button" class="premium-sms-btn" onclick="openRegistration()">
-                                ÎNSCRIE-TE PENTRU SMS
+                                PRIMEȘTE NOTIFICĂRI PE WHATSAPP
                             </button>
 
                         </div>
@@ -2037,13 +2135,17 @@
                             </span>
                         </button>
 
+                        <button class="side-btn" data-admin="salesHistoryAdmin">
+                            💰 Istoric vânzări
+                        </button>
+
                         <button class="side-btn" data-admin="clientsAdmin">👥 Clienți</button>
 
                         <button id="storesAdminBtn" class="side-btn" data-admin="storesAdmin" style="display:none;">
                             🏪 Magazine
                         </button>
 
-                        <button class="side-btn" data-admin="smsAdmin">💬 SMS simulate</button>
+                        <button class="side-btn" data-admin="smsAdmin">💬 WhatsApp</button>
                     </aside>
 
                     <div>
@@ -2055,6 +2157,11 @@
                                     <h2>Panou de administrare</h2>
                                     <p>Toate datele sunt salvate în Firebase.</p>
                                 </div>
+
+                                <button id="soundToggleBtn" class="btn btn-secondary" type="button"
+                                    onclick="toggleNotificationSound()">
+                                    🔔 Sunet notificări: PORNIT
+                                </button>
 
                                 <button id="logoutBtn" class="btn btn-danger" onclick="logoutAdmin()">
                                     Logout
@@ -2142,6 +2249,7 @@
                                             <th>Observații</th>
                                             <th>Expiră</th>
                                             <th>Status</th>
+                                            <th>Plată</th>
                                             <th>Acțiune</th>
                                         </tr>
                                     </thead>
@@ -2149,6 +2257,157 @@
                                 </table>
                             </div>
                         </section>
+
+                        <section id="salesHistoryAdmin" class="admin-section">
+
+                            <div class="section-title">
+                                <div>
+                                    <h2>Istoric vânzări</h2>
+                                    <p>Comenzile finalizate și predate.</p>
+                                </div>
+                            </div>
+
+                            <div class="glass card" style="margin-bottom:20px;">
+
+                                <div class="toolbar">
+
+                                    <div class="field">
+                                        <label>Magazin</label>
+                                        <select id="historyStoreFilter" onchange="renderSalesHistory()">
+                                            <option value="all">Toate magazinele</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label>Perioadă</label>
+                                        <select id="historyPeriodFilter" onchange="renderSalesHistory()">
+                                            <option value="today">Azi</option>
+                                            <option value="7days">Ultimele 7 zile</option>
+                                            <option value="month" selected>Luna aceasta</option>
+                                            <option value="custom">Perioadă personalizată</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="historyCustomDates" style="display:none; gap:10px;">
+
+                                        <div class="field">
+                                            <label>De la</label>
+                                            <input type="date" id="historyStartDate" onchange="renderSalesHistory()">
+                                        </div>
+
+                                        <div class="field">
+                                            <label>Până la</label>
+                                            <input type="date" id="historyEndDate" onchange="renderSalesHistory()">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div style="margin-top:18px; width:100%;">
+                                    <input type="text" id="salesHistorySearch"
+                                        placeholder="🔍 Caută client, telefon, produs sau magazin..."
+                                        oninput="renderSalesHistory()" style="width:100%;">
+                                </div>
+
+                            </div>
+
+                            <div class="kpis" style="margin-bottom:20px;">
+
+                                <div class="glass card kpi">
+                                    <span>Vânzări</span>
+                                    <strong id="historyTotalSales">0,00 lei</strong>
+                                </div>
+
+                                <div class="glass card kpi">
+                                    <span>Comenzi</span>
+                                    <strong id="historyOrderCount">0</strong>
+                                </div>
+
+                                <div class="glass card kpi">
+                                    <span>Cantitate vândută</span>
+                                    <strong id="historyTotalKg">0,0 kg</strong>
+                                </div>
+
+                                <div class="glass card kpi">
+                                    <span>Medie / comandă</span>
+                                    <strong id="historyAverageOrder">0,00 lei</strong>
+                                </div>
+
+                            </div>
+
+                            <div id="salesHistoryInsights" style="
+    display:grid;
+    grid-template-columns:minmax(280px, .8fr) minmax(400px, 1.2fr);
+    gap:20px;
+    margin-bottom:20px;
+">
+
+                                <div class="glass card" style="padding:20px;">
+                                    <h3 style="margin:0 0 8px;">🏆 Produsul cel mai vândut</h3>
+
+                                    <div id="topSellingProduct" style="
+            font-size:24px;
+            font-weight:800;
+            margin-top:18px;
+        ">
+                                        —
+                                    </div>
+
+                                    <div id="topSellingProductKg" style="
+            color:var(--muted);
+            margin-top:6px;
+        ">
+                                        0 kg vândute
+                                    </div>
+                                </div>
+
+                                <div class="glass card" style="padding:20px;">
+
+                                    <h3 style="margin:0 0 18px;">
+                                        📈 Vânzări în timp
+                                    </h3>
+
+                                    <div id="salesChart" style="
+            display:flex;
+            align-items:flex-end;
+            gap:8px;
+            height:190px;
+            overflow-x:auto;
+            padding:10px 4px 0;
+        ">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="glass card table-wrap">
+
+                                <table>
+
+                                    <thead>
+                                        <tr>
+                                            <th>Data / ora</th>
+                                            <th>Client</th>
+                                            <th>Telefon</th>
+                                            <th>Magazin</th>
+                                            <th>Produse</th>
+                                            <th>Cantitate</th>
+                                            <th>Total</th>
+                                            <th>Plată</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="salesHistoryTable"></tbody>
+
+                                </table>
+
+                            </div>
+
+                        </section>
+
 
                         <section id="clientsAdmin" class="admin-section">
                             <div class="section-title">
@@ -2242,7 +2501,7 @@
                         <section id="smsAdmin" class="admin-section">
                             <div class="section-title">
                                 <div>
-                                    <h2>SMS simulate</h2>
+                                    <h2>WhatsApp</h2>
                                     <p>În această versiune locală, mesajele nu sunt trimise real.</p>
                                 </div>
                             </div>
@@ -2267,7 +2526,9 @@
             <div class="premium-footer-main">
 
                 <div class="footer-brand">
-                    <div class="footer-logo">CP</div>
+                    <div class="footer-logo">
+                        <img src="poze/logo-premium.png" alt="Carmangerie Premium">
+                    </div>
 
                     <div>
                         <strong>CARMANGERIE</strong>
@@ -2363,6 +2624,34 @@
             </form>
         </div>
     </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="glass modal-card" style="max-width:420px;">
+
+            <div class="modal-head">
+                <h2>Confirmă plata</h2>
+                <button class="icon-btn" onclick="closeModal('paymentModal')">✕</button>
+            </div>
+
+            <div style="margin-bottom:20px; color:var(--muted);">
+                Selectează metoda de plată pentru această comandă.
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+
+                <button type="button" class="btn btn-primary" onclick="confirmPayment('cash')">
+                    💵 Numerar
+                </button>
+
+                <button type="button" class="btn btn-secondary" onclick="confirmPayment('card')">
+                    💳 Card
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
 
     <div id="offerModal" class="modal">
         <div class="glass modal-card">
@@ -2472,6 +2761,85 @@
                 </div>
 
                 <div class="field full">
+                    <label>Program magazin</label>
+
+                    <div style="display:grid;gap:10px;">
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Luni</strong>
+                            <input type="time" name="monOpen" value="08:00">
+                            <input type="time" name="monClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="monClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Marți</strong>
+                            <input type="time" name="tueOpen" value="08:00">
+                            <input type="time" name="tueClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="tueClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Miercuri</strong>
+                            <input type="time" name="wedOpen" value="08:00">
+                            <input type="time" name="wedClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="wedClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Joi</strong>
+                            <input type="time" name="thuOpen" value="08:00">
+                            <input type="time" name="thuClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="thuClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Vineri</strong>
+                            <input type="time" name="friOpen" value="08:00">
+                            <input type="time" name="friClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="friClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Sâmbătă</strong>
+                            <input type="time" name="satOpen" value="08:00">
+                            <input type="time" name="satClose" value="20:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="satClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:120px 1fr 1fr 90px;gap:8px;align-items:center;">
+                            <strong>Duminică</strong>
+                            <input type="time" name="sunOpen" value="08:00">
+                            <input type="time" name="sunClose" value="14:00">
+                            <label style="display:flex;align-items:center;gap:5px;margin:0;">
+                                <input type="checkbox" name="sunClosed">
+                                Închis
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="field full">
                     <button class="btn btn-primary" type="submit">
                         Salvează magazinul
                     </button>
@@ -2578,6 +2946,16 @@
                         </label>
 
                         <label class="check">
+                            <input type="checkbox" name="perm_reservations_correct_expired">
+                            Corectează rezervări expirate ca predate
+                        </label>
+
+                        <label class="check">
+                            <input type="checkbox" name="perm_sales_history_view">
+                            Vezi istoricul vânzărilor
+                        </label>
+
+                        <label class="check">
                             <input type="checkbox" name="perm_clients_view">
                             Vezi clienții
                         </label>
@@ -2661,10 +3039,59 @@
 
         let smsLog = load('meat_sms_log');
 
+        let paymentReservationId = null;
+        let paymentAction = null;
+
         let lastReservationCount = 0;
         let reservationsInitialized = false;
         let unreadReservations = 0;
         let soundEnabled = true;
+
+        function getNotificationSoundKey() {
+            return window.currentAdmin?.uid
+                ? `notificationSoundEnabled_${window.currentAdmin.uid}`
+                : null;
+        }
+
+        function loadNotificationSoundPreference() {
+            const key = getNotificationSoundKey();
+
+            soundEnabled = key
+                ? localStorage.getItem(key) !== 'false'
+                : true;
+
+            updateSoundToggleButton();
+        }
+
+
+        function openPaymentModal(action, id) {
+            paymentAction = action;
+            paymentReservationId = id;
+
+            document.getElementById('paymentModal').classList.add('open');
+        }
+
+
+        async function confirmPayment(paymentMethod) {
+
+            if (!paymentReservationId || !paymentAction) return;
+
+            const id = paymentReservationId;
+            const action = paymentAction;
+
+            document.getElementById('paymentModal').classList.remove('open');
+
+            paymentReservationId = null;
+            paymentAction = null;
+
+            if (action === 'complete') {
+                await completeReservation(id, paymentMethod);
+            }
+
+            if (action === 'correctExpired') {
+                await correctExpiredReservation(id, paymentMethod);
+            }
+        }
 
 
         function playNotificationSound() {
@@ -2692,6 +3119,36 @@
             osc.start();
             osc.stop(audio.currentTime + 0.45);
         }
+
+        function toggleNotificationSound() {
+            soundEnabled = !soundEnabled;
+
+            const key = getNotificationSoundKey();
+
+            if (key) {
+                localStorage.setItem(key, soundEnabled);
+            }
+
+            updateSoundToggleButton();
+        }
+
+        function updateSoundToggleButton() {
+            const btn = document.getElementById('soundToggleBtn');
+
+            if (!btn) return;
+
+            btn.textContent = soundEnabled
+                ? '🔔 Sunet notificări: PORNIT'
+                : '🔕 Sunet notificări: OPRIT';
+
+            btn.style.borderColor = soundEnabled
+                ? 'rgba(200, 155, 60, .28)'
+                : '#c62828';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotificationSoundPreference();
+        });
 
         function showReservationNotification(reservation) {
 
@@ -2808,6 +3265,43 @@
         function toast(msg) {
             const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3200);
         }
+
+        function closedStoreToast(open, close) {
+            const t = $("#toast");
+
+            t.className = "toast closed-store-toast";
+
+            t.innerHTML = `
+        <button class="closed-store-close" type="button" aria-label="Închide">×</button>
+
+        <div class="closed-store-title">
+            Magazinul este închis momentan.
+        </div>
+
+        <div class="closed-store-line"></div>
+
+        <div class="closed-store-text">
+    Poți plasa rezervarea între ${open} și ${close}.
+</div>
+
+<div class="closed-store-thanks">
+    Vă mulțumim pentru înțelegere!
+</div>
+    `;
+
+            t.querySelector(".closed-store-close").onclick = () => {
+                t.classList.remove("show");
+            };
+
+            requestAnimationFrame(() => {
+                t.classList.add("show");
+            });
+
+            setTimeout(() => {
+                t.classList.remove("show");
+            }, 5000);
+        }
+
         function fmtDate(v) { return new Date(v).toLocaleString('ro-RO', { dateStyle: 'short', timeStyle: 'short' }) }
         function phoneClean(v) { return v.replace(/\s+/g, '').replace(/[^0-9+]/g, '') }
         function discount(o) { return Math.round((1 - o.newPrice / o.oldPrice) * 100) }
@@ -2884,23 +3378,94 @@
 
             if (!box || !status || !hours) return;
 
-            const now = new Date();
-            const day = now.getDay(); // 0 = Duminică, 1 = Luni ... 6 = Sâmbătă
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const selectedStoreId = $("#clientStoreSelect")?.value || "";
+            const store = stores.find(s => s.id === selectedStoreId);
 
-            let openMinutes = 8 * 60;
-            let closeMinutes = 20 * 60;
-            let program = "08:00 - 20:00";
-
-            // Duminică
-            if (day === 0) {
-                closeMinutes = 14 * 60;
-                program = "08:00 - 14:00";
+            // Dacă nu este selectat niciun magazin
+            if (!store) {
+                status.textContent = "Alege magazinul";
+                hours.textContent = "—";
+                box.classList.add("closed");
+                return;
             }
+
+            const now = new Date();
+            const day = now.getDay();
+
+            const dayNames = [
+                "sunday",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday"
+            ];
+
+            const today = dayNames[day];
+
+            const defaultHours = {
+                monday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                tuesday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                wednesday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                thursday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                friday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                saturday: {
+                    open: "08:00",
+                    close: "20:00",
+                    closed: false
+                },
+                sunday: {
+                    open: "08:00",
+                    close: "14:00",
+                    closed: false
+                }
+            };
+
+            const dayHours = store.openingHours?.[today] || defaultHours[today];
+
+            if (dayHours.closed) {
+                status.textContent = "Închis";
+                hours.textContent = "Închis astăzi";
+                box.classList.add("closed");
+                return;
+            }
+
+            const [openHour, openMinute] = dayHours.open.split(":").map(Number);
+            const [closeHour, closeMinute] = dayHours.close.split(":").map(Number);
+
+            const openMinutes = openHour * 60 + openMinute;
+            const closeMinutes = closeHour * 60 + closeMinute;
+
+            const currentMinutes =
+                now.getHours() * 60 + now.getMinutes();
 
             const isOpen =
                 currentMinutes >= openMinutes &&
                 currentMinutes < closeMinutes;
+
+            const program =
+                `${dayHours.open} - ${dayHours.close}`;
 
             hours.textContent = program;
 
@@ -2912,7 +3477,6 @@
                 box.classList.add("closed");
             }
         }
-
 
         function renderClientStoreSelector() {
             const citySelect = $("#clientCitySelect");
@@ -2954,12 +3518,22 @@
 
                 if (matchingStores.some(store => store.id === savedStore)) {
                     storeSelect.value = savedStore;
+                } else if (matchingStores.length === 1) {
+                    storeSelect.value = matchingStores[0].id;
+
+                    localStorage.setItem(
+                        "selectedClientStore",
+                        matchingStores[0].id
+                    );
                 }
+
                 const headerLocation = $("#headerLocationName");
 
                 if (headerLocation && storeSelect.value) {
                     headerLocation.textContent = savedCity;
                 }
+
+                updateStoreOpeningStatus();
             }
         }
 
@@ -3003,6 +3577,7 @@
             }
 
             renderOffers();
+            updateStoreOpeningStatus();
         });
 
 
@@ -3251,8 +3826,26 @@
 <td>${r.quantity} kg</td>
 <td>${r.notes || '—'}</td>
 <td>${fmtDate(r.expiresAt)}</td>
-    <td><span class="status ${r.status}">${r.status === 'pending' ? 'În așteptare' : r.status === 'completed' ? 'Ridicată' : 'Expirată'}</span></td>
-    <td>
+
+<td>
+    <span class="status ${r.status}">
+        ${r.status === 'pending'
+                    ? 'În așteptare'
+                    : r.status === 'completed'
+                        ? 'Ridicată'
+                        : 'Expirată'}
+    </span>
+</td>
+
+<td>
+    ${r.paymentMethod === 'card'
+                    ? '💳 Card'
+                    : r.paymentMethod === 'cash'
+                        ? '💵 Numerar'
+                        : '—'}
+</td>
+
+<td>
     ${r.status === 'pending' &&
                     (
                         window.currentAdmin?.role === "administrator" ||
@@ -3261,7 +3854,7 @@
                     ? `
             <button
                 class="btn btn-success"
-                onclick="completeReservation('${r.id}')">
+                onclick="openPaymentModal('complete', '${r.id}')">
                 Predat
             </button>
         `
@@ -3269,12 +3862,12 @@
                     r.status === 'expired' &&
                         (
                             window.currentAdmin?.role === "administrator" ||
-                            window.currentAdmin?.role === "subadmin"
+                            window.currentAdmin?.permissions?.reservationsCorrectExpired === true
                         )
                         ? `
             <button
                 class="btn btn-secondary"
-                onclick="correctExpiredReservation('${r.id}')">
+                onclick="openPaymentModal('correctExpired', '${r.id}')">
                 Corectează ca predată
             </button>
         `
@@ -3282,7 +3875,7 @@
                 }
 </td>
 
-  </tr>`).join('') : '<tr><td colspan="9">Nu există rezervări.</td></tr>';
+  </tr>`).join('') : '<tr><td colspan="10">Nu există rezervări.</td></tr>';
         }
         function clientStats(c) {
             const rs = reservations.filter(r => r.phone === c.phone);
@@ -3290,6 +3883,449 @@
             const total = done + expired; const score = total ? Math.round(done / total * 100) : 100;
             return { done, expired, score };
         }
+
+        function renderSalesHistory() {
+
+            const table = $('#salesHistoryTable');
+            if (!table) return;
+
+            const period = $('#historyPeriodFilter')?.value || 'month';
+            const storeFilter = $('#historyStoreFilter')?.value || 'all';
+
+            const customDates = $('#historyCustomDates');
+
+            if (customDates) {
+                customDates.style.display =
+                    period === 'custom' ? 'flex' : 'none';
+            }
+
+            let startDate = null;
+            let endDate = null;
+
+            const now = new Date();
+
+            if (period === 'today') {
+
+                startDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate()
+                );
+
+                endDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate() + 1
+                );
+
+            } else if (period === '7days') {
+
+                startDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate() - 6
+                );
+
+                endDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate() + 1
+                );
+
+            } else if (period === 'month') {
+
+                startDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    1
+                );
+
+                endDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth() + 1,
+                    1
+                );
+
+            } else if (period === 'custom') {
+
+                const startValue = $('#historyStartDate')?.value;
+                const endValue = $('#historyEndDate')?.value;
+
+                if (startValue) {
+                    startDate = new Date(startValue + 'T00:00:00');
+                }
+
+                if (endValue) {
+                    endDate = new Date(endValue + 'T23:59:59.999');
+                }
+            }
+
+            const search =
+                ($('#salesHistorySearch')?.value || '')
+                    .trim()
+                    .toLowerCase();
+
+            let sales = reservations.filter(r => {
+
+                if (r.status !== 'completed') return false;
+
+                if (storeFilter !== 'all' &&
+                    r.locationId !== storeFilter) {
+                    return false;
+                }
+
+                const saleDate = new Date(
+                    r.completedAt || r.createdAt
+                );
+
+                if (startDate && saleDate < startDate) {
+                    return false;
+                }
+
+                if (endDate && saleDate > endDate) {
+                    return false;
+                }
+
+                if (search) {
+
+                    const storeName =
+                        stores.find(s => s.id === r.locationId)?.name || '';
+
+                    const searchableText = [
+                        r.name,
+                        r.phone,
+                        r.product,
+                        storeName
+                    ]
+                        .filter(Boolean)
+                        .join(' ')
+                        .toLowerCase();
+
+                    if (!searchableText.includes(search)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            sales.sort(
+                (a, b) =>
+                    new Date(b.completedAt || b.createdAt) -
+                    new Date(a.completedAt || a.createdAt)
+            );
+
+            let totalSales = 0;
+            let totalKg = 0;
+
+            sales.forEach(r => {
+
+                const quantity = Number(r.quantity) || 0;
+                const price = Number(r.pricePerKg);
+
+                totalKg += quantity;
+
+                if (Number.isFinite(price)) {
+                    totalSales += quantity * price;
+                }
+            });
+
+            const ordersWithPrice = sales.filter(
+                r => Number.isFinite(Number(r.pricePerKg))
+            ).length;
+
+            const averageOrder =
+                ordersWithPrice > 0
+                    ? totalSales / ordersWithPrice
+                    : 0;
+
+            $('#historyTotalSales').textContent =
+                totalSales.toFixed(2) + ' lei';
+
+            $('#historyOrderCount').textContent =
+                sales.length;
+
+            $('#historyTotalKg').textContent =
+                totalKg.toFixed(1) + ' kg';
+
+            $('#historyAverageOrder').textContent =
+                averageOrder.toFixed(2) + ' lei';
+
+            renderSalesInsights(sales);
+
+            table.innerHTML = sales.length
+                ? sales.map(r => {
+
+                    const quantity = Number(r.quantity) || 0;
+                    const price = Number(r.pricePerKg);
+
+                    const total =
+                        Number.isFinite(price)
+                            ? (quantity * price).toFixed(2) + ' lei'
+                            : '—';
+
+                    const payment =
+                        r.paymentMethod === 'card'
+                            ? '💳 Card'
+                            : r.paymentMethod === 'cash'
+                                ? '💵 Numerar'
+                                : '—';
+
+                    const store =
+                        stores.find(s => s.id === r.locationId)?.name ||
+                        'Site principal';
+
+                    return `
+                <tr>
+
+                    <td>
+                        ${fmtDate(r.completedAt || r.createdAt)}
+                    </td>
+
+                    <td>${r.name || '—'}</td>
+
+                    <td>${r.phone || '—'}</td>
+
+                    <td>${store}</td>
+
+                    <td>${r.product || '—'}</td>
+
+                    <td>${quantity.toFixed(1)} kg</td>
+
+                    <td>${total}</td>
+
+                    <td>${payment}</td>
+
+                    <td>
+                        <span class="status completed">
+                            Ridicată
+                        </span>
+                    </td>
+
+                </tr>
+            `;
+
+                }).join('')
+                : `
+            <tr>
+                <td colspan="9">
+                    Nu există vânzări pentru perioada selectată.
+                </td>
+            </tr>
+        `;
+        }
+
+        function renderSalesHistoryStoreFilter() {
+
+            const select = $('#historyStoreFilter');
+
+            if (!select) return;
+
+            const admin = window.currentAdmin;
+
+            // Administratorul general vede toate magazinele
+            if (admin?.role === 'administrator') {
+
+                select.disabled = false;
+
+                select.innerHTML =
+                    `<option value="all">Toate magazinele</option>` +
+
+                    stores
+                        .filter(store => store.active !== false)
+                        .map(store =>
+                            `<option value="${store.id}">
+                        ${store.name}
+                    </option>`
+                        )
+                        .join('');
+
+                return;
+            }
+
+            // Subadmin / seller cu magazin propriu
+            if (
+                (admin?.role === 'subadmin' ||
+                    admin?.role === 'seller') &&
+                admin.accessType === 'store'
+            ) {
+
+                select.innerHTML =
+                    stores
+                        .filter(store => store.id === admin.locationId)
+                        .map(store =>
+                            `<option value="${store.id}">
+                        ${store.name}
+                    </option>`
+                        )
+                        .join('');
+
+                select.value = admin.locationId;
+                select.disabled = true;
+
+                return;
+            }
+
+            // Acces Site principal
+            select.innerHTML =
+                `<option value="all">Site principal</option>`;
+
+            select.value = 'all';
+            select.disabled = true;
+        }
+
+        function renderSalesInsights(sales) {
+
+            // =========================
+            // PRODUSUL CEL MAI VÂNDUT
+            // =========================
+
+            const productTotals = {};
+
+            sales.forEach(r => {
+
+                const product = r.product || 'Produs necunoscut';
+                const quantity = Number(r.quantity) || 0;
+
+                productTotals[product] =
+                    (productTotals[product] || 0) + quantity;
+            });
+
+            const topProduct = Object.entries(productTotals)
+                .sort((a, b) => b[1] - a[1])[0];
+
+            const topProductEl = $('#topSellingProduct');
+            const topProductKgEl = $('#topSellingProductKg');
+
+            if (topProduct) {
+
+                topProductEl.textContent = topProduct[0];
+
+                topProductKgEl.textContent =
+                    topProduct[1].toFixed(1) + ' kg vândute';
+
+            } else {
+
+                topProductEl.textContent = '—';
+                topProductKgEl.textContent = '0 kg vândute';
+            }
+
+
+            // =========================
+            // GRAFIC VÂNZĂRI ÎN TIMP
+            // =========================
+
+            const chart = $('#salesChart');
+
+            if (!chart) return;
+
+            const dailySales = {};
+
+            sales.forEach(r => {
+
+                const price = Number(r.pricePerKg);
+                const quantity = Number(r.quantity) || 0;
+
+                // Comenzile vechi fără preț nu pot fi calculate valoric
+                if (!Number.isFinite(price)) return;
+
+                const date = new Date(
+                    r.completedAt || r.createdAt
+                );
+
+                const key =
+                    date.getFullYear() + '-' +
+                    String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(date.getDate()).padStart(2, '0');
+
+                dailySales[key] =
+                    (dailySales[key] || 0) +
+                    quantity * price;
+            });
+
+            const days = Object.entries(dailySales)
+                .sort((a, b) => a[0].localeCompare(b[0]));
+
+            if (!days.length) {
+
+                chart.innerHTML = `
+            <div style="
+                width:100%;
+                text-align:center;
+                color:var(--muted);
+                padding-top:70px;
+            ">
+                Nu există date valorice pentru perioada selectată.
+            </div>
+        `;
+
+                return;
+            }
+
+            const maxValue = Math.max(
+                ...days.map(x => x[1])
+            );
+
+            chart.innerHTML = days.map(([date, value]) => {
+
+                const height =
+                    maxValue > 0
+                        ? Math.max((value / maxValue) * 150, 6)
+                        : 6;
+
+                const parts = date.split('-');
+
+                const label =
+                    parts[2] + '.' + parts[1];
+
+                return `
+            <div style="
+                min-width:42px;
+                height:170px;
+                display:flex;
+                flex-direction:column;
+                justify-content:flex-end;
+                align-items:center;
+                gap:6px;
+            ">
+
+                <div style="
+                    font-size:10px;
+                    color:var(--muted);
+                    white-space:nowrap;
+                ">
+                    ${value.toFixed(0)} lei
+                </div>
+
+                <div title="${value.toFixed(2)} lei"
+                    style="
+                        width:28px;
+                        height:${height}px;
+                        background:linear-gradient(
+                            to top,
+                            #8f1512,
+                            #d8a641
+                        );
+                        border-radius:5px 5px 2px 2px;
+                        min-height:6px;
+                    ">
+                </div>
+
+                <div style="
+                    font-size:10px;
+                    color:var(--muted);
+                    white-space:nowrap;
+                ">
+                    ${label}
+                </div>
+
+            </div>
+        `;
+
+            }).join('');
+        }
+
+
         function renderClients() {
 
             let visibleClients = clients;
@@ -3586,6 +4622,8 @@
 
             form.perm_reservations_view.checked = !!p.reservationsView;
             form.perm_reservations_complete.checked = !!p.reservationsComplete;
+            form.perm_reservations_correct_expired.checked = !!p.reservationsCorrectExpired;
+            form.perm_sales_history_view.checked = !!p.salesHistoryView;
 
             form.perm_clients_view.checked = !!p.clientsView;
             form.perm_sms.checked = !!p.sms;
@@ -3623,6 +4661,37 @@
             f.city.value = store.city || "";
             f.address.value = store.address || "";
             f.status.value = store.status || "active";
+
+            const h = store.openingHours || {};
+
+            f.monOpen.value = h.monday?.open || "08:00";
+            f.monClose.value = h.monday?.close || "20:00";
+            f.monClosed.checked = !!h.monday?.closed;
+
+            f.tueOpen.value = h.tuesday?.open || "08:00";
+            f.tueClose.value = h.tuesday?.close || "20:00";
+            f.tueClosed.checked = !!h.tuesday?.closed;
+
+            f.wedOpen.value = h.wednesday?.open || "08:00";
+            f.wedClose.value = h.wednesday?.close || "20:00";
+            f.wedClosed.checked = !!h.wednesday?.closed;
+
+            f.thuOpen.value = h.thursday?.open || "08:00";
+            f.thuClose.value = h.thursday?.close || "20:00";
+            f.thuClosed.checked = !!h.thursday?.closed;
+
+            f.friOpen.value = h.friday?.open || "08:00";
+            f.friClose.value = h.friday?.close || "20:00";
+            f.friClosed.checked = !!h.friday?.closed;
+
+            f.satOpen.value = h.saturday?.open || "08:00";
+            f.satClose.value = h.saturday?.close || "20:00";
+            f.satClosed.checked = !!h.saturday?.closed;
+
+            f.sunOpen.value = h.sunday?.open || "08:00";
+            f.sunClose.value = h.sunday?.close || "14:00";
+            f.sunClosed.checked = !!h.sunday?.closed;
+
 
             f.dataset.editId = store.id;
 
@@ -3692,6 +4761,8 @@
             renderOffers();
             renderAdminOffers();
             renderReservations();
+            renderSalesHistoryStoreFilter();
+            renderSalesHistory();
             renderClients();
             renderKpis();
             renderSms();
@@ -3700,10 +4771,81 @@
 
         function openRegistration() { $('#registrationModal').classList.add('open') }
         function openReservation(id) {
-            const o = offers.find(x => x.id === id); if (!o) return;
-            const f = $('#reservationForm'); f.offerId.value = o.id; f.product.value = o.name; f.duration.value = o.defaultDuration || 90;
-            f.quantity.max = Math.min(o.stock, o.limit); $('#reservationModal').classList.add('open');
+            const o = offers.find(x => x.id === id);
+            if (!o) return;
+
+            const selectedStoreId = $("#clientStoreSelect")?.value || "";
+            const store = stores.find(s => s.id === selectedStoreId);
+
+            if (!store) {
+                return toast("Alege mai întâi magazinul.");
+            }
+
+            const now = new Date();
+            const dayNames = [
+                "sunday",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday"
+            ];
+
+            const today = dayNames[now.getDay()];
+
+            const defaultHours = {
+                monday: { open: "08:00", close: "20:00", closed: false },
+                tuesday: { open: "08:00", close: "20:00", closed: false },
+                wednesday: { open: "08:00", close: "20:00", closed: false },
+                thursday: { open: "08:00", close: "20:00", closed: false },
+                friday: { open: "08:00", close: "20:00", closed: false },
+                saturday: { open: "08:00", close: "20:00", closed: false },
+                sunday: { open: "08:00", close: "14:00", closed: false }
+            };
+
+            const dayHours =
+                store.openingHours?.[today] || defaultHours[today];
+
+            if (dayHours.closed) {
+                return toast("Magazinul este închis astăzi.");
+            }
+
+            const [openHour, openMinute] =
+                dayHours.open.split(":").map(Number);
+
+            const [closeHour, closeMinute] =
+                dayHours.close.split(":").map(Number);
+
+            const currentMinutes =
+                now.getHours() * 60 + now.getMinutes();
+
+            const openMinutes =
+                openHour * 60 + openMinute;
+
+            const closeMinutes =
+                closeHour * 60 + closeMinute;
+
+            if (
+                currentMinutes < openMinutes ||
+                currentMinutes >= closeMinutes
+            ) {
+                return closedStoreToast(
+                    dayHours.open,
+                    dayHours.close
+                );
+            }
+
+            const f = $("#reservationForm");
+
+            f.offerId.value = o.id;
+            f.product.value = o.name;
+            f.duration.value = o.defaultDuration || 90;
+            f.quantity.max = Math.min(o.stock, o.limit);
+
+            $("#reservationModal").classList.add("open");
         }
+
 
         function openOfferModal() {
 
@@ -4024,6 +5166,9 @@
 
             try {
 
+                clearTimeout(inactivityTimer);
+                inactivityTimer = null;
+
                 await window.signOut(window.auth);
 
                 lastReservationCount = 0;
@@ -4092,6 +5237,7 @@
             setVisible('[data-admin="dashboard"]', isSupreme || p.dashboard);
             setVisible('[data-admin="offersAdmin"]', isSupreme || p.offersView);
             setVisible('[data-admin="reservationsAdmin"]', isSupreme || p.reservationsView);
+            setVisible('[data-admin="salesHistoryAdmin"]', isSupreme || p.salesHistoryView);
             setVisible('[data-admin="clientsAdmin"]', isSupreme || p.clientsView);
             setVisible('[data-admin="smsAdmin"]', isSupreme || p.sms);
             setVisible(
@@ -4143,7 +5289,45 @@
                 name: d.name,
                 city: d.city,
                 address: d.address,
-                status: d.status
+                status: d.status,
+
+                openingHours: {
+                    monday: {
+                        open: d.monOpen || "08:00",
+                        close: d.monClose || "20:00",
+                        closed: !!d.monClosed
+                    },
+                    tuesday: {
+                        open: d.tueOpen || "08:00",
+                        close: d.tueClose || "20:00",
+                        closed: !!d.tueClosed
+                    },
+                    wednesday: {
+                        open: d.wedOpen || "08:00",
+                        close: d.wedClose || "20:00",
+                        closed: !!d.wedClosed
+                    },
+                    thursday: {
+                        open: d.thuOpen || "08:00",
+                        close: d.thuClose || "20:00",
+                        closed: !!d.thuClosed
+                    },
+                    friday: {
+                        open: d.friOpen || "08:00",
+                        close: d.friClose || "20:00",
+                        closed: !!d.friClosed
+                    },
+                    saturday: {
+                        open: d.satOpen || "08:00",
+                        close: d.satClose || "20:00",
+                        closed: !!d.satClosed
+                    },
+                    sunday: {
+                        open: d.sunOpen || "08:00",
+                        close: d.sunClose || "14:00",
+                        closed: !!d.sunClosed
+                    }
+                }
             };
 
             try {
@@ -4209,6 +5393,8 @@
                 offersDelete: !!d.perm_offers_delete,
                 reservationsView: !!d.perm_reservations_view,
                 reservationsComplete: !!d.perm_reservations_complete,
+                reservationsCorrectExpired: !!d.perm_reservations_correct_expired,
+                salesHistoryView: !!d.perm_sales_history_view,
                 clientsView: !!d.perm_clients_view,
                 sms: !!d.perm_sms,
                 storesManage: !!d.perm_stores_manage,
@@ -4339,10 +5525,12 @@
                 name: d.name,
                 phone: d.phone,
                 quantity: d.quantity,
+                pricePerKg: Number(o.newPrice),
                 notes: (d.notes || "").trim(),
                 createdAt: new Date().toISOString(),
                 expiresAt: new Date(Date.now() + d.duration * 60000).toISOString(),
                 status: "pending"
+
             };
 
             try {
@@ -4457,7 +5645,7 @@
 
         };
 
-        async function completeReservation(id) {
+        async function completeReservation(id, paymentMethod) {
 
             if (!requireAdmin()) return;
 
@@ -4478,7 +5666,8 @@
 
             await window.updateReservation(r.id, {
                 status: r.status,
-                completedAt: r.completedAt
+                completedAt: r.completedAt,
+                paymentMethod: paymentMethod
             });
 
 
@@ -4493,17 +5682,22 @@
             }
 
             renderAll();
-            toast("Rezervarea a fost marcată ca predată și punctele au fost adăugate.");
+            toast(
+                "Rezervarea a fost marcată ca predată. Plata: " +
+                (paymentMethod === "card" ? "Card" : "Numerar") +
+                "."
+            );
         }
 
-        async function correctExpiredReservation(id) {
+        async function correctExpiredReservation(id, paymentMethod) {
 
             if (!requireAdmin()) return;
 
-            // Doar administrator suprem sau subadministrator
+            // Administratorul suprem are acces complet.
+            // Subadmin / vânzător au nevoie de permisiunea reservationsComplete.
             if (
                 window.currentAdmin?.role !== "administrator" &&
-                window.currentAdmin?.role !== "subadmin"
+                window.currentAdmin?.permissions?.reservationsComplete !== true
             ) {
                 alert("Nu ai permisiunea să corectezi rezervările expirate.");
                 return;
@@ -4561,7 +5755,8 @@
 
                 await window.updateReservation(r.id, {
                     status: "completed",
-                    completedAt: r.completedAt
+                    completedAt: r.completedAt,
+                    paymentMethod: paymentMethod
                 });
 
                 // 3. Actualizăm clientul
@@ -4786,7 +5981,7 @@
 
         updateStoreOpeningStatus();
         setInterval(updateStoreOpeningStatus, 60000);
-        
+
     </script>
 
     <script type="module">
@@ -4845,6 +6040,28 @@
 
         window.isAdminLogged = false;
 
+        let inactivityTimer = null;
+
+        const INACTIVITY_LIMIT = 30 * 60 * 1000;
+
+        function resetInactivityTimer() {
+            if (!window.isAdminLogged) return;
+
+            clearTimeout(inactivityTimer);
+
+            inactivityTimer = setTimeout(async () => {
+                if (window.isAdminLogged) {
+                    toast("Ai fost deconectat automat după 30 de minute de inactivitate.");
+                    await logoutAdmin();
+                }
+            }, INACTIVITY_LIMIT);
+        }
+
+        ["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(eventName => {
+            document.addEventListener(eventName, resetInactivityTimer, { passive: true });
+        });
+
+
         onAuthStateChanged(auth, async (user) => {
 
             if (user) {
@@ -4874,6 +6091,10 @@
                     email: user.email,
                     ...adminData
                 };
+
+                resetInactivityTimer();
+
+                loadNotificationSoundPreference();
 
                 updateHeaderMenu();
 

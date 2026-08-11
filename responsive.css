@@ -1623,3 +1623,16 @@
         line-height: 1.2 !important;
     }
 }
+
+/* =========================================================
+   ISTORIC VÂNZĂRI - STATISTICI PE MOBIL
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    #salesHistoryInsights {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+}
