@@ -2415,6 +2415,17 @@
                                     <h2>Clienți și scor de încredere</h2>
                                     <p>Scorul este calculat din rezervări ridicate și expirate.</p>
                                 </div>
+
+                                <div class="toolbar clients-toolbar">
+
+                                    <select id="clientsStoreFilter">
+                                        <option value="all">Toate magazinele</option>
+                                    </select>
+
+                                    <input type="search" id="clientsSearch" placeholder="🔍 Caută client..."
+                                        autocomplete="off">
+
+                                </div>
                             </div>
                             <div class="glass card table-wrap">
                                 <table>
@@ -4328,33 +4339,154 @@
 
         function renderClients() {
 
+            const storeFilter = $("#clientsStoreFilter");
+            const searchInput = $("#clientsSearch");
+
+            const admin = window.currentAdmin;
+
+            // =========================
+            // FILTRU MAGAZIN
+            // =========================
+
+            if (storeFilter) {
+
+                const isStoreRestricted =
+                    (admin?.role === "subadmin" ||
+                        admin?.role === "seller") &&
+                    admin?.accessType === "store";
+
+                if (isStoreRestricted) {
+
+                    // Subadmin / seller vede doar magazinul lui
+                    storeFilter.innerHTML = stores
+                        .filter(s => s.id === admin.locationId)
+                        .map(s => `<option value="${s.id}">${s.name}</option>`)
+                        .join('');
+
+                    storeFilter.value = admin.locationId;
+                    storeFilter.disabled = true;
+
+                } else {
+
+                    // Administratorul general poate alege orice magazin
+                    const currentValue = storeFilter.value || "all";
+
+                    storeFilter.innerHTML = `
+                <option value="all">Toate magazinele</option>
+                ${stores
+                            .filter(s => s.active !== false)
+                            .map(s => `
+                        <option value="${s.id}">${s.name}</option>
+                    `)
+                            .join('')}
+            `;
+
+                    storeFilter.value =
+                        [...storeFilter.options].some(o => o.value === currentValue)
+                            ? currentValue
+                            : "all";
+
+                    storeFilter.disabled = false;
+                }
+
+                storeFilter.onchange = () => renderClients();
+            }
+
+            // =========================
+            // SEARCH
+            // =========================
+
+            const search =
+                (searchInput?.value || '')
+                    .trim()
+                    .toLowerCase();
+
+            if (searchInput) {
+                searchInput.oninput = () => renderClients();
+            }
+
+            // =========================
+            // FILTRARE CLIENTI
+            // =========================
+
             let visibleClients = clients;
 
-            // Subadmin / seller cu acces la un magazin
-            // vede doar clienții care au rezervări la magazinul lui
+            const selectedStoreId =
+                storeFilter?.value || "all";
+
+            // Restricție pentru subadmin / seller
             if (
-                (window.currentAdmin?.role === "subadmin" ||
-                    window.currentAdmin?.role === "seller") &&
-                window.currentAdmin?.accessType === "store"
+                (admin?.role === "subadmin" ||
+                    admin?.role === "seller") &&
+                admin?.accessType === "store"
             ) {
 
                 const visiblePhones = new Set(
                     reservations
                         .filter(r =>
-                            r.locationId === window.currentAdmin.locationId
+                            r.locationId === admin.locationId
                         )
                         .map(r => r.phone)
                 );
 
-                visibleClients = clients.filter(c =>
+                visibleClients = visibleClients.filter(c =>
                     visiblePhones.has(c.phone)
                 );
             }
+
+            // Filtrare după magazin
+            if (selectedStoreId !== "all") {
+
+                const storePhones = new Set(
+                    reservations
+                        .filter(r =>
+                            r.locationId === selectedStoreId
+                        )
+                        .map(r => r.phone)
+                );
+
+                visibleClients = visibleClients.filter(c =>
+                    storePhones.has(c.phone)
+                );
+            }
+
+            // Căutare
+            if (search) {
+
+                visibleClients = visibleClients.filter(c => {
+
+                    const clientStoreNames = stores
+                        .filter(store =>
+                            reservations.some(r =>
+                                r.phone === c.phone &&
+                                r.locationId === store.id
+                            )
+                        )
+                        .map(store => store.name);
+
+                    const searchableText = [
+                        c.name,
+                        c.phone,
+                        c.city,
+                        ...clientStoreNames
+                    ]
+                        .filter(Boolean)
+                        .join(' ')
+                        .toLowerCase();
+
+                    return searchableText.includes(search);
+                });
+            }
+
+            // =========================
+            // AFIȘARE
+            // =========================
 
             $('#clientTable').innerHTML = visibleClients.length
                 ? visibleClients.map(c => {
 
                     const s = clientStats(c);
+
                     const cls =
                         s.score >= 85 ? 'good' :
                             s.score >= 60 ? 'medium' :
@@ -4366,19 +4498,21 @@
                             ? fmtDate(c.suspendedUntil)
                             : 'Nu';
 
-                    return `
-                <tr>
-                    <td>${c.name}</td>
-                    <td>${c.phone}</td>
-                    <td>${c.city ||
+                    const clientCity =
+                        c.city ||
                         stores.find(s =>
                             reservations.some(r =>
                                 r.phone === c.phone &&
                                 r.locationId === s.id
                             )
                         )?.city ||
-                        '—'
-                        }</td>
+                        '—';
+
+                    return `
+                <tr>
+                    <td>${c.name}</td>
+                    <td>${c.phone}</td>
+                    <td>${clientCity}</td>
                     <td>${s.done}</td>
                     <td>${s.expired}</td>
                     <td class="trust ${cls}">${s.score}%</td>
@@ -4389,6 +4523,7 @@
                 }).join('')
                 : '<tr><td colspan="7">Nu există clienți.</td></tr>';
         }
+
 
         function renderSupremeAdmins() {
 
