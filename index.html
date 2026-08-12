@@ -1684,25 +1684,25 @@
             font-size: 14px
         }
 
-/* ===== RAND SELECTAT IN TABELE ===== */
+        /* ===== RAND SELECTAT IN TABELE ===== */
 
-.admin-section table tbody tr {
-    cursor: pointer;
-    transition:
-        background-color .18s ease,
-        box-shadow .18s ease;
-}
+        .admin-section table tbody tr {
+            cursor: pointer;
+            transition:
+                background-color .18s ease,
+                box-shadow .18s ease;
+        }
 
-.admin-section table tbody tr.selected-row {
-    background: rgba(200, 155, 60, .14);
-    box-shadow:
-        inset 3px 0 0 var(--gold),
-        inset 0 -1px 0 rgba(200, 155, 60, .35);
-}
+        .admin-section table tbody tr.selected-row {
+            background: rgba(200, 155, 60, .14);
+            box-shadow:
+                inset 3px 0 0 var(--gold),
+                inset 0 -1px 0 rgba(200, 155, 60, .35);
+        }
 
-.admin-section table tbody tr.selected-row td {
-    color: #f5f0e6;
-}
+        .admin-section table tbody tr.selected-row td {
+            color: #f5f0e6;
+        }
 
         th {
             color: var(--muted);
@@ -3181,21 +3181,21 @@
             loadNotificationSoundPreference();
         });
 
-document.addEventListener('click', (event) => {
+        document.addEventListener('click', (event) => {
 
-    const row = event.target.closest('.admin-section table tbody tr');
+            const row = event.target.closest('.admin-section table tbody tr');
 
-    if (!row) return;
+            if (!row) return;
 
-    // Nu selectăm rândurile goale / mesajele "Nu există..."
-    if (!row.querySelector('td')) return;
+            // Nu selectăm rândurile goale / mesajele "Nu există..."
+            if (!row.querySelector('td')) return;
 
-    document
-        .querySelectorAll('.admin-section table tbody tr.selected-row')
-        .forEach(r => r.classList.remove('selected-row'));
+            document
+                .querySelectorAll('.admin-section table tbody tr.selected-row')
+                .forEach(r => r.classList.remove('selected-row'));
 
-    row.classList.add('selected-row');
-});
+            row.classList.add('selected-row');
+        });
 
 
         function showReservationNotification(reservation) {
@@ -3384,7 +3384,7 @@ document.addEventListener('click', (event) => {
                 }
             }
 
-        }, 1000);
+        }, 5000);
 
         $$(".nav button").forEach((b) => b.onclick = () => {
 
@@ -3630,7 +3630,7 @@ document.addEventListener('click', (event) => {
 
 
         function renderOffers() {
-            expireReservations(false);
+            
             const selectedStoreId = $("#clientStoreSelect")?.value || "";
 
             const list = selectedStoreId
@@ -5588,7 +5588,6 @@ document.addEventListener('click', (event) => {
                         active
                     });
 
-                    console.log("Utilizator modificat:", updatedAdmin);
 
                     delete e.target.dataset.editUid;
 
@@ -5604,8 +5603,7 @@ document.addEventListener('click', (event) => {
                         permissions,
                         active
                     });
-
-                    console.log("Subadministrator creat:", subadmin);
+              
                 }
 
                 await window.refreshAdmins();
@@ -6229,8 +6227,22 @@ document.addEventListener('click', (event) => {
             }, INACTIVITY_LIMIT);
         }
 
+        let inactivityThrottle = false;
+
+        function handleActivity() {
+            if (inactivityThrottle) return;
+
+            inactivityThrottle = true;
+
+            resetInactivityTimer();
+
+            setTimeout(() => {
+                inactivityThrottle = false;
+            }, 1000);
+        }
+
         ["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(eventName => {
-            document.addEventListener(eventName, resetInactivityTimer, { passive: true });
+            document.addEventListener(eventName, handleActivity, { passive: true });
         });
 
 
@@ -6284,13 +6296,6 @@ document.addEventListener('click', (event) => {
 
                 reservationsInitialized = true;
 
-                console.log(
-                    "NOTIFICĂRI PREGĂTITE DUPĂ LOGIN:",
-                    [...window.knownPendingReservationIds]
-                );
-
-
-                console.log("Administrator autentificat:", window.currentAdmin);
 
                 applyAdminPermissions();
 
@@ -6339,7 +6344,6 @@ document.addEventListener('click', (event) => {
                 await refreshStores();
                 await refreshOffers();
 
-                console.log("Mod client: ofertele publice au fost încărcate.");
             }
 
         });
@@ -6559,10 +6563,6 @@ document.addEventListener('click', (event) => {
 
                     reservationsInitialized = true;
 
-                    console.log(
-                        "NOTIFICĂRI INIȚIALIZATE:",
-                        [...window.knownPendingReservationIds]
-                    );
 
                 } else {
 
@@ -6570,12 +6570,6 @@ document.addEventListener('click', (event) => {
                         r => !window.knownPendingReservationIds.has(r.id)
                     );
 
-                    console.log("TEST NOTIFICARE:", {
-                        adminLogged: window.isAdminLogged,
-                        pending: pendingReservations.map(r => r.id),
-                        known: [...window.knownPendingReservationIds],
-                        noi: newReservations.map(r => r.id)
-                    });
 
                     if (newReservations.length > 0) {
 
