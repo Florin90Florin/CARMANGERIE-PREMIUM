@@ -6040,16 +6040,16 @@
 
         window.isAdminLogged = false;
 
-        let inactivityTimer = null;
+        window.inactivityTimer = null;
 
         const INACTIVITY_LIMIT = 30 * 60 * 1000;
 
         function resetInactivityTimer() {
             if (!window.isAdminLogged) return;
 
-            clearTimeout(inactivityTimer);
+            clearTimeout(window.inactivityTimer);
 
-            inactivityTimer = setTimeout(async () => {
+            window.inactivityTimer = setTimeout(async () => {
                 if (window.isAdminLogged) {
                     toast("Ai fost deconectat automat după 30 de minute de inactivitate.");
                     await logoutAdmin();
