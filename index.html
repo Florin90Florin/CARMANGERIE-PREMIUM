@@ -5630,6 +5630,7 @@
                 }
 
                 await window.refreshStores();
+                renderAll();
 
                 e.target.reset();
                 delete e.target.dataset.editId;
@@ -5713,6 +5714,7 @@
                 }
 
                 await window.refreshAdmins();
+                renderAll();
 
                 e.target.reset();
                 closeModal("subadminModal");
@@ -5819,16 +5821,19 @@
 
                 if (err.message === "INSUFFICIENT_STOCK") {
                     await window.refreshOffers();
+                    renderAll();
                     return toast("Stocul nu mai este suficient. Oferta a fost actualizată.");
                 }
 
                 if (err.message === "OFFER_INACTIVE") {
                     await window.refreshOffers();
+                    renderAll();
                     return toast("Oferta nu mai este activă.");
                 }
 
                 if (err.message === "OFFER_NOT_FOUND") {
                     await window.refreshOffers();
+                    renderAll();
                     return toast("Oferta nu mai există.");
                 }
 
@@ -5839,7 +5844,12 @@
 
             await window.refreshClients();
             await window.refreshReservations();
-            e.target.reset(); closeModal('reservationModal'); await window.refreshOffers(); toast('Rezervare confirmată.');
+            e.target.reset();
+            closeModal('reservationModal');
+            await window.refreshOffers();
+            renderAll();
+            toast('Rezervare confirmată.');
+
         };
 
 
@@ -5914,9 +5924,9 @@
             }
 
             await refreshOffers();
+            renderAll();
 
             e.target.reset();
-
             closeModal("offerModal");
 
         };
@@ -6172,6 +6182,7 @@
             });
 
             await window.refreshOffers();
+            renderAll();
 
             toast(o.active ? "Oferta a fost activată." : "Oferta a fost oprită.");
         }
@@ -6195,6 +6206,7 @@
             await window.deleteOfferFromDb(id);
 
             await window.refreshOffers();
+            renderAll();
 
             toast("Oferta a fost ștearsă.");
         }
@@ -6439,7 +6451,7 @@
                 await refreshReservations();
 
                 updateReservationBadge();
-
+                renderAll();    
 
             } else {
 
@@ -6451,6 +6463,7 @@
                 // Clientul neautentificat trebuie să primească datele publice
                 await refreshStores();
                 await refreshOffers();
+                renderAll();
 
             }
 
@@ -6529,8 +6542,6 @@
                 // Administratorul principal vede toate ofertele
                 offers.push(...allOffers);
             }
-
-            renderAll();
         }
 
         async function refreshClients() {
@@ -6548,7 +6559,6 @@
 
             stores.push(...allStores);
 
-            renderStores();
             updateStoreOpeningStatus();
 
         }
@@ -6564,7 +6574,6 @@
 
             admins.push(...allAdmins);
 
-            renderStores();
         }
 
         window.refreshAdmins = refreshAdmins;
@@ -6606,8 +6615,6 @@
                 // Administratorul principal vede toate rezervările
                 reservations.push(...allReservations);
             }
-
-            renderAll();
         }
 
 
