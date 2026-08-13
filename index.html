@@ -2306,7 +2306,7 @@
                                 <select id="adminOfferStoreFilter" onchange="renderAdminOffers()"
                                     style="max-width:320px;">
                                     <option value="all">Toate magazinele</option>
-                                    <option value="main">Site principal</option>
+                                    
                                 </select>
                             </div>
 
@@ -3804,7 +3804,7 @@
 
                     filterSelect.innerHTML = `
             <option value="all">Toate magazinele</option>
-            <option value="main">Site principal</option>
+            
             ${stores.map(store => `
                 <option value="${store.id}">${store.name}</option>
             `).join('')}
