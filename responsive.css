@@ -1636,3 +1636,112 @@
     }
 
 }
+
+/* =========================================================
+   ADMIN - PROGRAM MAGAZIN - MOBILE
+   Fix Samsung Internet pentru inputurile de timp
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    /* Fiecare zi */
+    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] {
+        grid-template-columns: 78px minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: 6px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    /* Numele zilei */
+    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] > strong {
+        min-width: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Inputurile de timp */
+    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] input[type="time"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Checkbox-ul + Închis */
+    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] > label {
+        grid-column: 2 / -1 !important;
+        justify-self: start !important;
+        width: auto !important;
+        white-space: nowrap !important;
+    }
+
+}
+
+/* =========================================================
+   MOBILE - ELIMINARE CHENAR ALBASTRU LA APĂSARE
+   Samsung Internet / Chrome
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    button,
+    a,
+    input,
+    select,
+    textarea,
+    label,
+    [role="button"] {
+        -webkit-tap-highlight-color: transparent !important;
+        
+        outline: none !important;
+    }
+
+    button:focus,
+    button:focus-visible,
+    a:focus,
+    a:focus-visible,
+    input:focus,
+    input:focus-visible,
+    select:focus,
+    select:focus-visible,
+    textarea:focus,
+    textarea:focus-visible,
+    [role="button"]:focus,
+    [role="button"]:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+}
+
+/* =========================================================
+   MOBILE - TABEL ADMIN
+   Elimină highlight-ul/focus-ul albastru la atingerea
+   rândurilor care pot fi selectate prin swipe/tap
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    .admin-section .table-wrap,
+    .admin-section table,
+    .admin-section table tbody,
+    .admin-section table tbody tr,
+    .admin-section table tbody tr td,
+    .admin-section table tbody tr th {
+        -webkit-tap-highlight-color: transparent !important;
+        
+    }
+
+    .admin-section table tbody tr:focus,
+    .admin-section table tbody tr:focus-visible,
+    .admin-section table tbody tr td:focus,
+    .admin-section table tbody tr td:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Păstrăm selecția noastră aurie */
+    .admin-section table tbody tr.selected-row {
+        outline: none !important;
+    }
+
+}
