@@ -1876,21 +1876,72 @@
 
         @media (hover: none) and (pointer: coarse) {
 
+            /* regula pentru chenarul albastru */
             button,
             a,
             select,
             input,
-            [role="button"] {
+            textarea,
+            [role="button"],
+            [tabindex] {
                 -webkit-tap-highlight-color: transparent;
-                outline: none;
             }
 
             button:focus,
             button:focus-visible,
             a:focus,
-            a:focus-visible {
-                outline: none;
+            a:focus-visible,
+            select:focus,
+            select:focus-visible,
+            input:focus,
+            input:focus-visible,
+            textarea:focus,
+            textarea:focus-visible,
+            [role="button"]:focus,
+            [role="button"]:focus-visible,
+            [tabindex]:focus,
+            [tabindex]:focus-visible {
+                outline: none !important;
+                box-shadow: none !important;
             }
+
+            /* PROGRAM MAGAZIN - DOAR TELEFON/TABLETĂ */
+            /* PROGRAM MAGAZIN - MOBIL */
+            #storeModal .modal-card {
+                padding: 16px !important;
+            }
+
+            #storeModal .field.full>div[style*="display:grid"]>div {
+                grid-template-columns: 72px minmax(0, 94px) minmax(0, 94px) 34px !important;
+                gap: 3px !important;
+                min-width: 0 !important;
+            }
+
+            #storeModal .field.full>div[style*="display:grid"] input[type="time"] {
+                width: 100% !important;
+                min-width: 0 !important;
+                box-sizing: border-box !important;
+                padding: 10px 6px !important;
+                font-size: 12px !important;
+            }
+
+            #storeModal .field.full>div[style*="display:grid"] label {
+                min-width: 0 !important;
+                white-space: nowrap;
+                font-size: 12px !important;
+                gap: 3px !important;
+            }
+
+            #storeModal .field.full>div[style*="display:grid"] label input[type="checkbox"] {
+                margin: 0 !important;
+                width: 13px !important;
+                height: 13px !important;
+            }
+
+            #storeModal .modal-card {
+                background: rgba(15, 15, 15, 0.98) !important;
+            }
+
         }
     </style>
 
@@ -6498,6 +6549,7 @@
             stores.push(...allStores);
 
             renderStores();
+            updateStoreOpeningStatus();
 
         }
 
