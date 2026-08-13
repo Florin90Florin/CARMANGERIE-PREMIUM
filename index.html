@@ -1773,10 +1773,10 @@
         }
 
         .toast.show {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
 
         .toast.closed-store-toast.show {
             transform: translate(-50%, -50%);
@@ -1873,6 +1873,26 @@
             color: var(--muted);
             padding: 20px
         }
+
+        @media (hover: none) and (pointer: coarse) {
+
+            button,
+            a,
+            select,
+            input,
+            [role="button"] {
+                -webkit-tap-highlight-color: transparent;
+                outline: none;
+            }
+
+            button:focus,
+            button:focus-visible,
+            a:focus,
+            a:focus-visible {
+                outline: none;
+            }
+        }
+        
     </style>
 
 
@@ -3632,7 +3652,7 @@
 
 
         function renderOffers() {
-            
+
             const selectedStoreId = $("#clientStoreSelect")?.value || "";
 
             const list = selectedStoreId
@@ -5605,7 +5625,7 @@
                         permissions,
                         active
                     });
-              
+
                 }
 
                 await window.refreshAdmins();
