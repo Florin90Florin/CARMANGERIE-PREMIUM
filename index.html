@@ -1769,12 +1769,14 @@
             opacity: 0;
             transition: .3s;
             max-width: 360px;
+            pointer-events: none;
         }
 
         .toast.show {
-            transform: translateY(0);
-            opacity: 1
-        }
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
 
         .toast.closed-store-toast.show {
             transform: translate(-50%, -50%);
