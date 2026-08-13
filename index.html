@@ -1892,7 +1892,6 @@
                 outline: none;
             }
         }
-        
     </style>
 
 
@@ -2765,6 +2764,13 @@
                 <div class="field full">
                     <label>Parolă</label>
                     <input type="password" name="password" required>
+                </div>
+
+                <div class="field full" style="text-align:right;">
+                    <button type="button" onclick="resetAdminPassword()"
+                        style="background:none;border:none;color:var(--gold);cursor:pointer;padding:0;">
+                        Ai uitat parola?
+                    </button>
                 </div>
 
                 <div class="field full">
@@ -5324,6 +5330,33 @@
             $("#loginModal").classList.add("open");
         }
 
+        async function resetAdminPassword() {
+            const email = prompt("Introdu adresa de email pentru resetarea parolei:");
+
+            if (!email) return;
+
+            try {
+                await window.sendPasswordResetEmail(
+                    window.auth,
+                    email.trim()
+                );
+
+                toast("Am trimis emailul pentru resetarea parolei.");
+            } catch (err) {
+                console.error("Eroare resetare parolă:", err);
+
+                if (err.code === "auth/user-not-found") {
+                    return toast("Nu există niciun cont cu această adresă de email.");
+                }
+
+                if (err.code === "auth/invalid-email") {
+                    return toast("Adresa de email nu este validă.");
+                }
+
+                toast("Nu am putut trimite emailul de resetare.");
+            }
+        }
+
         $("#loginForm").onsubmit = async (e) => {
 
             e.preventDefault();
@@ -6182,6 +6215,7 @@
             auth,
 
             signInWithEmailAndPassword,
+            sendPasswordResetEmail,
             signOut,
             onAuthStateChanged,
 
@@ -6229,6 +6263,7 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
+        window.sendPasswordResetEmail = sendPasswordResetEmail;
 
         window.isAdminLogged = false;
 
