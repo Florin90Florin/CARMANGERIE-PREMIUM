@@ -2744,6 +2744,8 @@
             <form id="registrationForm" class="form-grid">
                 <div class="field"><label>Nume complet</label><input name="name" required></div>
                 <div class="field"><label>Telefon</label><input name="phone" required inputmode="tel"></div>
+                <div class="field"><label>Email <span style="color:var(--muted);">(opțional)</span></label><input
+                        name="email" type="email" placeholder="exemplu@email.com"></div>
                 <div class="field"><label>Data nașterii</label><input name="birthdate" type="date"></div>
                 <div class="field"><label>Oraș / localitate</label><input name="city" required></div>
                 <div class="field full"><label>Adresă</label><input name="address" placeholder="Stradă, număr"></div>
@@ -2764,6 +2766,11 @@
                 <div class="field full"><label>Produs</label><input name="product" readonly></div>
                 <div class="field"><label>Nume</label><input name="name" required></div>
                 <div class="field"><label>Telefon</label><input name="phone" required inputmode="tel"></div>
+                <div class="field">
+                    <label>Email <span style="color:var(--muted);">(opțional)</span></label>
+                    <input name="email" type="email" inputmode="email" autocomplete="email"
+                        placeholder="exemplu@email.com">
+                </div>
                 <div class="field"><label>Cantitate dorită (kg)</label><input name="quantity" type="number" min="0.1"
                         step="0.1" required></div>
                 <div class="field"><label>Durată rezervare</label><select name="duration">
@@ -5949,6 +5956,7 @@
                     id: c ? c.id : uid(),
                     name: d.name,
                     phone: d.phone,
+                    email: (d.email || "").trim(),
                     birthdate: d.birthdate || "",
                     city: d.city || "",
                     address: d.address || "",
@@ -5970,13 +5978,45 @@
 
 
         $('#reservationForm').onsubmit = async e => {
-            e.preventDefault(); expireReservations(false);
-            const d = Object.fromEntries(new FormData(e.target)); d.phone = phoneClean(d.phone); d.quantity = Number(d.quantity); d.duration = Number(d.duration);
+            e.preventDefault();
+            expireReservations(false);
+
+            const d = Object.fromEntries(new FormData(e.target));
+
+            d.phone = phoneClean(d.phone);
+            d.email = (d.email || "").trim();
+            d.quantity = Number(d.quantity);
+            d.duration = Number(d.duration);
+
             const o = offers.find(x => x.id === d.offerId);
-            if (!o || !o.active) return toast('Oferta nu mai este activă.');
-            if (d.quantity <= 0 || d.quantity > o.stock || d.quantity > o.limit) return toast('Cantitatea depășește limita sau stocul disponibil.');
+
+            const selectedStoreId = $("#clientStoreSelect")?.value || "";
+            const store = stores.find(s => s.id === selectedStoreId);
+
+            if (!o || !o.active) {
+                return toast('Oferta nu mai este activă.');
+            }
+
+            if (
+                d.quantity <= 0 ||
+                d.quantity > o.stock ||
+                d.quantity > o.limit
+            ) {
+                return toast('Cantitatea depășește limita sau stocul disponibil.');
+            }
+
             let c = clients.find(x => x.phone === d.phone);
-            if (c?.suspendedUntil && new Date(c.suspendedUntil) > new Date()) return toast('Rezervările sunt suspendate pentru acest număr până la ' + fmtDate(c.suspendedUntil));
+
+            if (
+                c?.suspendedUntil &&
+                new Date(c.suspendedUntil) > new Date()
+            ) {
+                return toast(
+                    'Rezervările sunt suspendate pentru acest număr până la ' +
+                    fmtDate(c.suspendedUntil)
+                );
+            }
+
             if (!c) {
                 c = {
                     id: uid(),
@@ -6000,13 +6040,15 @@
                 product: o.name,
                 name: d.name,
                 phone: d.phone,
+                email: d.email,
                 quantity: d.quantity,
                 pricePerKg: Number(o.newPrice),
                 notes: (d.notes || "").trim(),
                 createdAt: new Date().toISOString(),
-                expiresAt: new Date(Date.now() + d.duration * 60000).toISOString(),
+                expiresAt: new Date(
+                    Date.now() + d.duration * 60000
+                ).toISOString(),
                 status: "pending"
-
             };
 
             try {
@@ -6020,7 +6062,9 @@
                 if (err.message === "INSUFFICIENT_STOCK") {
                     await window.refreshOffers();
                     renderAll();
-                    return toast("Stocul nu mai este suficient. Oferta a fost actualizată.");
+                    return toast(
+                        "Stocul nu mai este suficient. Oferta a fost actualizată."
+                    );
                 }
 
                 if (err.message === "OFFER_INACTIVE") {
@@ -6035,21 +6079,219 @@
                     return toast("Oferta nu mai există.");
                 }
 
-                return toast("Rezervarea nu a putut fi efectuată. Încearcă din nou.");
+                return toast(
+                    "Rezervarea nu a putut fi efectuată. Încearcă din nou."
+                );
             }
 
             reservations.push(reservation);
 
+            /*
+             * EMAIL DE CONFIRMARE
+             * Se trimite DOAR dacă clientul a introdus un email.
+             * Dacă nu are email, rezervarea funcționează normal.
+             */
+            if (d.email) {
+
+                try {
+
+                    const emailResponse = await fetch(
+                        "https://carmangerie-email.venom-heart666.workers.dev/",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                email: d.email,
+                                subject: "Confirmare rezervare - Carmangerie Premium",
+                                html: `
+                            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
+                                <h2>Rezervarea ta a fost primită</h2>
+
+                                <p>Salut, ${d.name}!</p>
+
+                                <p>
+                                    Am primit rezervarea ta pentru:
+                                </p>
+
+                                <p>
+                                    <strong>${o.name}</strong><br>
+                                    Cantitate: <strong>${d.quantity} kg</strong><br>
+                                    Preț: <strong>${Number(o.newPrice).toFixed(2)} lei/kg</strong>
+                                </p>
+
+                                <p>
+                                    Rezervarea este valabilă până la:
+                                    <strong>${new Date(reservation.expiresAt).toLocaleString("ro-RO")}</strong>
+                                </p>
+
+                                ${d.notes
+                                        ? `<p><strong>Observații:</strong> ${d.notes}</p>`
+                                        : ""
+                                    }
+
+                                <p>
+                                    Îți mulțumim pentru comandă!
+                                </p>
+
+                                <hr>
+
+                                <p style="font-size:12px;color:#777;">
+                                    Acest email este o confirmare a comenzii.
+                                    Nu este un email promoțional.
+                                </p>
+                            </div>
+                        `
+                            })
+                        }
+                    );
+
+                    if (!emailResponse.ok) {
+                        console.error(
+                            "Emailul nu a putut fi trimis:",
+                            await emailResponse.text()
+                        );
+                    }
+
+                } catch (emailError) {
+
+                    console.error(
+                        "Eroare trimitere email:",
+                        emailError
+                    );
+
+                }
+            }
+
+            /*
+             * EMAIL NOTIFICARE ADMIN
+             * Se trimite după ce rezervarea a fost salvată cu succes.
+             */
+            try {
+
+                const adminEmailResponse = await fetch(
+                    "https://carmangerie-email.venom-heart666.workers.dev/",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            type: "admin",
+
+                            name: d.name,
+                            phone: d.phone,
+                            clientEmail: d.email || "",
+                            product: o.name,
+                            quantity: d.quantity,
+                            notes: (d.notes || "").trim(),
+
+                            subject: "🔔 Rezervare nouă - Carmangerie Premium",
+
+                            html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
+
+            <h2 style="color:#b8860b;">
+                🔔 Rezervare nouă
+            </h2>
+
+            <p>
+                Ai primit o rezervare nouă de la
+                <strong>Carmangerie Premium</strong>.
+            </p>
+
+            <hr>
+
+            <p>
+                <strong>👤 Client:</strong><br>
+                ${d.name}
+            </p>
+
+            <p>
+                <strong>📞 Telefon:</strong><br>
+                ${d.phone}
+            </p>
+
+            <p>
+                <strong>📧 Email:</strong><br>
+                ${d.email || "Nu a fost introdus"}
+            </p>
+
+            <hr>
+
+            <p>
+                <strong>🥩 Produs:</strong><br>
+                ${o.name}
+            </p>
+
+            <p>
+                <strong>⚖️ Cantitate:</strong><br>
+                ${d.quantity} kg
+            </p>
+
+            <p>
+                <strong>💰 Preț:</strong><br>
+                ${Number(o.newPrice).toFixed(2)} lei/kg
+            </p>
+
+            <p>
+                <strong>📍 Magazin:</strong><br>
+                ${store?.name || "Site principal"}
+            </p>
+
+            ${d.notes
+                                    ? `
+                        <p>
+                            <strong>📝 Observații:</strong><br>
+                            ${d.notes}
+                        </p>
+                    `
+                                    : ""
+                                }
+
+            <hr>
+
+            <p style="font-size:12px;color:#777;">
+                Această notificare a fost generată automat de
+                Carmangerie Premium.
+            </p>
+
+        </div>
+    `
+                        })
+                    }
+                );
+
+                if (!adminEmailResponse.ok) {
+                    console.error(
+                        "Notificarea adminului nu a putut fi trimisă:",
+                        await adminEmailResponse.text()
+                    );
+                }
+
+            } catch (adminEmailError) {
+
+                console.error(
+                    "Eroare trimitere notificare admin:",
+                    adminEmailError
+                );
+
+            }
+
             await window.refreshClients();
             await window.refreshReservations();
+
             e.target.reset();
+
             closeModal('reservationModal');
+
             await window.refreshOffers();
+
             renderAll();
+
             toast('Rezervare confirmată.');
-
         };
-
 
         $('#offerForm').onsubmit = async e => {
             e.preventDefault();
