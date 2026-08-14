@@ -1760,22 +1760,80 @@
             left: 50%;
             top: 50%;
             z-index: 200;
-            background: #fff;
-            color: #111;
-            padding: 14px 18px;
-            border-radius: 14px;
-            box-shadow: var(--shadow);
+
+            width: min(460px, calc(100vw - 40px));
+            max-width: 460px;
+            min-height: 150px;
+
+            padding: 30px 32px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+
+            background:
+                linear-gradient(rgba(8, 8, 8, 0.82),
+                    rgba(8, 8, 8, 0.82)),
+                url("poze/logo-premium.png") center / 240px auto no-repeat;
+
+            border: 1px solid #c9973e;
+            border-radius: 18px;
+
+            box-shadow:
+                0 0 0 1px rgba(201, 151, 62, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.65),
+                0 0 35px rgba(201, 151, 62, 0.12);
+
+            color: #fff;
+
+            font-size: 16px;
+            line-height: 1.5;
+
             transform: translate(-50%, calc(-50% + 120px));
             opacity: 0;
-            transition: .3s;
-            max-width: 360px;
+
+            transition:
+                transform .3s ease,
+                opacity .3s ease;
+
             pointer-events: none;
         }
 
         .toast.show {
-            transform: translateY(0);
+            transform: translate(-50%, -50%);
             opacity: 1;
             pointer-events: auto;
+        }
+
+        .toast-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .toast-title {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .toast-line {
+            width: 100px;
+            height: 1px;
+            background: #c9973e;
+            margin-bottom: 18px;
+        }
+
+        .toast-message {
+            font-size: 15px;
+            line-height: 1.55;
+            color: #ddd;
+            max-width: 380px;
         }
 
         .toast.closed-store-toast.show {
@@ -2306,7 +2364,7 @@
                                 <select id="adminOfferStoreFilter" onchange="renderAdminOffers()"
                                     style="max-width:320px;">
                                     <option value="all">Toate magazinele</option>
-                                    
+
                                 </select>
                             </div>
 
@@ -3390,7 +3448,35 @@
         }
 
         function toast(msg) {
-            const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3200);
+            const t = $("#toast");
+
+            // Revenim întotdeauna la stilul normal de notificare.
+            // Astfel, un closedStoreToast anterior nu influențează mesajul.
+            t.className = "toast";
+
+            t.innerHTML = `
+        <div class="toast-content">
+            <div class="toast-title">
+                Carmangerie Premium
+            </div>
+
+            <div class="toast-line"></div>
+
+            <div class="toast-message">
+                ${msg}
+            </div>
+        </div>
+    `;
+
+            requestAnimationFrame(() => {
+                t.classList.add("show");
+            });
+
+            clearTimeout(window.toastTimer);
+
+            window.toastTimer = setTimeout(() => {
+                t.classList.remove("show");
+            }, 3200);
         }
 
         function closedStoreToast(open, close) {
@@ -3508,6 +3594,13 @@
             const selectedStoreId = $("#clientStoreSelect")?.value || "";
             const store = stores.find(s => s.id === selectedStoreId);
 
+            if (store && store.status === "inactive") {
+                status.textContent = "Magazin inactiv";
+                hours.textContent = "Momentan indisponibil";
+                box.classList.add("closed");
+                return;
+            }
+
             // Dacă nu este selectat niciun magazin
             if (!store) {
                 status.textContent = "Alege magazinul";
@@ -3605,16 +3698,31 @@
             }
         }
 
+
         function renderClientStoreSelector() {
             const citySelect = $("#clientCitySelect");
             const storeSelect = $("#clientStoreSelect");
 
             if (!citySelect || !storeSelect) return;
 
-            const activeStores = stores.filter(store => store.active !== false);
+            const activeStores = stores.filter(
+                store => store.status !== "inactive"
+            );
 
+            const savedCity =
+                localStorage.getItem("selectedClientCity") || "";
+
+            const savedStore =
+                localStorage.getItem("selectedClientStore") || "";
+
+            const savedStoreObject = stores.find(
+                store => store.id === savedStore
+            );
+
+            // Localitățile rămân disponibile chiar dacă
+            // magazinul selectat anterior a devenit inactiv.
             const cities = [...new Set(
-                activeStores
+                stores
                     .map(store => store.city)
                     .filter(Boolean)
             )].sort();
@@ -3625,27 +3733,52 @@
                     `<option value="${city}">${city}</option>`
                 ).join("");
 
-            const savedCity = localStorage.getItem("selectedClientCity") || "";
-            const savedStore = localStorage.getItem("selectedClientStore") || "";
-
             if (savedCity && cities.includes(savedCity)) {
+
                 citySelect.value = savedCity;
 
-                const matchingStores = activeStores.filter(store =>
-                    store.city === savedCity
+                const matchingStores = activeStores.filter(
+                    store => store.city === savedCity
                 );
 
-                storeSelect.innerHTML =
-                    `<option value="">Alege magazinul</option>` +
-                    matchingStores.map(store =>
-                        `<option value="${store.id}">${store.name}</option>`
-                    ).join("");
+                const savedInactiveStore =
+                    savedStoreObject &&
+                        savedStoreObject.city === savedCity &&
+                        savedStoreObject.status === "inactive"
+                        ? savedStoreObject
+                        : null;
 
+                let storeOptions =
+                    `<option value="">Alege magazinul</option>`;
+
+                storeOptions += matchingStores.map(store =>
+                    `<option value="${store.id}">
+                ${store.name}
+            </option>`
+                ).join("");
+
+                // Dacă magazinul selectat anterior a devenit inactiv,
+                // îl păstrăm vizibil, dar nu îl facem selectabil.
+                if (savedInactiveStore) {
+                    storeOptions += `
+                <option value="${savedInactiveStore.id}" disabled>
+                    ${savedInactiveStore.name} — INACTIV
+                </option>
+            `;
+                }
+
+                storeSelect.innerHTML = storeOptions;
                 storeSelect.disabled = false;
 
-                if (matchingStores.some(store => store.id === savedStore)) {
+                if (savedInactiveStore) {
+                    storeSelect.value = savedInactiveStore.id;
+                }
+                else if (matchingStores.some(
+                    store => store.id === savedStore
+                )) {
                     storeSelect.value = savedStore;
-                } else if (matchingStores.length === 1) {
+                }
+                else if (matchingStores.length === 1) {
                     storeSelect.value = matchingStores[0].id;
 
                     localStorage.setItem(
@@ -3664,6 +3797,7 @@
             }
         }
 
+
         $("#clientCitySelect")?.addEventListener("change", function () {
             const city = this.value;
             const storeSelect = $("#clientStoreSelect");
@@ -3673,16 +3807,17 @@
 
             if (!city) return;
 
-            const matchingStores = stores.filter(store =>
-                store.active !== false &&
-                store.city === city
+            const matchingStores = stores.filter(
+                store => store.city === city
             );
 
             storeSelect.innerHTML =
                 `<option value="">Alege magazinul</option>` +
-                matchingStores.map(store =>
-                    `<option value="${store.id}">${store.name}</option>`
-                ).join("");
+                matchingStores.map(store => `
+        <option value="${store.id}">
+            ${store.name}${store.status === "inactive" ? " — INACTIV" : ""}
+        </option>
+    `).join("");
 
             storeSelect.disabled = false;
         });
@@ -3709,8 +3844,47 @@
 
 
         function renderOffers() {
-
             const selectedStoreId = $("#clientStoreSelect")?.value || "";
+            const selectedStore = stores.find(s => s.id === selectedStoreId);
+
+            // Magazinul este inactiv
+            if (selectedStore && selectedStore.status === "inactive") {
+                $('#heroStock').textContent = "Magazin momentan indisponibil";
+
+                $('#offerGrid').innerHTML = `
+            <div class="glass empty" style="
+                grid-column: 1 / -1;
+                padding: 50px 24px;
+                text-align: center;
+            ">
+                <div style="
+                    font-size: 42px;
+                    margin-bottom: 16px;
+                ">🏪</div>
+
+                <h3 style="
+                    margin: 0 0 12px;
+                    color: #e2bd68;
+                    font-size: 24px;
+                ">
+                    Acest magazin este momentan inactiv
+                </h3>
+
+                <p style="
+                    margin: 0 auto;
+                    max-width: 600px;
+                    color: #b8b0a2;
+                    line-height: 1.7;
+                    font-size: 14px;
+                ">
+                    Ne cerem scuze pentru neplăcerile create.
+                    Revenim cât putem de repede.
+                </p>
+            </div>
+        `;
+
+                return;
+            }
 
             const list = selectedStoreId
                 ? activeOffers().filter(o => o.locationId === selectedStoreId)
@@ -5032,6 +5206,10 @@
                 return toast("Alege mai întâi magazinul.");
             }
 
+            if (store.status === "inactive") {
+                return toast("Acest magazin este momentan inactiv. Ne cerem scuze pentru neplăcerile create. Revenim cât putem de repede.");
+            }
+
             const now = new Date();
             const dayNames = [
                 "sunday",
@@ -5409,35 +5587,55 @@
         }
 
         $("#loginForm").onsubmit = async (e) => {
-
             e.preventDefault();
 
             const data = Object.fromEntries(new FormData(e.target));
 
             try {
-
-                await window.signInWithEmailAndPassword(
+                const credential = await window.signInWithEmailAndPassword(
                     window.auth,
                     data.email,
                     data.password
                 );
 
+                const user = credential.user;
 
+                // Verificăm imediat dacă acest cont de administrator este activ.
+                const adminRef = window.doc(window.db, "admins", user.uid);
+                const adminSnap = await window.getDoc(adminRef);
+
+                if (!adminSnap.exists()) {
+                    await window.signOut(window.auth);
+                    return toast("Contul de administrator nu există.");
+                }
+
+                const adminData = adminSnap.data();
+
+                if (adminData.active !== true) {
+                    await window.signOut(window.auth);
+
+                    return toast(
+                        "Contul tău este dezactivat. Contactează administratorul pentru reactivare."
+                    );
+                }
 
                 closeModal("loginModal");
-
                 toast("Autentificare reușită.");
-
                 e.target.reset();
 
             } catch (err) {
-
                 console.error(err);
 
-                toast("Email sau parolă incorectă.");
+                if (
+                    err.code === "auth/invalid-credential" ||
+                    err.code === "auth/wrong-password" ||
+                    err.code === "auth/user-not-found"
+                ) {
+                    return toast("Email sau parolă incorectă.");
+                }
 
+                toast("Nu te-ai putut autentifica. Încearcă din nou.");
             }
-
         };
 
         async function logoutAdmin() {
@@ -6451,7 +6649,7 @@
                 await refreshReservations();
 
                 updateReservationBadge();
-                renderAll();    
+                renderAll();
 
             } else {
 
@@ -6477,6 +6675,9 @@
         window.query = query;
         window.serverTimestamp = serverTimestamp;
         window.onSnapshot = onSnapshot;
+
+        window.getDoc = getDoc;
+        window.doc = doc;
 
         window.loadOffers = loadOffers;
         window.saveOffer = saveOffer;

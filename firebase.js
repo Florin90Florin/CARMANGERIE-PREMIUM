@@ -115,11 +115,34 @@ export async function createReservationAtomic(reservation) {
 
   const offerRef = doc(db, "offers", reservation.offerId);
   const reservationRef = doc(db, "reservations", reservation.id);
+  const storeRef = reservation.locationId
+    ? doc(db, "stores", reservation.locationId)
+    : null;
 
   await runTransaction(db, async (transaction) => {
 
-    // Citim stocul REAL direct din Firestore
+    // Citim oferta și magazinul direct din Firestore
     const offerSnap = await transaction.get(offerRef);
+
+    if (!offerSnap.exists()) {
+      throw new Error("OFFER_NOT_FOUND");
+    }
+
+    let storeSnap = null;
+
+    if (storeRef) {
+      storeSnap = await transaction.get(storeRef);
+
+      if (!storeSnap.exists()) {
+        throw new Error("STORE_NOT_FOUND");
+      }
+
+      const store = storeSnap.data();
+
+      if (store.status === "inactive") {
+        throw new Error("STORE_INACTIVE");
+      }
+    }
 
     if (!offerSnap.exists()) {
       throw new Error("OFFER_NOT_FOUND");
