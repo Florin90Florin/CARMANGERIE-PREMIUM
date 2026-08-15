@@ -6117,8 +6117,9 @@
 
                                 <p>
                                     <strong>${o.name}</strong><br>
-                                    Cantitate: <strong>${d.quantity} kg</strong><br>
-                                    Preț: <strong>${Number(o.newPrice).toFixed(2)} lei/kg</strong>
+Cantitate: <strong>${d.quantity} kg</strong><br>
+Preț: <strong>${Number(o.newPrice).toFixed(2)} lei/kg</strong><br>
+Magazin: <strong>${store?.name || "Carmangerie Premium"}</strong>
                                 </p>
 
                                 <p>
@@ -6138,9 +6139,10 @@
                                 <hr>
 
                                 <p style="font-size:12px;color:#777;">
-                                    Acest email este o confirmare a comenzii.
-                                    Nu este un email promoțional.
-                                </p>
+    Acest email a fost generat automat.<br>
+    Vă rugăm să nu răspundeți la acest mesaj.
+    Pentru orice întrebare, vă rugăm să contactați magazinul.
+</p>
                             </div>
                         `
                             })
@@ -6179,6 +6181,7 @@
                         },
                         body: JSON.stringify({
                             type: "admin",
+                            locationId: o.locationId || null,
 
                             name: d.name,
                             phone: d.phone,
@@ -6187,7 +6190,7 @@
                             quantity: d.quantity,
                             notes: (d.notes || "").trim(),
 
-                            subject: "🔔 Rezervare nouă - Carmangerie Premium",
+                            subject: `🔔 Rezervare nouă - ${store?.name || "Carmangerie Premium"}`,
 
                             html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
