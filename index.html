@@ -6106,44 +6106,98 @@
                                 email: d.email,
                                 subject: "Confirmare rezervare - Carmangerie Premium",
                                 html: `
-                            <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
-                                <h2>Rezervarea ta a fost primită</h2>
+                            
+                                <div style="margin:0 auto;max-width:620px;background:#0b0b0b;color:#f5f1e8;font-family:Arial,sans-serif;border:1px solid #b8860b;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.35);">
 
-                                <p>Salut, ${d.name}!</p>
+    <div style="background:linear-gradient(135deg,#171717,#080808);padding:24px 22px;text-align:center;border-bottom:1px solid #b8860b;">
+        <div style="font-size:26px;font-weight:700;color:#d4a73a;letter-spacing:.5px;">
+            🥩 Rezervarea ta a fost primită
+        </div>
 
-                                <p>
-                                    Am primit rezervarea ta pentru:
-                                </p>
+        <div style="margin-top:7px;font-size:14px;color:#cfc8b8;">
+            Carmangerie Premium
+        </div>
+    </div>
 
-                                <p>
-                                    <strong>${o.name}</strong><br>
-Cantitate: <strong>${d.quantity} kg</strong><br>
-Preț: <strong>${Number(o.newPrice).toFixed(2)} lei/kg</strong><br>
-Magazin: <strong>${store?.name || "Carmangerie Premium"}</strong>
-                                </p>
+    <div style="padding:24px 22px;">
 
-                                <p>
-                                    Rezervarea este valabilă până la:
-                                    <strong>${new Date(reservation.expiresAt).toLocaleString("ro-RO")}</strong>
-                                </p>
+        <p style="font-size:16px;margin:0 0 18px 0;">
+            Salut, <strong style="color:#d4a73a;">${d.name}</strong>!
+        </p>
 
-                                ${d.notes
-                                        ? `<p><strong>Observații:</strong> ${d.notes}</p>`
+        <p style="font-size:15px;line-height:1.6;margin:0 0 22px 0;color:#e6e0d5;">
+            Am primit rezervarea ta și am înregistrat-o cu succes.
+        </p>
+
+        <div style="background:#151515;border:1px solid #3b3322;border-radius:10px;padding:18px;margin-bottom:18px;">
+
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:#b8860b;font-weight:700;margin-bottom:8px;">
+                Detalii rezervare
+            </div>
+
+            <div style="font-size:20px;font-weight:700;color:#ffffff;margin-bottom:14px;">
+                ${o.name}
+            </div>
+
+            <div style="border-top:1px solid #302b22;padding-top:12px;font-size:15px;line-height:1.8;">
+                <strong style="color:#cfc8b8;">Cantitate:</strong>
+                ${d.quantity} kg
+                <br>
+
+                <strong style="color:#cfc8b8;">Preț:</strong>
+                ${Number(o.newPrice).toFixed(2)} lei/kg
+                <br>
+
+                <strong style="color:#cfc8b8;">Magazin:</strong>
+                ${store?.name || "Carmangerie Premium"}
+            </div>
+
+        </div>
+
+        <div style="background:#1a1710;border-left:4px solid #b8860b;border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b8860b;font-weight:700;margin-bottom:5px;">
+                Rezervare valabilă până la
+            </div>
+
+            <div style="font-size:15px;color:#ffffff;font-weight:600;">
+                ${new Date(reservation.expiresAt).toLocaleString("ro-RO")}
+            </div>
+
+        </div>
+
+        ${d.notes
+                                        ? `
+        <div style="background:#151515;border:1px solid #3b3322;border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b8860b;font-weight:700;margin-bottom:6px;">
+                Observațiile tale
+            </div>
+
+            <div style="font-size:14px;line-height:1.6;color:#e6e0d5;">
+                ${d.notes}
+            </div>
+        </div>
+        `
                                         : ""
                                     }
 
-                                <p>
-                                    Îți mulțumim pentru comandă!
-                                </p>
+        <p style="font-size:15px;line-height:1.6;color:#e6e0d5;margin:22px 0 0 0;">
+            Îți mulțumim pentru rezervare!<br>
+            Te așteptăm cu drag la <strong style="color:#d4a73a;">Carmangerie Premium</strong>.
+        </p>
 
-                                <hr>
+    </div>
 
-                                <p style="font-size:12px;color:#777;">
-    Acest email a fost generat automat.<br>
-    Vă rugăm să nu răspundeți la acest mesaj.
-    Pentru orice întrebare, vă rugăm să contactați magazinul.
-</p>
-                            </div>
+    <div style="background:#080808;border-top:1px solid #302b22;padding:16px 20px;text-align:center;">
+        <p style="font-size:11px;line-height:1.5;color:#777;margin:0;">
+            Acest email a fost generat automat.<br>
+            Vă rugăm să nu răspundeți la acest mesaj.<br>
+            Pentru orice întrebare, vă rugăm să contactați magazinul.
+        </p>
+    </div>
+
+</div>    
+
                         `
                             })
                         }
@@ -6193,74 +6247,89 @@ Magazin: <strong>${store?.name || "Carmangerie Premium"}</strong>
                             subject: `🔔 Rezervare nouă - ${store?.name || "Carmangerie Premium"}`,
 
                             html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
+        
+                            <div style="margin:0 auto;
+                            max-width:620px;
+                            background:#0b0b0b;
+                            color:#f5f1e8;
+                            font-family:Arial,sans-serif;
+                            border:1px solid #b8860b;
+                            border-radius:14px;
+                            overflow:visible;
+                            box-shadow:0 8px 30px rgba(0,0,0,.35);">
 
-            <h2 style="color:#b8860b;">
-                🔔 Rezervare nouă
-            </h2>
+  <div style="background:linear-gradient(135deg,#171717,#080808);padding:24px 22px;text-align:center;border-bottom:1px solid #b8860b;">
+    <div style="font-size:26px;font-weight:700;color:#d4a73a;letter-spacing:.5px;">
+      🔔 Rezervare nouă
+    </div>
+    <div style="margin-top:7px;font-size:14px;color:#cfc8b8;">
+      Carmangerie Premium
+    </div>
+  </div>
 
-            <p>
-                Ai primit o rezervare nouă de la
-                <strong>Carmangerie Premium</strong>.
-            </p>
+  <div style="padding:22px;">
 
-            <hr>
+    <div style="font-size:14px;color:#aaa;margin-bottom:18px;">
+      Ai primit o rezervare nouă de la <strong style="color:#f5f1e8;">Carmangerie Premium</strong>.
+    </div>
 
-            <p>
-                <strong>👤 Client:</strong><br>
-                ${d.name}
-            </p>
+    <div style="background:#151515;border:1px solid #332b18;border-radius:10px;padding:16px;margin-bottom:14px;">
+      <div style="color:#d4a73a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+        Client
+      </div>
+      <div style="font-size:16px;font-weight:700;">
+        👤 ${d.name}
+      </div>
+      <div style="margin-top:8px;font-size:14px;color:#ddd;">
+        📞 ${d.phone}
+      </div>
+      <div style="margin-top:6px;font-size:14px;color:#ddd;">
+        📧 ${d.email || "Nu a fost introdus"}
+      </div>
+    </div>
 
-            <p>
-                <strong>📞 Telefon:</strong><br>
-                ${d.phone}
-            </p>
+    <div style="background:#151515;border:1px solid #332b18;border-radius:10px;padding:16px;margin-bottom:14px;">
+      <div style="color:#d4a73a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+        Rezervare
+      </div>
 
-            <p>
-                <strong>📧 Email:</strong><br>
-                ${d.email || "Nu a fost introdus"}
-            </p>
+      <div style="font-size:17px;font-weight:700;">
+        🥩 ${o.name}
+      </div>
 
-            <hr>
+      <div style="margin-top:12px;font-size:14px;color:#ddd;">
+        ⚖️ <strong>Cantitate:</strong> ${d.quantity} kg
+      </div>
 
-            <p>
-                <strong>🥩 Produs:</strong><br>
-                ${o.name}
-            </p>
+      <div style="margin-top:7px;font-size:14px;color:#ddd;">
+        💰 <strong>Preț:</strong> ${Number(o.newPrice).toFixed(2)} lei/kg
+      </div>
 
-            <p>
-                <strong>⚖️ Cantitate:</strong><br>
-                ${d.quantity} kg
-            </p>
+      <div style="margin-top:7px;font-size:14px;color:#ddd;">
+        📍 <strong>Magazin:</strong> ${store?.name || "Site principal"}
+      </div>
+    </div>
 
-            <p>
-                <strong>💰 Preț:</strong><br>
-                ${Number(o.newPrice).toFixed(2)} lei/kg
-            </p>
+    ${d.notes ? `
+    <div style="background:#1b1b1b;border-left:3px solid #d4a73a;border-radius:8px;padding:14px 16px;margin-bottom:18px;">
+      <div style="font-size:13px;font-weight:700;color:#d4a73a;margin-bottom:6px;">
+        📝 Observații
+      </div>
+      <div style="font-size:14px;color:#e5e5e5;">
+        ${d.notes}
+      </div>
+    </div>
+    ` : ""}
 
-            <p>
-                <strong>📍 Magazin:</strong><br>
-                ${store?.name || "Site principal"}
-            </p>
+    <div style="border-top:1px solid #333;padding-top:15px;text-align:center;">
+      <div style="font-size:11px;color:#777;">
+        Această notificare a fost generată automat de Carmangerie Premium.
+      </div>
+    </div>
 
-            ${d.notes
-                                    ? `
-                        <p>
-                            <strong>📝 Observații:</strong><br>
-                            ${d.notes}
-                        </p>
-                    `
-                                    : ""
-                                }
+  </div>
+</div>    
 
-            <hr>
-
-            <p style="font-size:12px;color:#777;">
-                Această notificare a fost generată automat de
-                Carmangerie Premium.
-            </p>
-
-        </div>
     `
                         })
                     }
