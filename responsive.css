@@ -1745,3 +1745,36 @@
     }
 
 }
+
+/* =========================================================
+   FIX MOBILE - MODALE + CARDURI OFERTE
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    /* MODALE - peste header și poziționate mai jos */
+    .modal {
+        z-index: 2000 !important;
+        padding: 78px 10px 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Toate cardurile de creare / modificare / autentificare
+       mai opace și mai ușor de citit */
+    .modal-card {
+        width: 100% !important;
+        max-height: calc(100vh - 100px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        background: #0f0f0f !important;
+        border: 1px solid rgba(200, 155, 60, .38) !important;
+    }
+
+    /* Ofertele pot urca în spațiul de sus fără să fie tăiate */
+    #clientView #offerGrid {
+        padding-top: 6px !important;
+        margin-top: -6px !important;
+        overflow-y: hidden !important;
+    }
+}
