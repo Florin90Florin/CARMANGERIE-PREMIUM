@@ -405,6 +405,30 @@
     .all-offers-btn {
         width: 100%;
         min-width: 0;
+
+        padding: 10px 14px;
+
+        border-radius: 7px;
+
+        box-shadow:
+            0 6px 18px rgba(0, 0, 0, .20),
+            inset 0 1px rgba(255, 255, 255, .04);
+    }
+
+    .all-offers-btn>div:first-child {
+        margin-bottom: 6px !important;
+
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 1.2px !important;
+        line-height: 1.2 !important;
+    }
+
+    .all-offers-btn>div:last-child {
+        font-size: 10px !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0 !important;
     }
 
 
@@ -423,19 +447,19 @@
     }
 
     #clientView .premium-benefits .benefit-item {
-    min-width: 0 !important;
-    min-height: 82px !important;
-    height: 82px !important;
-    padding: 5px 5px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 3px !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-}
+        min-width: 0 !important;
+        min-height: 82px !important;
+        height: 82px !important;
+        padding: 5px 5px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 3px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
 
     #clientView .premium-benefits .benefit-item+.benefit-item {
         border-left: 1px solid rgba(110, 92, 58, .22) !important;
@@ -497,19 +521,19 @@
 
     /* STÂNGA - text */
     #clientView .premium-cta-content {
-    position: static !important;
-    z-index: 2 !important;
+        position: static !important;
+        z-index: 2 !important;
 
-    width: 100% !important;
-    max-width: 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
 
-    display: block !important;
+        display: block !important;
 
-    padding: 0 !important;
-    margin: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
 
-    text-align: left !important;
-}
+        text-align: left !important;
+    }
 
     /* Textul CTA */
     #clientView .premium-cta-kicker {
@@ -615,46 +639,46 @@
        FOOTER
        ========================= */
 
-   .premium-footer-main {
-    width: 100%;
-    padding: 22px 12px 16px !important;
-    grid-template-columns: 1.2fr 1fr 1fr !important;
-    gap: 10px !important;
-    align-items: start !important;
-    box-sizing: border-box !important;
-}
+    .premium-footer-main {
+        width: 100%;
+        padding: 22px 12px 16px !important;
+        grid-template-columns: 1.2fr 1fr 1fr !important;
+        gap: 10px !important;
+        align-items: start !important;
+        box-sizing: border-box !important;
+    }
 
 
-#clientView .premium-footer-main .footer-brand {
-    min-width: 0 !important;
-    margin: 0 !important;
-}
+    #clientView .premium-footer-main .footer-brand {
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
 
-#clientView .premium-footer-main .footer-column {
-    min-width: 0 !important;
-    gap: 4px !important;
-}
+    #clientView .premium-footer-main .footer-column {
+        min-width: 0 !important;
+        gap: 4px !important;
+    }
 
-#clientView .premium-footer-main .footer-column h3,
-#clientView .premium-footer-main .footer-column h4 {
-    font-size: 8px !important;
-    line-height: 1.1 !important;
-    margin: 0 0 5px !important;
-}
+    #clientView .premium-footer-main .footer-column h3,
+    #clientView .premium-footer-main .footer-column h4 {
+        font-size: 8px !important;
+        line-height: 1.1 !important;
+        margin: 0 0 5px !important;
+    }
 
-#clientView .premium-footer-main .footer-column p,
-#clientView .premium-footer-main .footer-column a,
-#clientView .premium-footer-main .footer-column span {
-    font-size: 7px !important;
-    line-height: 1.3 !important;
-    margin: 0 !important;
-}
+    #clientView .premium-footer-main .footer-column p,
+    #clientView .premium-footer-main .footer-column a,
+    #clientView .premium-footer-main .footer-column span {
+        font-size: 7px !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+    }
 
-#clientView .premium-footer-main .footer-brand p {
-    font-size: 7px !important;
-    line-height: 1.3 !important;
-    margin: 5px 0 0 !important;
-}
+    #clientView .premium-footer-main .footer-brand p {
+        font-size: 7px !important;
+        line-height: 1.3 !important;
+        margin: 5px 0 0 !important;
+    }
 
 
 
@@ -670,17 +694,17 @@
     }
 
     .premium-footer-bottom {
-    width: 100%;
-    padding: 8px 10px 10px !important;
-    flex-direction: column;
-    text-align: center;
-    gap: 3px !important;
-}
+        width: 100%;
+        padding: 8px 10px 10px !important;
+        flex-direction: column;
+        text-align: center;
+        gap: 3px !important;
+    }
 
-#clientView .premium-footer-bottom * {
-    font-size: 7px !important;
-    line-height: 1.2 !important;
-}
+    #clientView .premium-footer-bottom * {
+        font-size: 7px !important;
+        line-height: 1.2 !important;
+    }
 
     /* =========================
        MODALE
@@ -1103,68 +1127,135 @@
    Suprascrie stilurile din index.html fara modificarea index.html.
    ========================================================= */
 @media (max-width: 620px) {
-    #clientView .premium-footer { width:100% !important; max-width:100% !important; overflow:hidden !important; }
+    #clientView .premium-footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
 
     #clientView .premium-footer .premium-footer-main {
-        display:grid !important;
-        grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-        gap:0 !important; width:100% !important; max-width:100% !important;
-        padding:16px 8px 12px !important; box-sizing:border-box !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 16px 8px 12px !important;
+        box-sizing: border-box !important;
     }
 
     #clientView .premium-footer .footer-brand {
-        grid-column:1 / -1 !important;
-        display:grid !important;
-        grid-template-columns:48px minmax(0,1fr) !important;
-        grid-template-rows:auto auto !important;
-        align-items:center !important; column-gap:9px !important; row-gap:3px !important;
-        width:100% !important; max-width:none !important;
-        margin:0 0 12px !important; padding:0 !important;
+        grid-column: 1 / -1 !important;
+        display: grid !important;
+        grid-template-columns: 48px minmax(0, 1fr) !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        column-gap: 9px !important;
+        row-gap: 3px !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 0 12px !important;
+        padding: 0 !important;
     }
 
     #clientView .premium-footer .footer-logo {
-        grid-column:1 !important; grid-row:1 !important;
-        width:48px !important; height:48px !important; margin:0 !important; padding:0 !important;
-        border:0 !important; border-radius:0 !important;
-        background-image:url("poze/logo-premium.png") !important;
-        background-repeat:no-repeat !important; background-position:center !important; background-size:contain !important;
-        font-size:0 !important; color:transparent !important; line-height:0 !important;
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        width: 48px !important;
+        height: 48px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background-image: url("poze/logo-premium.png") !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-size: contain !important;
+        font-size: 0 !important;
+        color: transparent !important;
+        line-height: 0 !important;
     }
 
-    #clientView .premium-footer .footer-brand > div:nth-child(2) {
-        grid-column:2 !important; grid-row:1 !important; min-width:0 !important; margin:0 !important; padding:0 !important;
+    #clientView .premium-footer .footer-brand>div:nth-child(2) {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
+
     #clientView .premium-footer .footer-brand strong {
-        display:block !important; margin:0 !important; font-size:14px !important; line-height:1.05 !important;
-        letter-spacing:.7px !important; white-space:nowrap !important;
+        display: block !important;
+        margin: 0 !important;
+        font-size: 14px !important;
+        line-height: 1.05 !important;
+        letter-spacing: .7px !important;
+        white-space: nowrap !important;
     }
-    #clientView .premium-footer .footer-brand > div:nth-child(2) span {
-        display:block !important; margin-top:2px !important; font-size:8px !important; line-height:1 !important; letter-spacing:2px !important;
+
+    #clientView .premium-footer .footer-brand>div:nth-child(2) span {
+        display: block !important;
+        margin-top: 2px !important;
+        font-size: 8px !important;
+        line-height: 1 !important;
+        letter-spacing: 2px !important;
     }
+
     #clientView .premium-footer .footer-brand p {
-        grid-column:1 / -1 !important; grid-row:2 !important;
-        margin:5px 0 0 !important; padding:0 !important; font-size:8px !important; line-height:1.25 !important; max-width:none !important;
+        grid-column: 1 / -1 !important;
+        grid-row: 2 !important;
+        margin: 5px 0 0 !important;
+        padding: 0 !important;
+        font-size: 8px !important;
+        line-height: 1.25 !important;
+        max-width: none !important;
     }
 
     #clientView .premium-footer .footer-column {
-        grid-column:auto !important; width:100% !important; min-width:0 !important; max-width:none !important;
-        display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:3px !important;
-        margin:0 !important; padding:0 5px !important; box-sizing:border-box !important;
+        grid-column: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 3px !important;
+        margin: 0 !important;
+        padding: 0 5px !important;
+        box-sizing: border-box !important;
     }
+
     #clientView .premium-footer .footer-column h3 {
-        margin:0 0 4px !important; font-size:8px !important; line-height:1 !important; letter-spacing:.7px !important;
+        margin: 0 0 4px !important;
+        font-size: 8px !important;
+        line-height: 1 !important;
+        letter-spacing: .7px !important;
     }
+
     #clientView .premium-footer .footer-column span,
     #clientView .premium-footer .footer-column strong {
-        display:block !important; font-size:7px !important; line-height:1.25 !important; white-space:normal !important;
+        display: block !important;
+        font-size: 7px !important;
+        line-height: 1.25 !important;
+        white-space: normal !important;
     }
 
     #clientView .premium-footer .premium-footer-bottom {
-        width:100% !important; max-width:100% !important; padding:7px 8px 8px !important; margin:0 !important;
-        display:flex !important; flex-direction:column !important; align-items:center !important; gap:2px !important;
-        text-align:center !important; box-sizing:border-box !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 7px 8px 8px !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 2px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
     }
-    #clientView .premium-footer .premium-footer-bottom span { font-size:6px !important; line-height:1.2 !important; }
+
+    #clientView .premium-footer .premium-footer-bottom span {
+        font-size: 6px !important;
+        line-height: 1.2 !important;
+    }
 }
 
 
@@ -1246,7 +1337,7 @@
     }
 
     /* TEXTUL DE LÂNGĂ SIGLĂ */
-    .premium-footer-main .footer-brand > div:nth-child(2) {
+    .premium-footer-main .footer-brand>div:nth-child(2) {
         min-width: 0 !important;
 
         margin: 0 !important;
@@ -1273,7 +1364,7 @@
         white-space: nowrap !important;
     }
 
-    .premium-footer-main .footer-brand > div:nth-child(2) span {
+    .premium-footer-main .footer-brand>div:nth-child(2) span {
         display: block !important;
 
         margin: 3px 0 0 !important;
@@ -1448,7 +1539,7 @@
         min-width: 0 !important;
     }
 
-    .admin-layout > * {
+    .admin-layout>* {
         min-width: 0 !important;
         max-width: 100% !important;
     }
@@ -1537,7 +1628,7 @@
         min-width: 0 !important;
     }
 
-    .admin-layout > * {
+    .admin-layout>* {
         min-width: 0 !important;
         max-width: 100% !important;
     }
@@ -1645,7 +1736,7 @@
 @media (max-width: 620px) {
 
     /* Fiecare zi */
-    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] {
+    .field.full>div>div[style*="grid-template-columns:120px 1fr 1fr 90px"] {
         grid-template-columns: 78px minmax(0, 1fr) minmax(0, 1fr) !important;
         gap: 6px !important;
         width: 100% !important;
@@ -1653,13 +1744,13 @@
     }
 
     /* Numele zilei */
-    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] > strong {
+    .field.full>div>div[style*="grid-template-columns:120px 1fr 1fr 90px"]>strong {
         min-width: 0 !important;
         white-space: nowrap !important;
     }
 
     /* Inputurile de timp */
-    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] input[type="time"] {
+    .field.full>div>div[style*="grid-template-columns:120px 1fr 1fr 90px"] input[type="time"] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
@@ -1667,7 +1758,7 @@
     }
 
     /* Checkbox-ul + Închis */
-    .field.full > div > div[style*="grid-template-columns:120px 1fr 1fr 90px"] > label {
+    .field.full>div>div[style*="grid-template-columns:120px 1fr 1fr 90px"]>label {
         grid-column: 2 / -1 !important;
         justify-self: start !important;
         width: auto !important;
@@ -1691,7 +1782,7 @@
     label,
     [role="button"] {
         -webkit-tap-highlight-color: transparent !important;
-        
+
         outline: none !important;
     }
 
@@ -1728,7 +1819,7 @@
     .admin-section table tbody tr td,
     .admin-section table tbody tr th {
         -webkit-tap-highlight-color: transparent !important;
-        
+
     }
 
     .admin-section table tbody tr:focus,
